@@ -4,7 +4,8 @@
 ************************************************/
 #include "..\MPC82.H"   //暫存器及組態定義
 #include "MUSIC.H"
-//#define MUSIC
+#include "math.h"
+#define MUSIC
 #define PARSER
 //#define LCD
 #define BUFFER
@@ -13,19 +14,29 @@
 #define ON 2
 #define WAIT 3
 #define CHANNEL 0x00
-char channel;
-char note;
-char velocity;
-int action; //1 =note off ; 2=note on ; 3= wait
+unsigned char channel;
+unsigned char note;
+unsigned char velocity;
+unsigned int action; //1 =note off ; 2=note on ; 3= wait
 #endif
 #ifdef LCD
-char jj=0;
-char line;
+unsigned char jj=0;
+unsigned char line;
 #endif
 #ifdef BUFFER
 #define BUFFER_SIZE 960
 volatile unsigned int produceCount, consumeCount;
-char buffer[BUFFER_SIZE];
+unsigned char buffer[BUFFER_SIZE];
+/*
+ = { 0x90,0x48,0x50,0x91,0x3C,0x50,0x92,0x54,0x50,0x90,0x48,0x0,0x90,0x49,0x50,0x91,0x3C,0x0,0x91,0x3D,0x50,0x92,0x54,0x0,0x92,0x55,0x50,0x90,0x4A,0x50,0x91,0x3E,0x50,0x92,0x56,0x50,0x80,
+0x49,0x0,0x81,0x3D,0x0,0x82,0x55,0x0,0x90,0x4B,0x50,0x91,0x3F,0x50,0x92,0x57,0x50,0x80,0x4A,0x0,0x81,0x3E,0x0,0x82,0x56,0x0,0x90,0x4C,0x50,0x91,0x40,0x50,0x92,0x58,0x50,0x80,0x4B,0x0,
+0x81,0x3F,0x0,0x82,0x57,0x0,0x90,0x4D,0x50,0x91,0x41,0x50,0x92,0x59,0x50,0x80,0x4C,0x0,0x81,0x40,0x0,0x82,0x58,0x0,0x90,0x4E,0x50,0x91,0x42,0x50,0x92,0x5A,0x50,0x80,0x4D,0x0,0x81,0x41,0x0,
+0x82,0x59,0x0,0x90,0x4F,0x50,0x91,0x43,0x50,0x92,0x5B,0x50,0x80,0x4E,0x0,0x81,0x42,0x0,0x82,0x5A,0x0,0x90,0x50,0x50,0x91,0x44,0x50,0x92,0x5C,0x50,0x80,0x4F,0x0,0x81,0x43,0x0,0x82,0x5B,
+0x0,0x90,0x51,0x50,0x91,0x45,0x50,0x92,0x5D,0x50,0x80,0x50,0x0,0x81,0x44,0x0,0x82,0x5C,0x0,0x90,0x52,0x50,0x91,0x46,0x50,0x92,0x5E,0x50,0x80,0x51,0x0,0x81,0x45,0x0,0x82,0x5D,0x0,
+0x90,0x53,0x0,0x91,0x47,0x50,0x92,0x5F,0x50,0x80,0x52,0x0,0x81,0x46,0x0,0x82,0x5E,0x0,0x90,0x54,0x50,0x91,0x48,0x50,0x92,0x60,0x50,0x80,0x53,0x0,0x81,0x47,0x0,0x82,0x5F,0x0,0x90,0x55,
+0x50,0x91,0x49,0x50,0x92,0x61,0x50,0x80,0x54,0x0,0x81,0x48,0x0,0x82,0x60,0x0,0x90,0x56,0x50,0x91,0x4A,0x50,0x92,0x62,0x50,0x80,0x55,0x0,0x81,0x49,0x0,0x82,0x61,0x0,0x90,0x57,0x50,0x91,
+0x4B,0x50,0x92,0x63,0x50,0x80,0x56,0x0,0x81,0x4A,0x0,0x82,0x62,0x0,0x80,0x57,0x0,0x81,0x4B,0x0,0x82,0x63,0x0 };
+*/
 #endif
 #ifdef MUSIC
 unsigned int  code Table[]  //定義音頻陣列資料,0為休止符  
@@ -43,12 +54,13 @@ unsigned int  code Table[]  //定義音頻陣列資料,0為休止符
    	};
 #endif
 
-void consumeToken(char incomingByte); 
+void consumeToken(unsigned char incomingByte); 
 
 main()
 {   
 	#ifdef BUFFER
-	produceCount = consumeCount = 0;
+	produceCount = 0;
+	consumeCount = 0;
 	#endif
 	#ifdef PARSER
 	note = velocity = 0;
@@ -73,11 +85,11 @@ main()
 	while(1)
 	#ifdef BUFFER
 	{
-		while (produceCount - consumeCount == 0)
+		while (abs(produceCount - consumeCount) == 0)
            ; // buffer is empty
  
         consumeToken( buffer[consumeCount++]);
-		if( consumeCount >= BUFFER_SIZE)
+		if( consumeCount >= BUFFER_SIZE )
         	consumeCount = 0;
 	}
 	#else
@@ -85,10 +97,10 @@ main()
 	#endif
 }
 
-void consumeToken(char incomingByte)
+void consumeToken(unsigned char incomingByte)
 {
 		#ifdef PARSER
-		if (incomingByte & 0x90 ) // Note on
+		if ( (incomingByte >> 4) == 9 ) // Note on
 	    { 
 			channel = (incomingByte & 0x0F); 
 			#ifdef MUSIC
@@ -104,7 +116,7 @@ void consumeToken(char incomingByte)
 			#endif
     		action = ON;
 	    }
-	    else if (incomingByte & 0x80 ) // Note off
+	    else if ( (incomingByte >> 4) == 8 )// Note off
 	    { 
 			channel = (incomingByte & 0x0F);
 			#ifdef MUSIC
@@ -112,16 +124,12 @@ void consumeToken(char incomingByte)
 			#endif
 			action = OFF;
 	    }
-		else if ( 0 == velocity &&	action != WAIT )
+		else if(incomingByte < 0x80)//if (action != WAIT )
 		{
 		    if (0 == note) // note on, wait for note value
 		    { 
 		      	note=incomingByte;
-				if( CHANNEL == channel
-				#ifdef MUSIC
-				 && action == ON 
-				#endif 
-				)
+				if( CHANNEL == channel && action == ON )
 				{
 					#ifdef MUSIC
 					CCAP0L=Table[note];	   //設定比較暫存器低位元組
@@ -146,37 +154,51 @@ void consumeToken(char incomingByte)
 		    }
 		    else //if ( note != 0 && action != WAIT)  // velocity
 		    { 
-		      velocity=incomingByte;
-		      if(action == ON)
-			  { 
-			  	if( CHANNEL == channel )
-		      	{
-					#ifdef MUSIC
-					CR = 1;             //啟動PCA計數，開始發音
-					#endif
-					LED1=~velocity;  //將接收到的字元由LED輸出
-					#ifdef LCD
-					char raynote = (velocity & 0xF0);
-					raynote >>= 4;
-					if(raynote <= 0x09)
-						LCD_Data(raynote + '0');  //字元送到LCD顯示   
+		       velocity=incomingByte;
+		       if(action == ON)
+			   { 
+			  	 if( CHANNEL == channel )
+		      	 {
+				 	if( velocity != 0 )
+					{
+						#ifdef MUSIC
+						CR = 1;             //啟動PCA計數，開始發音
+						#endif
+						LED1=~velocity;  //將接收到的字元由LED輸出
+						#ifdef LCD
+						char raynote = (velocity & 0xF0);
+						raynote >>= 4;
+						if(raynote <= 0x09)
+							LCD_Data(raynote + '0');  //字元送到LCD顯示   
+						else
+							LCD_Data(raynote - 10 + 'A');
+						raynote = (velocity & 0x0F);
+						if(raynote <= 0x09)
+							LCD_Data(raynote + '0');  //字元送到LCD顯示   
+						else
+							LCD_Data(raynote - 10 + 'A');
+						LCD_Data(' ');
+						#endif
+					}
 					else
-						LCD_Data(raynote - 10 + 'A');
-					raynote = (velocity & 0x0F);
-					if(raynote <= 0x09)
-						LCD_Data(raynote + '0');  //字元送到LCD顯示   
-					else
-						LCD_Data(raynote - 10 + 'A');
-					LCD_Data(' ');
-					#endif
+					{
+						#ifdef MUSIC
+			  	  		//if( CHANNEL == channel )
+		      		 		//CR = 0;
+				  		#endif		
+					}
 		         }
+				 else
+				 {
+				 	//produceCount = produceCount;
+				 }
 				 //Midi_Send(0x90,note,velocity); 
 		       }
 		       else //if(action == OFF)
 			   { 
 			   	  #ifdef MUSIC
-			  	  if( CHANNEL == channel )
-		      		CR = 0;
+			  	  //if( CHANNEL == channel )
+		      		 //CR = 0;
 				  #endif		
 		          //Midi_Send(0x80,note,velocity); 
 		       }
@@ -185,8 +207,11 @@ void consumeToken(char incomingByte)
 		       action=WAIT;
 			}
 		}
-	    else{ }	
-		#else
+		else
+		{
+		 	//produceCount = produceCount;
+		}
+	    #else
 		
 		#endif
 }
@@ -198,7 +223,7 @@ void SCON_int(void)  interrupt 4  //串列中斷函數
 	if(SBUF < 0xF0)
 	{
 		#ifdef BUFFER
-		while (produceCount - consumeCount + 1 == BUFFER_SIZE)
+		while ( abs(produceCount - consumeCount) == BUFFER_SIZE )
             ; // buffer is full
  
         buffer[produceCount++] = SBUF;
