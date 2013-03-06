@@ -5,13 +5,21 @@
 #include "..\MPC82.H"   //暫存器及組態定義
 #include "MUSIC.H"
 #include "math.h"
+//#define RAYPWM
+#define BUFFER
 #define MUSIC
+//#define TIMER0
+#define TIMER2
 #define PARSER
 //#define LCD
-#define BUFFER
-#define TIMER2
-#ifdef TIMER2
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
+#ifdef RAYPWM
+unsigned char gg = 8;
+#endif
+#ifdef TIMER0
+unsigned char hh = 0;
+#endif
+#ifdef TIMER2
 unsigned char ii = 0;
 #endif
 #ifdef PARSER
@@ -86,6 +94,7 @@ main()
 			        bit0:CP/RL2=0,重新載入*/
     RCAP2=T2R=65536-TT; //設定Timer2及T2自動載入暫存器
 #endif
+    EA=1;
 #ifdef MUSIC
     CCAPM0 = ECOM+MAT+TOG+ECCF; //MAT=1，PAC計數與CCAP0匹配時，令CCF0=1
     //ECOM=1，致能比較器功能
@@ -94,24 +103,37 @@ main()
     AUXIE = EPCA; //致能PCA中斷
     CCF0 = 0;		//清除模組0的比較旗標
 #endif
-    EA=1;
+#ifdef RAYPWM
+    CCAPM1=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
+    CR = 1;
+    CCAP1H = gg; //設定CEX1脈波時間
+#endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
     ET2=1;      //致能Timer2中斷
+    //TR2=1;
+#endif
+#ifdef TIMER0
+    //TMOD=0x01;   //設定Timer0為mode1內部計時
+    TL0=65536 - TT;
+    TH0=65536 - TT >> 8; //設定計時值
+    ET0=1;  //致能Timer0中
+    //TR0 = 1;
 #endif
     while(1)
-#ifdef BUFFER
     {
+#ifdef BUFFER
         while (abs(produceCount - consumeCount) == 0)
             ; // buffer is empty
 
         consumeToken( buffer[consumeCount++]);
         if( consumeCount >= BUFFER_SIZE )
             consumeCount = 0;
-    }
 #else
         ;   	//自我空轉，表示可做其它工作
 #endif
+    }
 }
 
 void consumeToken(unsigned char incomingByte)
@@ -120,9 +142,6 @@ void consumeToken(unsigned char incomingByte)
     if ( (incomingByte >> 4) == 9 ) // Note on
     {
         channel = (incomingByte & 0x0F);
-#ifdef MUSIC
-        //CR = 0;
-#endif
         //LED0=~channel;
 #ifdef LCD
         if(channel <= 0x09)
@@ -136,9 +155,6 @@ void consumeToken(unsigned char incomingByte)
     else if ( (incomingByte >> 4) == 8 )// Note off
     {
         channel = (incomingByte & 0x0F);
-#ifdef MUSIC
-        //CR = 0;
-#endif
         action = OFF;
     }
     else if(incomingByte < 0x80)//if (action != WAIT )
@@ -180,9 +196,9 @@ void consumeToken(unsigned char incomingByte)
                     {
 #ifdef MUSIC
                         CR = 1;             //啟動PCA計數，開始發音
+#endif
 #ifdef TIMER2
                         //TR2 = 1;         //啟動Timer2開始計時
-#endif
 #endif
                         LED1=~velocity;  //將接收到的字元由LED輸出
 #ifdef LCD
@@ -242,7 +258,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
-    //LED=~ii++; //LED遞加輸出
+    //LED1=~ii++; //LED遞加輸出
     //}
     //else  //若是T2EX腳輸入負緣觸發令LED=0，強迫重新載入
     //{
@@ -291,7 +307,7 @@ void UART_init(unsigned int bps)  //UART啟始程式
     P0M0=0;
     P0M1=0xFF; //設定P0為推挽式輸出(M0-1=01)
     SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
-    TMOD = 0x20;     //設定TIMER1為MODE2
+    TMOD = T0_M0 + T1_M1;//0x20;     //設定TIMER1為MODE2
 
     AUXR2 = T1X12;
     PCON = SMOD;
@@ -310,6 +326,17 @@ void PCA_Interrupt() interrupt 10
 {
     CCF0 = 0;	    //清除模組0的比較旗標
     CL = CH =0;   //PCA計數器由0開始上數
+}
+#endif
+
+#ifdef TIMER0
+/***************************************/
+void T0_int(void) interrupt 1  //Timer0中斷函數
+{
+    TL0 = 65536 - TT ;
+    TH0 = 65536 - TT >> 8; //重新設定計時值
+    //SPEAK=!SPEAK;     //喇叭反相輸出
+    //LED=~hh++; //LED遞加輸出
 }
 #endif
 
