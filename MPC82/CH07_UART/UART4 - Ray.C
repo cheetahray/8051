@@ -20,9 +20,7 @@ sbit PWM10 = P1^0;
 sbit PWM11 = P1^1;  
 unsigned char PWM10_VAR, PWM11_VAR ;
 void softPWM();
-#endif
-#ifdef TIMER0
-unsigned char hh = 0;
+//unsigned char hh = 0;
 #endif
 #ifdef TIMER2
 unsigned char ii = 0;
@@ -370,8 +368,8 @@ void PCA_Interrupt() interrupt 10
 /***************************************/
 void T0_int(void) interrupt 1  //Timer0中斷函數
 {
-    TL0 = 65536 - TT ;
-    TH0 = 65536 - TT >> 8; //重新設定計時值
+    //TL0 = 65536 - TT ;
+    //TH0 = 65536 - TT >> 8; //重新設定計時值
     //SPEAK=!SPEAK;     //喇叭反相輸出
     //LED=~hh++; //LED遞加輸出
 }
