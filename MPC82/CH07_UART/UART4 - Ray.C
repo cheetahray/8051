@@ -16,8 +16,6 @@
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef RAYPWM
 #define TIMER0
-sbit PWM10 = P1^0;  
-sbit PWM11 = P1^1;  
 unsigned char PWM10_VAR, PWM11_VAR ;
 void softPWM();
 //unsigned char hh = 0;
@@ -275,13 +273,13 @@ void consumeToken(unsigned char incomingByte)
 #ifdef RAYPWM
 void softPWM()
 {
-	PWM10 = PWM11 = 1; 	 //PWM的開始準位=1
+	P1_0 = P1_1 = 1; 	 //PWM的開始準位=1
 	while(0==TF0)	//若計時未溢位PWM輸出
 	{
 		if(TL0 > PWM10_VAR) 
-			PWM10=0;//若計時值 >PWM0值，PWM10=0
+			P1_0=0;//若計時值 >PWM0值，PWM10=0
 		if(TL0 > PWM11_VAR) 
-			PWM11=0;//若計時值 >PWM1值，PWM11=0 
+			P1_1=0;//若計時值 >PWM1值，PWM11=0 
 	}
 	TF0=0;	//若計時溢位，清除計時溢位旗標,重頭開始
 }
@@ -313,7 +311,8 @@ void SCON_int(void)  interrupt 4  //串列中斷函數
         while ( abs(produceCount - consumeCount) == BUFFER_SIZE )
             ; // buffer is full
 
-        buffer[produceCount++] = SBUF;
+        buffer[produceCount] = SBUF;
+		SBUF = buffer[produceCount++];
         if(produceCount >= BUFFER_SIZE)
             produceCount = 0;
 #else
