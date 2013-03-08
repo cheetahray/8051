@@ -367,12 +367,12 @@ void PCA_Interrupt() interrupt 10
 #ifdef TIMER0
 /***************************************/
 //void T0_int(void) interrupt 1  //Timer0中斷函數
-{
+//{
     //TL0 = 65536 - TT ;
     //TH0 = 65536 - TT >> 8; //重新設定計時值
     //SPEAK=!SPEAK;     //喇叭反相輸出
     //LED=~hh++; //LED遞加輸出
-}
+//}
 #endif
 
 #ifdef LCD
