@@ -6,7 +6,7 @@
 #include "MUSIC.H"
 #include "math.h"
 #define BUFFER
-#define MUSIC
+//#define MUSIC
 #ifndef MUSIC
 #define RAYPWM
 #endif
@@ -88,6 +88,7 @@ main()
     LCD_Cmd(0x80);        //游標由第一行開始顯示
     LCD_Cmd(0x0f);//*0000 1111,顯示幕ON,顯示游標,游標閃爍
 #endif
+    TMOD = 0;
     UART_init(31250);      //設定串列環境及鮑率
 #ifdef TIMER2
     //PCON2=5; //Fosc=Fosc/32，時間=31250uS*32=1秒(軟體模擬無效)
@@ -122,7 +123,7 @@ main()
     //TR2=1;
 #endif
 #ifdef TIMER0
-    //TMOD=0x01;   //設定Timer0為mode1內部計時
+    TMOD += T0_M1 ; //TMOD=0x01;   //設定Timer0為mode1內部計時
     //TL0=65536 - TT;
     //TH0=65536 - TT >> 8; //設定計時值
     //ET0=1;  //致能Timer0中
@@ -365,13 +366,10 @@ void UART_init(unsigned int bps)  //UART啟始程式
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
     S2CON = S2REN;
-    TMOD = T0_M1 + T1_M1; //0x01-1/32 Sec Int 0x02-PWM     //設定TIMER1為MODE2
-
+    TMOD += T1_M1;  //設定TIMER1為MODE2
     AUXR2 = T1X12 + URM0X6;	// T1X12 for uart1	URM0X6 for uart2
     PCON = SMOD;
-    TH1=212;	 //211~213
-
-    //TH1 = 256-(57600/bps);  //設計時器決定串列傳輸鮑率
+    TH1=212;	 //211~213 //TH1 = 256-(57600/bps);  //設計時器決定串列傳輸鮑率
     TR1 = 1;          //開始計時
 }
 
