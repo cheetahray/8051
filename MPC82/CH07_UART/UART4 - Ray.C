@@ -3,12 +3,13 @@
 *硬體：SW3-3(TxD1)ON
 ************************************************/
 #include "..\MPC82.H"   //暫存器及組態定義
-#include "MUSIC.H"
 #include "math.h"
 #define BUFFER
 //#define MUSIC
 #ifndef MUSIC
 #define RAYPWM
+#else
+#include "MUSIC.H"
 #endif
 //#define TIMER2
 #define PARSER
@@ -307,23 +308,23 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
 }
 #endif
 /*****************************************************/
-void SCON_int(void)  interrupt 4  //串列中斷函數
+void S2CON_int(void)  interrupt 12  //串列中斷函數
 {
-    if(1==RI)
+    if(S2CON & S2RI)
     {
-        RI=0;             //接收完畢，令RI=0
-        if(SBUF < 0xF0)
+        S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
+        if(S2BUF < 0xF0)
         {
 #ifdef BUFFER
             while ( abs(produceCount - consumeCount) == BUFFER_SIZE )
                 ; // buffer is full
 
-            buffer[produceCount] = SBUF;
-            SBUF = buffer[produceCount++];
+            buffer[produceCount] = S2BUF;
+            S2BUF = buffer[produceCount++];
             if(produceCount >= BUFFER_SIZE)
                 produceCount = 0;
 #else
-            consumeToken(SBUF);
+            consumeToken(S2BUF);
 #endif
 #ifdef LCD
             if(0 == line && jj > 15) {
@@ -339,19 +340,20 @@ void SCON_int(void)  interrupt 4  //串列中斷函數
         }
     }
     else
-        TI=0;
+        S2CON &= ~S2TI; //若為發射所產生的中斷，清除發射旗標令S2TI=0
 }
 
 //**********************************************************
-void S2CON_int (void)  interrupt 12  //串列中斷函數
+void SCON_int (void)  interrupt 4  //串列中斷函數
 {
-    //if(S2CON & S2RI)  //若為接收所產生的中斷
+    //if(1==RI)  //若為接收所產生的中斷
     {
-        S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
-        //rayCHANNEL = S2BUF;//LED = ~S2BUF;     //將接收到的字元由LED輸出
-        //S2BUF = ~LED;     //將temp發射出去
+        RI=0;             //接收完畢，令RI=0
+        //rayCHANNEL = SBUF;	//LED = ~SBUF;     //將接收到的字元由LED輸出
+        //SBUF = ~LED;     //將temp發射出去
     }
-    //else S2CON &= ~S2TI; //若為發射所產生的中斷，清除發射旗標令S2TI=0
+    //else 
+	//TI=0;
 }
 
 /***********************************************************
@@ -364,13 +366,13 @@ void UART_init(unsigned int bps)  //UART啟始程式
     P0M0=0;
     P0M1=0xFF; //設定P0為推挽式輸出(M0-1=01)
     REN = 1;
-    SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
-    S2CON = S2REN;
-    TMOD += T1_M1;  //設定TIMER1為MODE2
-    AUXR2 = T1X12 + URM0X6;	// T1X12 for uart1	URM0X6 for uart2
-    PCON = SMOD;
-    TH1=212;	 //211~213 //TH1 = 256-(57600/bps);  //設計時器決定串列傳輸鮑率
-    TR1 = 1;          //開始計時
+    //SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
+    S2CON = S2REN + S2SM1;
+    //TMOD += T1_M1;  //設定TIMER1為MODE2
+    AUXR2 = /*T1X12*/ S2TX12 + S2SMOD + URM0X6;	// T1X12 for uart1	URM0X6 for uart2
+    //PCON = SMOD;
+    S2BRT = 212;	//TH1=212;	 //211~213 //TH1 = 256-(57600/bps);  //設計時器決定串列傳輸鮑率
+    //TR1 = 1;          //開始計時
 }
 
 #ifdef MUSIC
