@@ -111,14 +111,14 @@ main()
     AUXIE = ES2;
 #endif
 #ifdef RAYPWM
-    CCAPM0=CCAPM1=CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
-    PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    CCAP0H=CCAP1H=CCAP2H=CCAP3H=CCAP4H=CCAP5H=0;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    /*PCAPWM0=PCAPWM1=*/PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
+    /*CCAP0H=CCAP1H=*/CCAP2H=CCAP3H=CCAP4H=CCAP5H=0;//0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
     PWM10_VAR=PWM11_VAR=0;
 #endif
-    ES=1;            //致能串列中斷
+    //ES=1;            //致能串列中斷
 #ifdef TIMER2
     ET2=1;      //致能Timer2中斷
     //TR2=1;
@@ -138,9 +138,16 @@ main()
         {
 #ifdef RAYPWM
             softPWM();
-#else
-            ; // buffer is empty
 #endif
+			if(1 == RI)
+			{
+				RI = 0;
+				rayCHANNEL = SBUF;
+				if(P1_0 != 1)
+					P1_0 = 1;
+			}
+			else if(P1_0 != 0)
+				P1_0 = 0;
         }
         consumeToken( buffer[consumeCount++]);
         if( consumeCount >= BUFFER_SIZE )
@@ -148,7 +155,7 @@ main()
 #elif defined RAYPWM
         softPWM();
 #else
-        ;   	//自我空轉，表示可做其它工作
+        ;//自我空轉，表示可做其它工作
 #endif
     }
 }
@@ -279,11 +286,11 @@ void consumeToken(unsigned char incomingByte)
 #ifdef RAYPWM
 void softPWM()
 {
-    P1_0 = P1_1 = 1; 	 //PWM的開始準位=1
+    /*P1_0 = */P1_1 = 1; 	 //PWM的開始準位=1
     while(0==TF0)	//若計時未溢位PWM輸出
     {
-        if(TL0 > PWM10_VAR)
-            P1_0=0;//若計時值 >PWM0值，PWM10=0
+        //if(TL0 > PWM10_VAR)
+           //P1_0=0;//若計時值 >PWM0值，PWM10=0
         if(TL0 > PWM11_VAR)
             P1_1=0;//若計時值 >PWM1值，PWM11=0
     }
@@ -342,20 +349,20 @@ void S2CON_int(void)  interrupt 12  //串列中斷函數
     else
         S2CON &= ~S2TI; //若為發射所產生的中斷，清除發射旗標令S2TI=0
 }
-
+/*
 //**********************************************************
 void SCON_int (void)  interrupt 4  //串列中斷函數
 {
-    //if(1==RI)  //若為接收所產生的中斷
+    if(1==RI)  //若為接收所產生的中斷
     {
-        RI=0;             //接收完畢，令RI=0
-        //rayCHANNEL = SBUF;	//LED = ~SBUF;     //將接收到的字元由LED輸出
-        //SBUF = ~LED;     //將temp發射出去
+        RI = 0;             //接收完畢，令RI=0
+        //LED = ~SBUF;     //將接收到的字元由LED輸出
+		//SBUF = ~LED;     //將temp發射出去
     }
-    //else 
-	//TI=0;
+    else 
+		TI=0;
 }
-
+*/
 /***********************************************************
 *函數名稱: UART_init
 *功能描述: UART啟始程式
@@ -369,7 +376,7 @@ void UART_init(unsigned int bps)  //UART啟始程式
     //SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
     S2CON = S2REN + S2SM1;
     //TMOD += T1_M1;  //設定TIMER1為MODE2
-    AUXR2 = /*T1X12*/ S2TX12 + S2SMOD + URM0X6;	// T1X12 for uart1	URM0X6 for uart2
+    AUXR2 = /*T1X12*/ S2TX12 + S2SMOD + URM0X6 + S2TR;	// T1X12 for uart1	URM0X6 for uart2
     //PCON = SMOD;
     S2BRT = 212;	//TH1=212;	 //211~213 //TH1 = 256-(57600/bps);  //設計時器決定串列傳輸鮑率
     //TR1 = 1;          //開始計時
