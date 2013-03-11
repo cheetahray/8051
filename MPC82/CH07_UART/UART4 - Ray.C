@@ -5,7 +5,7 @@
 #include "..\MPC82.H"   //暫存器及組態定義
 #include "math.h"
 #define BUFFER
-//#define MUSIC
+#define MUSIC
 #ifndef MUSIC
 #define RAYPWM
 #else
@@ -111,14 +111,14 @@ main()
     AUXIE = ES2;
 #endif
 #ifdef RAYPWM
-    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    /*CCAPM0=*/CCAPM1=CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
-    /*PCAPWM0=PCAPWM1=*/PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    /*CCAP0H=CCAP1H=*/CCAP2H=CCAP3H=CCAP4H=CCAP5H=0;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    /*PCAPWM0=*///PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
+    /*CCAP0H=*/CCAP1H=CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
-    PWM10_VAR=PWM11_VAR=0;
+    PWM10_VAR=PWM11_VAR=0x00;
 #endif
-    //ES=1;            //致能串列中斷
+    ES=1;            //致能串列中斷
 #ifdef TIMER2
     ET2=1;      //致能Timer2中斷
     //TR2=1;
@@ -139,15 +139,17 @@ main()
 #ifdef RAYPWM
             softPWM();
 #endif
-			if(1 == RI)
+#ifndef MUSIC
+			if(S2CON & S2RI)
 			{
-				RI = 0;
-				rayCHANNEL = SBUF;
+				S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
+				rayCHANNEL = S2BUF;
 				if(P1_0 != 1)
 					P1_0 = 1;
 			}
 			else if(P1_0 != 0)
 				P1_0 = 0;
+#endif
         }
         consumeToken( buffer[consumeCount++]);
         if( consumeCount >= BUFFER_SIZE )
@@ -315,23 +317,23 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
 }
 #endif
 /*****************************************************/
-void S2CON_int(void)  interrupt 12  //串列中斷函數
+void SCON_int(void)  interrupt 4  //串列中斷函數
 {
-    if(S2CON & S2RI)
+    if(1 == RI)
     {
-        S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
-        if(S2BUF < 0xF0)
+        RI = 0;    //接收完畢，令RI=0
+        if(SBUF < 0xF0)
         {
 #ifdef BUFFER
             while ( abs(produceCount - consumeCount) == BUFFER_SIZE )
                 ; // buffer is full
 
-            buffer[produceCount] = S2BUF;
-            S2BUF = buffer[produceCount++];
+            buffer[produceCount] = SBUF;
+            SBUF = buffer[produceCount++];
             if(produceCount >= BUFFER_SIZE)
                 produceCount = 0;
 #else
-            consumeToken(S2BUF);
+            consumeToken(SBUF);
 #endif
 #ifdef LCD
             if(0 == line && jj > 15) {
@@ -347,20 +349,20 @@ void S2CON_int(void)  interrupt 12  //串列中斷函數
         }
     }
     else
-        S2CON &= ~S2TI; //若為發射所產生的中斷，清除發射旗標令S2TI=0
+        TI=0;        
 }
 /*
 //**********************************************************
-void SCON_int (void)  interrupt 4  //串列中斷函數
+void S2CON_int (void)  interrupt 12  //串列中斷函數
 {
-    if(1==RI)  //若為接收所產生的中斷
+    if(S2CON & S2RI)  //若為接收所產生的中斷
     {
-        RI = 0;             //接收完畢，令RI=0
-        //LED = ~SBUF;     //將接收到的字元由LED輸出
-		//SBUF = ~LED;     //將temp發射出去
+        S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
+        //LED = ~S2BUF;     //將接收到的字元由LED輸出
+		//S2BUF = ~LED;     //將temp發射出去
     }
     else 
-		TI=0;
+		S2CON &= ~S2TI; //若為發射所產生的中斷，清除發射旗標令S2TI=0
 }
 */
 /***********************************************************
@@ -373,13 +375,15 @@ void UART_init(unsigned int bps)  //UART啟始程式
     P0M0=0;
     P0M1=0xFF; //設定P0為推挽式輸出(M0-1=01)
     REN = 1;
-    //SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
-    S2CON = S2REN + S2SM1;
-    //TMOD += T1_M1;  //設定TIMER1為MODE2
-    AUXR2 = /*T1X12*/ S2TX12 + S2SMOD + URM0X6 + S2TR;	// T1X12 for uart1	URM0X6 for uart2
-    //PCON = SMOD;
-    S2BRT = 212;	//TH1=212;	 //211~213 //TH1 = 256-(57600/bps);  //設計時器決定串列傳輸鮑率
-    //TR1 = 1;          //開始計時
+    SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
+#ifndef MUSIC
+    S2CON = S2REN;// + S2SM1;
+#endif
+    TMOD += T1_M1;  //設定TIMER1為MODE2
+    AUXR2 = T1X12 + URM0X6;// + S2TX12 + S2SMOD + S2TR;	// T1X12 for uart1	URM0X6 for uart2
+    PCON = SMOD;
+    TH1=212;	//S2BRT = 212 //211~213 //TH1 = 256-(57600/bps);  //設計時器決定串列傳輸鮑率
+    TR1 = 1;          //開始計時
 }
 
 #ifdef MUSIC
