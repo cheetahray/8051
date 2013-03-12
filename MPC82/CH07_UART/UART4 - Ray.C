@@ -5,7 +5,7 @@
 #include "..\MPC82.H"   //暫存器及組態定義
 #include "math.h"
 #define BUFFER
-#define MUSIC
+//#define MUSIC
 #ifndef MUSIC
 #define RAYPWM
 #else
@@ -124,12 +124,11 @@ main()
     //TR2=1;
 #endif
 #ifdef TIMER0
-    TMOD += T0_M1 ; //TMOD=0x01;   //設定Timer0為mode1內部計時
-    //TL0=65536 - TT;
-    //TH0=65536 - TT >> 8; //設定計時值
-    //ET0=1;  //致能Timer0中
-    TH0=TL0=0;    //Timer0由0開始計時
-    TR0=1;	    //啟動Timer0開始計時
+    TMOD += T0_M1;	//設定Timer0為mode1內部計時
+    TL0=0;	//TL0=65536 - TT;
+    TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
+    ET0=1;	//致能Timer0中
+    TR0=1;	//啟動Timer0開始計時
 #endif
     while(1)
     {
@@ -288,15 +287,12 @@ void consumeToken(unsigned char incomingByte)
 #ifdef RAYPWM
 void softPWM()
 {
-    /*P1_0 = */P1_1 = 1; 	 //PWM的開始準位=1
-    while(0==TF0)	//若計時未溢位PWM輸出
-    {
         //if(TL0 > PWM10_VAR)
            //P1_0=0;//若計時值 >PWM0值，PWM10=0
         if(TL0 > PWM11_VAR)
             P1_1=0;//若計時值 >PWM1值，PWM11=0
-    }
-    TF0=0;	//若計時溢位，清除計時溢位旗標,重頭開始
+		else
+			P1_1=1;
 }
 #endif
 #ifdef TIMER2
@@ -400,13 +396,13 @@ void PCA_Interrupt() interrupt 10
 
 #ifdef TIMER0
 /***************************************/
-//void T0_int(void) interrupt 1  //Timer0中斷函數
-//{
-//TL0 = 65536 - TT ;
-//TH0 = 65536 - TT >> 8; //重新設定計時值
-//SPEAK=!SPEAK;     //喇叭反相輸出
-//LED=~hh++; //LED遞加輸出
-//}
+void T0_int(void) interrupt 1  //Timer0中斷函數
+{
+	TL0 = 0;//TL0 = 65536 - TT ;
+	TH0 = 0;//TH0 = 65536 - TT >> 8; //重新設定計時值
+	//SPEAK=!SPEAK;     //喇叭反相輸出
+	//LED=~hh++; //LED遞加輸出
+}
 #endif
 
 #ifdef LCD
