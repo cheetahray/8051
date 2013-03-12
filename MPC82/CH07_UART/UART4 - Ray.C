@@ -6,25 +6,24 @@
 #include "math.h"
 #define BUFFER
 //#define MUSIC
+#define CHANNEL16
 #ifndef MUSIC
 #define RAYPWM
 #else
 #include "MUSIC.H"
 #endif
-//#define TIMER2
+#define TIMER2
 #define PARSER
 //#define LCD
 #ifdef TIMER2
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
+unsigned char ii = 0;
 #endif
 #ifdef RAYPWM
 #define TIMER0
 unsigned char PWM10_VAR, PWM11_VAR ;
 void softPWM();
 //unsigned char hh = 0;
-#endif
-#ifdef TIMER2
-unsigned char ii = 0;
 #endif
 #ifdef PARSER
 #define OFF 1
@@ -97,6 +96,7 @@ main()
                     bit3:EXEN2=1,使用外部T2EX接腳
 			        bit1:C/T=0,內部計時
 			        bit0:CP/RL2=0,重新載入*/
+    T2MOD = 0x00;
     RCAP2=T2R=65536-TT; //設定Timer2及T2自動載入暫存器
 #endif
     EA=1;
@@ -105,11 +105,10 @@ main()
     //ECOM=1，致能比較器功能
     //TOG=1，(CH:CL)=CCAP0時，令CEX0腳反相
     //ECCF=1，致能有匹配(CCF0=1)時，產生中斷
-    AUXIE = EPCA + ES2; //致能PCA中斷
+    AUXIE = EPCA; //致能PCA中斷
     CCF0 = 0;		//清除模組0的比較旗標
-#else
-    AUXIE = ES2;
 #endif
+    //AUXIE += ES2;
 #ifdef RAYPWM
     /*CCAPM0=*/CCAPM1=CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
@@ -121,7 +120,7 @@ main()
     ES=1;            //致能串列中斷
 #ifdef TIMER2
     ET2=1;      //致能Timer2中斷
-    //TR2=1;
+    TR2=1;
 #endif
 #ifdef TIMER0
     TMOD += T0_M1;	//設定Timer0為mode1內部計時
@@ -138,16 +137,16 @@ main()
 #ifdef RAYPWM
             softPWM();
 #endif
-#ifndef MUSIC
-			if(S2CON & S2RI)
-			{
-				S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
-				rayCHANNEL = S2BUF;
-				if(P1_0 != 1)
-					P1_0 = 1;
-			}
-			else if(P1_0 != 0)
-				P1_0 = 0;
+#ifdef CHANNEL16
+            if(S2CON & S2RI)
+            {
+                S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
+                rayCHANNEL = S2BUF;
+                if(P1_0 != 1)
+                    P1_0 = 1;
+            }
+            else if(P1_0 != 0)
+                P1_0 = 0;
 #endif
         }
         consumeToken( buffer[consumeCount++]);
@@ -287,12 +286,12 @@ void consumeToken(unsigned char incomingByte)
 #ifdef RAYPWM
 void softPWM()
 {
-        //if(TL0 > PWM10_VAR)
-           //P1_0=0;//若計時值 >PWM0值，PWM10=0
-        if(TL0 > PWM11_VAR)
-            P1_1=0;//若計時值 >PWM1值，PWM11=0
-		else
-			P1_1=1;
+    //if(TL0 > PWM10_VAR)
+    //P1_0=0;//若計時值 >PWM0值，PWM10=0
+    if(TL0 > PWM11_VAR)
+        P1_1=0;//若計時值 >PWM1值，PWM11=0
+    else
+        P1_1=1;
 }
 #endif
 #ifdef TIMER2
@@ -302,6 +301,15 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
+    if(ii >=0 && ii <= 5)
+        PWM11_VAR = 0xE0;
+    else
+    {
+        PWM11_VAR = 0x00;
+        if(ii >= 12)
+            ii = 0;
+    }
+    ii++;
     //LED1=~ii++; //LED遞加輸出
     //}
     //else  //若是T2EX腳輸入負緣觸發令LED=0，強迫重新載入
@@ -345,7 +353,7 @@ void SCON_int(void)  interrupt 4  //串列中斷函數
         }
     }
     else
-        TI=0;        
+        TI=0;
 }
 /*
 //**********************************************************
@@ -357,7 +365,7 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
         //LED = ~S2BUF;     //將接收到的字元由LED輸出
 		//S2BUF = ~LED;     //將temp發射出去
     }
-    else 
+    else
 		S2CON &= ~S2TI; //若為發射所產生的中斷，清除發射旗標令S2TI=0
 }
 */
@@ -372,7 +380,7 @@ void UART_init(unsigned int bps)  //UART啟始程式
     P0M1=0xFF; //設定P0為推挽式輸出(M0-1=01)
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
-#ifndef MUSIC
+#ifdef CHANNEL16
     S2CON = S2REN;// + S2SM1;
 #endif
     TMOD += T1_M1;  //設定TIMER1為MODE2
@@ -398,10 +406,10 @@ void PCA_Interrupt() interrupt 10
 /***************************************/
 void T0_int(void) interrupt 1  //Timer0中斷函數
 {
-	TL0 = 0;//TL0 = 65536 - TT ;
-	TH0 = 0;//TH0 = 65536 - TT >> 8; //重新設定計時值
-	//SPEAK=!SPEAK;     //喇叭反相輸出
-	//LED=~hh++; //LED遞加輸出
+    TL0 = 0;//TL0 = 65536 - TT ;
+    TH0 = 0;//TH0 = 65536 - TT >> 8; //重新設定計時值
+    //SPEAK=!SPEAK;     //喇叭反相輸出
+    //LED=~hh++; //LED遞加輸出
 }
 #endif
 
