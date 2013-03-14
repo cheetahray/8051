@@ -5,10 +5,10 @@
 #include "..\MPC82.H"   //暫存器及組態定義
 #include "math.h"
 #define BUFFER
-//#define MUSIC
-#define CHANNEL16
+#define MUSIC
+//#define CHANNEL16
 #ifndef MUSIC
-#define RAYPWM
+#define HARDRAYPWM
 #else
 #include "MUSIC.H"
 #endif
@@ -17,14 +17,11 @@
 //#define LCD
 #ifdef TIMER2
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
-unsigned char ii = 0;
+unsigned char i11;
 #endif
-#ifdef RAYPWM
 #define TIMER0
-unsigned char PWM10_VAR, PWM11_VAR ;
+unsigned char PWM10_VAR, PWM11_VAR;
 void softPWM();
-//unsigned char hh = 0;
-#endif
 #ifdef PARSER
 #define OFF 1
 #define ON 2
@@ -109,14 +106,16 @@ main()
     CCF0 = 0;		//清除模組0的比較旗標
 #endif
     //AUXIE += ES2;
-#ifdef RAYPWM
+#ifdef HARDRAYPWM
     /*CCAPM0=*/CCAPM1=CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     /*PCAPWM0=*///PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    /*CCAP0H=*/CCAP1H=CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    /*CCAP0H=*/
+    CCAP1H=CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
-    PWM10_VAR=PWM11_VAR=0x00;
 #endif
+    PWM10_VAR=PWM11_VAR=0x00;
+    i11=0xFF;
     ES=1;            //致能串列中斷
 #ifdef TIMER2
     ET2=1;      //致能Timer2中斷
@@ -134,9 +133,7 @@ main()
 #ifdef BUFFER
         while (abs(produceCount - consumeCount) == 0)
         {
-#ifdef RAYPWM
             softPWM();
-#endif
 #ifdef CHANNEL16
             if(S2CON & S2RI)
             {
@@ -152,10 +149,8 @@ main()
         consumeToken( buffer[consumeCount++]);
         if( consumeCount >= BUFFER_SIZE )
             consumeCount = 0;
-#elif defined RAYPWM
-        softPWM();
 #else
-        ;//自我空轉，表示可做其它工作
+        softPWM();	//自我空轉，表示可做其它工作
 #endif
     }
 }
@@ -221,7 +216,8 @@ void consumeToken(unsigned char incomingByte)
 #ifdef MUSIC
                         CR = 1;             //啟動PCA計數，開始發音
 #endif
-#ifdef RAYPWM
+                        i11 = 0;
+#ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
                         //CCAP1H=0x20;  //設定(P13/CEX1)脈波時間，平均電壓為4.4V
                         //CCAP2H=0x40;  //設定(P14/CEX2)脈波時間，平均電壓為3.8V
@@ -229,8 +225,6 @@ void consumeToken(unsigned char incomingByte)
                         //CCAP4H=0xA0;  //設定(P16/CEX4)脈波時間，平均電壓為1.8V
                         //CCAP5H=0xFF;  //設定(P17/CEX5)脈波時間，平均電壓為0.01V
                         //記得統一加上 inverse ~
-                        //PWM10_VAR = 240;
-                        //PWM11_VAR = 240;
 #endif
                         LED1=~velocity;  //將接收到的字元由LED輸出
 #ifdef LCD
@@ -254,6 +248,7 @@ void consumeToken(unsigned char incomingByte)
                         //if( rayCHANNEL == channel )
                         //CR = 0;
 #endif
+                        //i11 = 0xFF;
                     }
                 }
                 else
@@ -268,6 +263,7 @@ void consumeToken(unsigned char incomingByte)
                 //if( rayCHANNEL == channel )
                 //CR = 0;
 #endif
+                //i11 = 0xFF;
                 //Midi_Send(0x80,note,velocity);
             }
             note=0;
@@ -283,7 +279,6 @@ void consumeToken(unsigned char incomingByte)
 
 #endif
 }
-#ifdef RAYPWM
 void softPWM()
 {
     //if(TL0 > PWM10_VAR)
@@ -293,7 +288,6 @@ void softPWM()
     else
         P1_1=1;
 }
-#endif
 #ifdef TIMER2
 //*****************************************************
 void T2_int (void) interrupt 5   //Timer2中斷函數
@@ -301,15 +295,17 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
-    if(ii >=0 && ii <= 5)
-        PWM11_VAR = 0xE0;
+    if(i11 >=0 && i11 <= 5)
+    {
+        PWM11_VAR = 0xA5;
+        i11++;
+    }
     else
     {
         PWM11_VAR = 0x00;
-        if(ii >= 12)
-            ii = 0;
+        if(i11 >= 12)
+            i11 = 0;
     }
-    ii++;
     //LED1=~ii++; //LED遞加輸出
     //}
     //else  //若是T2EX腳輸入負緣觸發令LED=0，強迫重新載入
