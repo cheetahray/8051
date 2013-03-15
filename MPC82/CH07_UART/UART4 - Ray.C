@@ -6,17 +6,17 @@
 #include "math.h"
 #define BUFFER
 //#define MUSIC		 //P12	   	CR
-#define HARDRAYPWM		  //P14 P15 P16 P17
+#define HARDRAYPWM		  //P14 P15 P16
 #ifndef MUSIC
-#define CHANNEL16		  //P10 P12 P13	 	CR
+#define CHANNEL16		  //P10 P12 P13	P17 	CR
 #else
 #include "MUSIC.H"
 #endif
 #define TIMER2
 #define PARSER
 //#define LCD
-#ifdef TIMER2
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
+#ifdef TIMER2
 unsigned char i11;
 #endif
 #define TIMER0
@@ -107,10 +107,27 @@ main()
 #endif
     //AUXIE += ES2;
 #ifdef HARDRAYPWM
-    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    /*CCAP0H=CCAP1H=*/CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    /*CCAP0H=CCAP1H=*/
+    CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
+#ifndef CHANNEL16
+    CR = 1;
+#endif
+#endif
+#ifdef CHANNEL16
+#ifndef HARDRAYPWM
+    CMOD = 0; //PCA計數時脈來源CPS1-0:00=Fosc/12
+#endif
+    CCAPM5=ECOM+MAT+ECCF;
+    //MAT=1，PAC計數與CCAP0匹配時，令CCF0=1
+    //ECOM=1，致能比較器功能
+    //ECCF=1，致能有匹配(CCFn=1)時，產生中斷
+    CCAP5L=TT;
+    CCAP5H=TT>>8; //設定模組5比較暫存器
+    AUXIE = EPCA;      //致能PCA中斷
+    CCF5=0;  //清除模組0-5的比較旗標
     CR = 1;
 #endif
     PWM10_VAR=PWM11_VAR=0x00;
@@ -133,15 +150,6 @@ main()
         while (abs(produceCount - consumeCount) == 0)
         {
             softPWM();
-#ifdef CHANNEL16
-            if(S2CON & S2RI) //若RI=0表示未接收完畢，再繼續檢查
-            {
-                S2CON &= ~S2RI;//RI=0;         //若RI=1表示已接收1個字元完畢，清除RI=0
-                LED=~S2BUF;     //將接收到的字元由LED輸出
-                P1_0=0;
-                P1_0=1 ;   //開始串列傳輸
-            }
-#endif
         }
         consumeToken( buffer[consumeCount++]);
         if( consumeCount >= BUFFER_SIZE )
@@ -210,9 +218,6 @@ void consumeToken(unsigned char incomingByte)
                 {
                     if( velocity != 0 )
                     {
-#ifdef MUSIC
-                        CR = 1;             //啟動PCA計數，開始發音
-#endif
                         i11 = 0;
 #ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
@@ -241,10 +246,6 @@ void consumeToken(unsigned char incomingByte)
                     }
                     else
                     {
-#ifdef MUSIC
-                        //if( rayCHANNEL == channel )
-                        //CR = 0;
-#endif
                         //i11 = 0xFF;
                     }
                 }
@@ -256,10 +257,6 @@ void consumeToken(unsigned char incomingByte)
             }
             else //if(action == OFF)
             {
-#ifdef MUSIC
-                //if( rayCHANNEL == channel )
-                //CR = 0;
-#endif
                 //i11 = 0xFF;
                 //Midi_Send(0x80,note,velocity);
             }
@@ -388,17 +385,41 @@ void UART_init(unsigned int bps)  //UART啟始程式
     TR1 = 1;          //開始計時
 }
 
-#ifdef MUSIC
 /***********************************************************
 *函數名稱: PCA中斷函數
 *功能描述: 自動令CEX0反相
 ************************************************************/
 void PCA_Interrupt() interrupt 10
 {
-    CCF0 = 0;	    //清除模組0的比較旗標
+#ifdef MUSIC
+    CCF0 = 0;   //清除模組0的比較旗標
     CL = CH =0;   //PCA計數器由0開始上數
-}
 #endif
+#ifdef CHANNEL16
+    int pcai=7,pcaj=0;
+    rayCHANNEL = 0;
+    if(CCF5)
+    {
+        P1_0=0;
+        //Delay_ms(1);   //載入74165並列資料
+        P1_0=1 ;   //開始串列傳輸
+        while((S2CON & S2RI)==0); //若RI=0表示未接收完畢，再繼續檢查
+        S2CON &= ~S2RI;         //若RI=1表示已接收1個字元完畢，清除RI=0
+        while(pcai>=0)
+        {
+            if((S2BUF >> pcai) & 1)
+            {
+                rayCHANNEL += (1<<pcaj);
+            }
+            pcai--;
+            pcaj++;
+        }
+        LED=~rayCHANNEL;     //將接收到的字元由LED輸出
+        CL=CH=0;
+        CCF5=0; //清除模組0-5的比較旗標
+    }//第T*6秒動作，PCA計數器由0上數
+#endif
+}
 
 #ifdef TIMER0
 /***************************************/
