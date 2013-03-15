@@ -5,10 +5,10 @@
 #include "..\MPC82.H"   //暫存器及組態定義
 #include "math.h"
 #define BUFFER
-#define MUSIC
-//#define CHANNEL16
+//#define MUSIC		 //P12	   	CR
+#define HARDRAYPWM		  //P14 P15 P16 P17
 #ifndef MUSIC
-#define HARDRAYPWM
+#define CHANNEL16		  //P10 P12 P13	 	CR
 #else
 #include "MUSIC.H"
 #endif
@@ -107,11 +107,10 @@ main()
 #endif
     //AUXIE += ES2;
 #ifdef HARDRAYPWM
-    /*CCAPM0=*/CCAPM1=CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
-    /*PCAPWM0=*///PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    /*CCAP0H=*/
-    CCAP1H=CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
+    /*CCAP0H=CCAP1H=*/CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
 #endif
     PWM10_VAR=PWM11_VAR=0x00;
@@ -135,15 +134,13 @@ main()
         {
             softPWM();
 #ifdef CHANNEL16
-            if(S2CON & S2RI)
+            if(S2CON & S2RI) //若RI=0表示未接收完畢，再繼續檢查
             {
-                S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
-                rayCHANNEL = S2BUF;
-                if(P1_0 != 1)
-                    P1_0 = 1;
+                S2CON &= ~S2RI;//RI=0;         //若RI=1表示已接收1個字元完畢，清除RI=0
+                LED=~S2BUF;     //將接收到的字元由LED輸出
+                P1_0=0;
+                P1_0=1 ;   //開始串列傳輸
             }
-            else if(P1_0 != 0)
-                P1_0 = 0;
 #endif
         }
         consumeToken( buffer[consumeCount++]);
@@ -295,17 +292,22 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
-    if(i11 >=0 && i11 <= 5)
+    if(i11 == 0)
     {
-        PWM11_VAR = 0xA5;
+        PWM11_VAR = 0xE5;
+#ifdef MUSIC
         i11++;
+#endif
     }
     else
     {
-        PWM11_VAR = 0x00;
-        if(i11 >= 12)
-            i11 = 0;
+        PWM11_VAR = 0x50;
     }
+#ifndef MUSIC
+    i11++;
+    if(i11 >= 2)
+        i11 = 0;
+#endif
     //LED1=~ii++; //LED遞加輸出
     //}
     //else  //若是T2EX腳輸入負緣觸發令LED=0，強迫重新載入
