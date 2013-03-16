@@ -17,7 +17,7 @@
 //#define LCD
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i11;
+char i11;
 #endif
 #define TIMER0
 unsigned char PWM10_VAR, PWM11_VAR;
@@ -131,7 +131,7 @@ main()
     CR = 1;
 #endif
     PWM10_VAR=PWM11_VAR=0x00;
-    i11=0xFF;
+    i11=-1;
     ES=1;            //致能串列中斷
 #ifdef TIMER2
     ET2=1;      //致能Timer2中斷
@@ -218,7 +218,7 @@ void consumeToken(unsigned char incomingByte)
                 {
                     if( velocity != 0 )
                     {
-                        i11 = 0;
+                        i11 = -1;
 #ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
                         //CCAP1H=0x20;  //設定(P13/CEX1)脈波時間，平均電壓為4.4V
@@ -289,23 +289,23 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
-    if(i11 == 0)
-    {
-        PWM11_VAR = 0xE5;
-#ifdef MUSIC
-        i11++;
-#endif
-    }
-    else
-    {
-        PWM11_VAR = 0x50;
-    }
-#ifndef MUSIC
-    i11++;
-    if(i11 >= 2)
-        i11 = 0;
-#endif
-    //LED1=~ii++; //LED遞加輸出
+	switch(i11++)
+	{
+		case -1:
+			PWM11_VAR = 0xE5;
+		break;
+		case 0:
+			PWM11_VAR = 0xD0;
+		break;
+		case 1:
+			PWM11_VAR = 0x67;
+			i11 = 0;
+		break; 
+		default:
+			PWM11_VAR = 0;
+		break;
+	}
+	//LED1=~ii++; //LED遞加輸出
     //}
     //else  //若是T2EX腳輸入負緣觸發令LED=0，強迫重新載入
     //{
