@@ -7,8 +7,14 @@
 #define BUFFER
 //#define MUSIC		 //P12	   	CR
 #define HARDRAYPWM		  //P14 P15 P16
+#define DEBUG
+#ifdef DEBUG
+#include <stdio.h>   //加入標準輸出入函數
+unsigned char oldCHANNEL=0xFF;
+#endif
 #ifndef MUSIC
 #define CHANNEL16		  //P10 P12 P13	P17 	CR
+#define TTT  65535  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #else
 #include "MUSIC.H"
 #endif
@@ -26,7 +32,7 @@ void softPWM();
 #define OFF 1
 #define ON 2
 #define WAIT 3
-unsigned char rayCHANNEL = 0;//#define rayCHANNEL 0x00
+unsigned char rayCHANNEL = 0, oneCHANNEL = 0, twoCHANNEL = 0;//#define rayCHANNEL 0x00
 unsigned char channel;
 unsigned char note;
 unsigned char velocity;
@@ -37,7 +43,7 @@ unsigned char jj=0;
 unsigned char line;
 #endif
 #ifdef BUFFER
-#define BUFFER_SIZE 960
+#define BUFFER_SIZE 900
 volatile unsigned int produceCount, consumeCount;
 unsigned char buffer[BUFFER_SIZE];
 /*
@@ -124,8 +130,8 @@ main()
     //MAT=1，PAC計數與CCAP0匹配時，令CCF0=1
     //ECOM=1，致能比較器功能
     //ECCF=1，致能有匹配(CCFn=1)時，產生中斷
-    CCAP5L=TT;
-    CCAP5H=TT>>8; //設定模組5比較暫存器
+    CCAP5L=TTT;
+    CCAP5H=TTT>>8; //設定模組5比較暫存器
     AUXIE = EPCA;      //致能PCA中斷
     CCF5=0;  //清除模組0-5的比較旗標
     CR = 1;
@@ -186,7 +192,7 @@ void consumeToken(unsigned char incomingByte)
         if (0 == note) // note on, wait for note value
         {
             note=incomingByte;
-            if( rayCHANNEL == channel && action == ON )
+            if( oneCHANNEL == channel && action == ON )
             {
 #ifdef MUSIC
                 CCAP0L=Table[note];	   //設定比較暫存器低位元組
@@ -214,7 +220,7 @@ void consumeToken(unsigned char incomingByte)
             velocity=incomingByte;
             if(action == ON)
             {
-                if( rayCHANNEL == channel )
+                if( oneCHANNEL == channel )
                 {
                     if( velocity != 0 )
                     {
@@ -275,6 +281,16 @@ void consumeToken(unsigned char incomingByte)
 }
 void softPWM()
 {
+#ifdef DEBUG
+    if(oldCHANNEL != oneCHANNEL)
+    {
+        oldCHANNEL = oneCHANNEL;
+        TI=1;
+        printf("%d\n",(int)oneCHANNEL);
+        Delay_ms(1);
+        TI=0;
+    }
+#endif
     //if(TL0 > PWM10_VAR)
     //P1_0=0;//若計時值 >PWM0值，PWM10=0
     if(TL0 > PWM11_VAR)
@@ -289,23 +305,23 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
-	switch(i11++)
-	{
-		case -1:
-			PWM11_VAR = 0xE5;
-		break;
-		case 0:
-			PWM11_VAR = 0xD0;
-		break;
-		case 1:
-			PWM11_VAR = 0x67;
-			i11 = 0;
-		break; 
-		default:
-			PWM11_VAR = 0;
-		break;
-	}
-	//LED1=~ii++; //LED遞加輸出
+    switch(i11++)
+    {
+    case -1:
+        PWM11_VAR = 0xE5;
+        break;
+    case 0:
+        PWM11_VAR = 0xD0;
+        break;
+    case 1:
+        PWM11_VAR = 0x67;
+        i11 = 0;
+        break;
+    default:
+        PWM11_VAR = 0;
+        break;
+    }
+    //LED1=~ii++; //LED遞加輸出
     //}
     //else  //若是T2EX腳輸入負緣觸發令LED=0，強迫重新載入
     //{
@@ -347,8 +363,8 @@ void SCON_int(void)  interrupt 4  //串列中斷函數
 #endif
         }
     }
-    else
-        TI=0;
+    //else
+    //TI=0;
 }
 /*
 //**********************************************************
@@ -381,7 +397,11 @@ void UART_init(unsigned int bps)  //UART啟始程式
     TMOD += T1_M1;  //設定TIMER1為MODE2
     AUXR2 = T1X12 + URM0X6;// + S2TX12 + S2SMOD + S2TR;	// T1X12 for uart1	URM0X6 for uart2
     PCON = SMOD;
+#ifdef DEBUG
+    TH1=112;
+#else
     TH1=212;	//S2BRT = 212 //211~213 //TH1 = 256-(57600/bps);  //設計時器決定串列傳輸鮑率
+#endif
     TR1 = 1;          //開始計時
 }
 
@@ -415,6 +435,8 @@ void PCA_Interrupt() interrupt 10
             pcaj++;
         }
         LED=~rayCHANNEL;     //將接收到的字元由LED輸出
+        oneCHANNEL = (rayCHANNEL & 0x0F);
+        twoCHANNEL = (rayCHANNEL >> 4);
         CL=CH=0;
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
