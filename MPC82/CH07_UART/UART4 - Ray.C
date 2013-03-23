@@ -25,9 +25,10 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef TIMER2
 char i11;
 #endif
-#define TIMER0
-unsigned char PWM10_VAR, PWM11_VAR;
+unsigned char PWM_VAR=0;//宣告PWM變數
+unsigned char PWM11_VAR; 
 void softPWM();
+//#define TIMER0
 #ifdef PARSER
 #define OFF 1
 #define ON 2
@@ -117,7 +118,7 @@ main()
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
     /*CCAP0H=CCAP1H=*/
-    CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x7F;//0x00; //設定(P12/CEX0)，平均電壓為0V
 #ifndef CHANNEL16
     CR = 1;
 #endif
@@ -136,8 +137,8 @@ main()
     CCF5=0;  //清除模組0-5的比較旗標
     CR = 1;
 #endif
-    PWM10_VAR=PWM11_VAR=0x00;
-    i11=-1;
+    PWM11_VAR=0x00;
+    i11=0;
     ES=1;            //致能串列中斷
 #ifdef TIMER2
     ET2=1;      //致能Timer2中斷
@@ -155,7 +156,7 @@ main()
 #ifdef BUFFER
         while (abs(produceCount - consumeCount) == 0)
         {
-            softPWM();
+			softPWM();
         }
         consumeToken( buffer[consumeCount++]);
         if( consumeCount >= BUFFER_SIZE )
@@ -291,12 +292,12 @@ void softPWM()
         TI=0;
     }
 #endif
+	P1_1=1;
+    while(PWM_VAR++)
     //if(TL0 > PWM10_VAR)
     //P1_0=0;//若計時值 >PWM0值，PWM10=0
-    if(TL0 > PWM11_VAR)
-        P1_1=0;//若計時值 >PWM1值，PWM11=0
-    else
-        P1_1=1;
+    	if(PWM_VAR > PWM11_VAR)
+        	P1_1=0;//若計時值 >PWM1值，PWM11=0
 }
 #ifdef TIMER2
 //*****************************************************
@@ -311,11 +312,11 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         PWM11_VAR = 0xE5;
         break;
     case 0:
-        PWM11_VAR = 0xD0;
+        PWM11_VAR = 0xFE;
+        i11 = 0;
         break;
     case 1:
         PWM11_VAR = 0x67;
-        i11 = 0;
         break;
     default:
         PWM11_VAR = 0;
@@ -447,8 +448,6 @@ void PCA_Interrupt() interrupt 10
 /***************************************/
 void T0_int(void) interrupt 1  //Timer0中斷函數
 {
-    TL0 = 0;//TL0 = 65536 - TT ;
-    TH0 = 0;//TH0 = 65536 - TT >> 8; //重新設定計時值
     //SPEAK=!SPEAK;     //喇叭反相輸出
     //LED=~hh++; //LED遞加輸出
 }
