@@ -28,7 +28,7 @@ char i11;
 unsigned char PWM_VAR=0;//宣告PWM變數
 unsigned char PWM11_VAR; 
 void softPWM();
-//#define TIMER0
+#define TIMER0
 #ifdef PARSER
 #define OFF 1
 #define ON 2
@@ -292,12 +292,6 @@ void softPWM()
         TI=0;
     }
 #endif
-	P1_1=1;
-    while(PWM_VAR++)
-    //if(TL0 > PWM10_VAR)
-    //P1_0=0;//若計時值 >PWM0值，PWM10=0
-    	if(PWM_VAR > PWM11_VAR)
-        	P1_1=0;//若計時值 >PWM1值，PWM11=0
 }
 #ifdef TIMER2
 //*****************************************************
@@ -312,7 +306,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         PWM11_VAR = 0xE5;
         break;
     case 0:
-        PWM11_VAR = 0xFE;
+        PWM11_VAR = 0x40;
         i11 = 0;
         break;
     case 1:
@@ -388,8 +382,8 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 ************************************************************/
 void UART_init(unsigned int bps)  //UART啟始程式
 {
-    P0M0=0;
-    P0M1=0xFF; //設定P0為推挽式輸出(M0-1=01)
+    //P0M0=0;
+    //P0M1=0xFF; //設定P0為推挽式輸出(M0-1=01)
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
 #ifdef CHANNEL16
@@ -448,6 +442,9 @@ void PCA_Interrupt() interrupt 10
 /***************************************/
 void T0_int(void) interrupt 1  //Timer0中斷函數
 {
+	TR0 = 0;
+	P1_1 = (PWM_VAR++ <= PWM11_VAR);
+	TR0 = 1;
     //SPEAK=!SPEAK;     //喇叭反相輸出
     //LED=~hh++; //LED遞加輸出
 }
