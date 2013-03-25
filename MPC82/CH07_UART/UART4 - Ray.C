@@ -14,7 +14,7 @@ unsigned char oldCHANNEL=0xFF;
 #endif
 #ifndef MUSIC
 #define CHANNEL16		  //P10 P12 P13	P17 	CR
-#define TTT  65535  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
+#define TIMER0
 #else
 #include "MUSIC.H"
 #endif
@@ -23,12 +23,17 @@ unsigned char oldCHANNEL=0xFF;
 //#define LCD
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-char i11;
+unsigned char i11;
 #endif
-unsigned char PWM_VAR=0;//宣告PWM變數
-unsigned char PWM11_VAR; 
 void softPWM();
-#define TIMER0
+#define CEX2 P1_4
+#define DIIIF 0xFE
+#define DIVF 0xE6
+#define DVF 0xCE
+#define DVIF 0xB6
+#define DVIIF 0x00
+#define UIVF 0x4F
+#define SIMULATION
 #ifdef PARSER
 #define OFF 1
 #define ON 2
@@ -114,19 +119,15 @@ main()
 #endif
     //AUXIE += ES2;
 #ifdef HARDRAYPWM
-    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
     /*CCAP0H=CCAP1H=*/
-    CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x7F;//0x00; //設定(P12/CEX0)，平均電壓為0V
-#ifndef CHANNEL16
+    CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
 #endif
-#endif
-#ifdef CHANNEL16
-#ifndef HARDRAYPWM
+#ifdef PCATIMER
     CMOD = 0; //PCA計數時脈來源CPS1-0:00=Fosc/12
-#endif
     CCAPM5=ECOM+MAT+ECCF;
     //MAT=1，PAC計數與CCAP0匹配時，令CCF0=1
     //ECOM=1，致能比較器功能
@@ -137,7 +138,6 @@ main()
     CCF5=0;  //清除模組0-5的比較旗標
     CR = 1;
 #endif
-    PWM11_VAR=0x00;
     i11=0;
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -145,18 +145,28 @@ main()
     TR2=1;
 #endif
 #ifdef TIMER0
-    TMOD += T0_M1;	//設定Timer0為mode1內部計時
+    TMOD += T0_M0;	//設定Timer0為mode1內部計時
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
     ET0=1;	//致能Timer0中
     TR0=1;	//啟動Timer0開始計時
+#endif
+#ifdef SIMULATION
+    EX0=1;
+    EX1=1;
+    EX2=1;
+    EX3=1;//致能外部INT0~3中斷
+    IT0=1;
+    IT1=1;
+    IT2=1;
+    IT3=1;//設定INT0~3腳負緣觸發中斷
 #endif
     while(1)
     {
 #ifdef BUFFER
         while (abs(produceCount - consumeCount) == 0)
         {
-			softPWM();
+            softPWM();
         }
         consumeToken( buffer[consumeCount++]);
         if( consumeCount >= BUFFER_SIZE )
@@ -225,7 +235,7 @@ void consumeToken(unsigned char incomingByte)
                 {
                     if( velocity != 0 )
                     {
-                        i11 = -1;
+                        i11 = 0;
 #ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
                         //CCAP1H=0x20;  //設定(P13/CEX1)脈波時間，平均電壓為4.4V
@@ -292,6 +302,7 @@ void softPWM()
         TI=0;
     }
 #endif
+    P1_1=CEX2;
 }
 #ifdef TIMER2
 //*****************************************************
@@ -300,20 +311,66 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
-    switch(i11++)
+    switch(i11--)
     {
-    case -1:
-        PWM11_VAR = 0xE5;
-        break;
-    case 0:
-        PWM11_VAR = 0x40;
+    default:
         i11 = 0;
         break;
     case 1:
-        PWM11_VAR = 0x67;
+        CCAP2H = ~0x00;
         break;
-    default:
-        PWM11_VAR = 0;
+    case 2:
+        CCAP2H = ~0x00;
+        break;
+    case 3:
+        CCAP2H = ~UIVF;
+        break;
+    case 4:
+        CCAP2H = ~UIVF;
+        break;
+    case 5:
+        break;
+    case 6:
+        break;
+    case 7:
+        if( CCAP2H == ~UIVF ) 
+		{
+		    CCAP2H = ~DIIIF;
+        }
+		else if( CCAP2H == ~0x00 )
+            CCAP2H = ~DIIIF;
+        break;
+    case 8:
+        if( CCAP2H == ~UIVF )
+		{
+		    CCAP2H = ~DIVF;
+        }
+		else if( CCAP2H == ~0x00 )
+            CCAP2H = ~DIVF;
+        break;
+    case 9:
+        if( CCAP2H == ~UIVF ) 
+		{
+		    CCAP2H = ~DVF;
+        }
+		else if( CCAP2H == ~0x00 )
+            CCAP2H = ~DVF;
+        break;
+    case 10:
+        if( CCAP2H == ~UIVF )
+		{
+		    CCAP2H = ~DVIF;
+        }
+		else if( CCAP2H == ~0x00 )
+            CCAP2H = ~DVIF;
+        break;
+    case 11:
+        if( CCAP2H == ~UIVF )
+		{
+		    CCAP2H = ~DVIIF;
+        }
+		else if( CCAP2H == ~0x00 )
+            CCAP2H = ~DVIIF;
         break;
     }
     //LED1=~ii++; //LED遞加輸出
@@ -382,8 +439,7 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 ************************************************************/
 void UART_init(unsigned int bps)  //UART啟始程式
 {
-    //P0M0=0;
-    //P0M1=0xFF; //設定P0為推挽式輸出(M0-1=01)
+    P1M1=0x02; //設定P0為推挽式輸出(M0-1=01)
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
 #ifdef CHANNEL16
@@ -410,10 +466,16 @@ void PCA_Interrupt() interrupt 10
     CCF0 = 0;   //清除模組0的比較旗標
     CL = CH =0;   //PCA計數器由0開始上數
 #endif
+}
+
+#ifdef TIMER0
+/***************************************/
+void T0_int(void) interrupt 1  //Timer0中斷函數
+{
 #ifdef CHANNEL16
     int pcai=7,pcaj=0;
     rayCHANNEL = 0;
-    if(CCF5)
+    //if(CCF5)
     {
         P1_0=0;
         //Delay_ms(1);   //載入74165並列資料
@@ -432,19 +494,12 @@ void PCA_Interrupt() interrupt 10
         LED=~rayCHANNEL;     //將接收到的字元由LED輸出
         oneCHANNEL = (rayCHANNEL & 0x0F);
         twoCHANNEL = (rayCHANNEL >> 4);
-        CL=CH=0;
-        CCF5=0; //清除模組0-5的比較旗標
+        TL0=0;	//TL0=65536 - TT;
+        TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
+        //CL=CH=0;
+        //CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
 #endif
-}
-
-#ifdef TIMER0
-/***************************************/
-void T0_int(void) interrupt 1  //Timer0中斷函數
-{
-	TR0 = 0;
-	P1_1 = (PWM_VAR++ <= PWM11_VAR);
-	TR0 = 1;
     //SPEAK=!SPEAK;     //喇叭反相輸出
     //LED=~hh++; //LED遞加輸出
 }
@@ -501,5 +556,27 @@ void LCD_init(void)    //LCD的啟始程式
                     bit0:S=0,游標移位禁能*/
     LCD_Cmd(0x01); //清除顯示幕
     LCD_Cmd(0x02); //游標回原位
+}
+#endif
+#ifdef SIMULATION
+/*********************************/
+void EX0_int(void) interrupt 0   //INT0中斷函數0
+{
+    i11 = 11;
+}
+/*********************************************/
+void EX1_int(void) interrupt 2   //INT1中斷函數2
+{
+    i11 = 10;
+}
+/*********************************************/
+void EX2_int(void) interrupt 6   //INT2中斷函數6
+{
+    i11 = 9;
+}
+/*********************************************/
+void EX3_int(void) interrupt 7   //INT3中斷函數7
+{
+    i11 = 8;
 }
 #endif
