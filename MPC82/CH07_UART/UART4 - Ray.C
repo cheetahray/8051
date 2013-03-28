@@ -27,12 +27,7 @@ unsigned char i11;
 #endif
 void softPWM();
 #define CEX2 P1_4
-#define DIIIF 0xFE
-#define DIVF 0xE6
-#define DVF 0xCE
-#define DVIF 0xB6
-#define DVIIF 0x00
-#define UIVF 0x4F
+#define DIF 0x80
 #define SIMULATION
 #ifdef PARSER
 #define OFF 1
@@ -311,66 +306,19 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
-    switch(i11--)
+    switch(i11)
     {
-    default:
-        i11 = 0;
+    case 0:
         break;
     case 1:
         CCAP2H = ~0x00;
+        i11--;
         break;
     case 2:
-        CCAP2H = ~0x00;
         break;
     case 3:
-        CCAP2H = ~UIVF;
-        break;
-    case 4:
-        CCAP2H = ~UIVF;
-        break;
-    case 5:
-        break;
-    case 6:
-        break;
-    case 7:
-        if( CCAP2H == ~UIVF ) 
-		{
-		    CCAP2H = ~DIIIF;
-        }
-		else if( CCAP2H == ~0x00 )
-            CCAP2H = ~DIIIF;
-        break;
-    case 8:
-        if( CCAP2H == ~UIVF )
-		{
-		    CCAP2H = ~DIVF;
-        }
-		else if( CCAP2H == ~0x00 )
-            CCAP2H = ~DIVF;
-        break;
-    case 9:
-        if( CCAP2H == ~UIVF ) 
-		{
-		    CCAP2H = ~DVF;
-        }
-		else if( CCAP2H == ~0x00 )
-            CCAP2H = ~DVF;
-        break;
-    case 10:
-        if( CCAP2H == ~UIVF )
-		{
-		    CCAP2H = ~DVIF;
-        }
-		else if( CCAP2H == ~0x00 )
-            CCAP2H = ~DVIF;
-        break;
-    case 11:
-        if( CCAP2H == ~UIVF )
-		{
-		    CCAP2H = ~DVIIF;
-        }
-		else if( CCAP2H == ~0x00 )
-            CCAP2H = ~DVIIF;
+        CCAP2H = ~DIF;
+        i11 = 1;
         break;
     }
     //LED1=~ii++; //LED遞加輸出
@@ -562,21 +510,21 @@ void LCD_init(void)    //LCD的啟始程式
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0中斷函數0
 {
-    i11 = 11;
+    i11 = 3;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1中斷函數2
 {
-    i11 = 10;
+    i11 = 3;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2中斷函數6
 {
-    i11 = 9;
+    i11 = 3;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3中斷函數7
 {
-    i11 = 8;
+    i11 = 3;
 }
 #endif
