@@ -350,8 +350,8 @@ void SCON_int(void)  interrupt 4  //¦ê¦C¤¤Â_¨ç¼Æ
             while ( abs(produceCount - consumeCount) == BUFFER_SIZE )
                 ; // buffer is full
 
-            buffer[produceCount] = SBUF;
-            SBUF = buffer[produceCount++];
+            buffer[produceCount++] = SBUF;
+            //SBUF = buffer[produceCount++];
             if(produceCount >= BUFFER_SIZE)
                 produceCount = 0;
 #else
@@ -370,8 +370,8 @@ void SCON_int(void)  interrupt 4  //¦ê¦C¤¤Â_¨ç¼Æ
 #endif
         }
     }
-    else
-        TI=0;
+    //else
+        //TI=0;
 }
 /*
 //**********************************************************
