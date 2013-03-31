@@ -6,15 +6,16 @@
 #include "math.h"
 #define BUFFER
 //#define MUSIC		 //P12	   	CR
-#define HARDRAYPWM		  //P14 P15 P16
-#define DEBUG
+//#define DEBUG
+//#define CHANNEL16		  //P10 P12 P13
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
 unsigned char oldCHANNEL=0xFF;
 #endif
 #ifndef MUSIC
-#define CHANNEL16		  //P10 P12 P13	P17 	CR
+#define HARDRAYPWM		  //P14 P15 P16		CR
 #define TIMER0
+#define SIMULATION
 #else
 #include "MUSIC.H"
 #endif
@@ -27,8 +28,7 @@ unsigned char i11;
 #endif
 void softPWM();
 #define CEX2 P1_4
-#define DIF 0x80
-#define SIMULATION
+#define DIF 0x82
 #ifdef PARSER
 #define OFF 1
 #define ON 2
@@ -133,7 +133,9 @@ main()
     CCF5=0;  //清除模組0-5的比較旗標
     CR = 1;
 #endif
+#ifdef TIMER2
     i11=0;
+#endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
     ET2=1;      //致能Timer2中斷
@@ -230,7 +232,12 @@ void consumeToken(unsigned char incomingByte)
                 {
                     if( velocity != 0 )
                     {
-                        i11 = 0;
+#ifdef MUSIC
+                        CR = 1;
+#endif
+#ifdef SIMULATION
+                        i11 = 3;
+#endif
 #ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
                         //CCAP1H=0x20;  //設定(P13/CEX1)脈波時間，平均電壓為4.4V
@@ -363,8 +370,8 @@ void SCON_int(void)  interrupt 4  //串列中斷函數
 #endif
         }
     }
-    //else
-    //TI=0;
+    else
+        TI=0;
 }
 /*
 //**********************************************************
@@ -404,17 +411,17 @@ void UART_init(unsigned int bps)  //UART啟始程式
     TR1 = 1;          //開始計時
 }
 
+#ifdef MUSIC
 /***********************************************************
 *函數名稱: PCA中斷函數
 *功能描述: 自動令CEX0反相
 ************************************************************/
 void PCA_Interrupt() interrupt 10
 {
-#ifdef MUSIC
     CCF0 = 0;   //清除模組0的比較旗標
     CL = CH =0;   //PCA計數器由0開始上數
-#endif
 }
+#endif
 
 #ifdef TIMER0
 /***************************************/
