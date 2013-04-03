@@ -28,7 +28,7 @@ unsigned char i11;
 #endif
 void softPWM();
 #define CEX2 P1_4
-#define DIF 0x82
+#define DIF 0xFE
 #ifdef PARSER
 #define OFF 1
 #define ON 2
@@ -236,7 +236,7 @@ void consumeToken(unsigned char incomingByte)
                         CR = 1;
 #endif
 #ifdef SIMULATION
-                        i11 = 3;
+                        i11 = 4;
 #endif
 #ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //砞﹚(P12/CEX0)猧丁キА筿溃4.6V
@@ -322,10 +322,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i11--;
         break;
     case 2:
+        i11--;
         break;
     case 3:
+        i11--;
+    case 4:
         CCAP2H = ~DIF;
-        i11 = 1;
+        i11--;
         break;
     }
     //LED1=~ii++; //LED患块
@@ -371,7 +374,7 @@ void SCON_int(void)  interrupt 4  //﹃い耞ㄧ计
         }
     }
     //else
-        //TI=0;
+    //TI=0;
 }
 /*
 //**********************************************************
@@ -517,21 +520,21 @@ void LCD_init(void)    //LCD币﹍祘Α
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0い耞ㄧ计0
 {
-    i11 = 3;
+    i11 = 4;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1い耞ㄧ计2
 {
-    i11 = 3;
+    i11 = 4;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2い耞ㄧ计6
 {
-    i11 = 3;
+    i11 = 4;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3い耞ㄧ计7
 {
-    i11 = 3;
+    i11 = 4;
 }
 #endif
