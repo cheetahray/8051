@@ -24,11 +24,12 @@ unsigned char oldCHANNEL=0xFF;
 //#define LCD
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i11;
+unsigned char i14,i15,i16;
 #endif
 void softPWM();
-#define CEX2 P1_4
-#define DIF 0xFE
+#define DIF14 0xFE
+#define DIF15 0xE0
+#define DIF16 0xD0
 #ifdef PARSER
 #define OFF 1
 #define ON 2
@@ -134,7 +135,7 @@ main()
     CR = 1;
 #endif
 #ifdef TIMER2
-    i11=0;
+    i14=i15=i16=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -236,7 +237,7 @@ void consumeToken(unsigned char incomingByte)
                         CR = 1;
 #endif
 #ifdef SIMULATION
-                        i11 = 4;
+                        i14 = 4;
 #endif
 #ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
@@ -261,6 +262,32 @@ void consumeToken(unsigned char incomingByte)
                         else
                             LCD_Data(raynote - 10 + 'A');
                         LCD_Data(' ');
+#endif
+                    }
+                    else
+                    {
+                        //i11 = 0xFF;
+                    }
+                }
+                else if( 1 == channel )
+                {
+                    if( velocity != 0 )
+                    {
+#ifdef SIMULATION
+                        i15 = 4;
+#endif
+                    }
+                    else
+                    {
+                        //i11 = 0xFF;
+                    }
+                }
+                else if( 2 == channel )
+                {
+                    if( velocity != 0 )
+                    {
+#ifdef SIMULATION
+                        i16 = 2;
 #endif
                     }
                     else
@@ -304,7 +331,6 @@ void softPWM()
         TI=0;
     }
 #endif
-    P1_1=CEX2;
 }
 #ifdef TIMER2
 //*****************************************************
@@ -313,22 +339,53 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
     //{
     TF2=0;    //清除TF2=0
-    switch(i11)
+    switch(i14)
     {
     case 0:
         break;
     case 1:
         CCAP2H = ~0x00;
-        i11--;
+        i14--;
         break;
     case 2:
-        i11--;
+        i14--;
         break;
     case 3:
-        i11--;
+        i14--;
     case 4:
-        CCAP2H = ~DIF;
-        i11--;
+        CCAP2H = ~DIF14;
+        i14--;
+        break;
+    }
+	switch(i16)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP4H = ~0x00;
+        i16--;
+        break;
+    case 2:
+        CCAP4H = ~DIF16;
+        i16--;
+        break;
+    }
+	switch(i15)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP3H = ~0x00;
+        i15--;
+        break;
+    case 2:
+        i15--;
+        break;
+    case 3:
+        i15--;
+    case 4:
+        CCAP3H = ~DIF15;
+        i15--;
         break;
     }
     //LED1=~ii++; //LED遞加輸出
@@ -397,7 +454,7 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 ************************************************************/
 void UART_init(unsigned int bps)  //UART啟始程式
 {
-    P1M1=0x02; //設定P0為推挽式輸出(M0-1=01)
+    P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
 #ifdef CHANNEL16
@@ -520,21 +577,21 @@ void LCD_init(void)    //LCD的啟始程式
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0中斷函數0
 {
-    i11 = 4;
+    i14 = 4;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1中斷函數2
 {
-    i11 = 4;
+    i16 = 2;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2中斷函數6
 {
-    i11 = 4;
+    i15 = 4;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3中斷函數7
 {
-    i11 = 4;
+    //i11 = 4;
 }
 #endif
