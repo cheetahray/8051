@@ -14,6 +14,19 @@ unsigned char oldCHANNEL=0xFF;
 #endif
 #ifndef MUSIC
 #define HARDRAYPWM		  //P14 P15 P16		CR
+#ifdef	HARDRAYPWM
+#define PCATIMER
+#define TTT  256
+unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR;
+#define DIF00 0x10
+#define DIF01 0x30
+#define DIF02 0x80
+#define DIF03 0xA9
+#define DIF04 0xE0
+#define DIF14 0xFE
+#define DIF15 0xE0
+#define DIF16 0xD0
+#endif
 #define TIMER0
 #define SIMULATION
 #else
@@ -24,12 +37,9 @@ unsigned char oldCHANNEL=0xFF;
 //#define LCD
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i14,i15,i16;
+unsigned char i14,i15,i16,i00,i01,i02,i03,i04; 
 #endif
 void softPWM();
-#define DIF14 0xFE
-#define DIF15 0xE0
-#define DIF16 0xD0
 #ifdef PARSER
 #define OFF 1
 #define ON 2
@@ -87,7 +97,7 @@ main()
 #endif
 #ifdef PARSER
     note = velocity = 0;
-    action = WAIT;
+    action = -1;
 #endif
 #ifdef LCD
     line = 0;
@@ -117,15 +127,15 @@ main()
 #endif
     //AUXIE += ES2;
 #ifdef HARDRAYPWM
-    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
     /*CCAP0H=CCAP1H=*/
-    CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
 #endif
 #ifdef PCATIMER
-    CMOD = 0; //PCA計數時脈來源CPS1-0:00=Fosc/12
+    //CMOD = 0; //PCA計數時脈來源CPS1-0:00=Fosc/12
     CCAPM5=ECOM+MAT+ECCF;
     //MAT=1，PAC計數與CCAP0匹配時，令CCF0=1
     //ECOM=1，致能比較器功能
@@ -134,10 +144,15 @@ main()
     CCAP5H=TTT>>8; //設定模組5比較暫存器
     AUXIE = EPCA;      //致能PCA中斷
     CCF5=0;  //清除模組0-5的比較旗標
-    CR = 1;
+    //CR = 1;
+	P00_VAR=DIF00;
+	P01_VAR=DIF01;
+	P02_VAR=DIF02;
+	P03_VAR=DIF03;
+	P04_VAR=DIF04;
 #endif
 #ifdef TIMER2
-    i14=i15=i16=0;
+    i14=i15=i16=i00=i01=i02=i03=i04=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -340,6 +355,18 @@ void softPWM()
         TI=0;
     }
 #endif
+#ifdef PCATIMER
+	if(CL > P00_VAR)
+		P0_0 = 0;
+	if(CL > P01_VAR)
+		P0_1 = 0;
+	if(CL > P02_VAR)
+		P0_2 = 0;
+	if(CL > P03_VAR)
+		P0_3 = 0;
+	if(CL > P04_VAR)
+		P0_4 = 0;
+#endif
 }
 #ifdef TIMER2
 //*****************************************************
@@ -364,19 +391,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i14--;
         break;
     }
-    switch(i16)
-    {
-    case 0:
-        break;
-    case 1:
-        CCAP4H = ~0x00;
-        i16--;
-        break;
-    case 2:
-        CCAP4H = ~DIF16;
-        i16--;
-        break;
-    }
     switch(i15)
     {
     case 0:
@@ -393,6 +407,109 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 4:
         CCAP3H = ~DIF15;
         i15--;
+        break;
+    }
+	switch(i16)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP4H = ~0x00;
+        i16--;
+        break;
+    case 2:
+        CCAP4H = ~DIF16;
+        i16--;
+        break;
+    }
+    switch(i00)
+    {
+    case 0:
+        break;
+    case 1:
+        P00_VAR = 0x00;
+        i00--;
+        break;
+    case 2:
+        i00--;
+        break;
+    case 3:
+        i00--;
+    case 4:
+        P00_VAR = DIF00;
+        i00--;
+        break;
+    }
+    switch(i01)
+    {
+    case 0:
+        break;
+    case 1:
+        P01_VAR = 0x00;
+        i01--;
+        break;
+    case 2:
+        i01--;
+        break;
+    case 3:
+        i01--;
+    case 4:
+        P01_VAR = DIF01;
+        i01--;
+        break;
+    }
+	switch(i02)
+    {
+    case 0:
+        break;
+    case 1:
+        P02_VAR = 0x00;
+        i02--;
+        break;
+    case 2:
+        i02--;
+        break;
+    case 3:
+        i02--;
+    case 4:
+        P02_VAR = DIF02;
+        i02--;
+        break;
+    }
+    switch(i03)
+    {
+    case 0:
+        break;
+    case 1:
+        P03_VAR = 0x00;
+        i03--;
+        break;
+    case 2:
+        i03--;
+        break;
+    case 3:
+        i03--;
+    case 4:
+        P03_VAR = DIF03;
+        i03--;
+        break;
+    }
+	switch(i04)
+    {
+    case 0:
+        break;
+    case 1:
+        P04_VAR = 0x00;
+        i04--;
+        break;
+    case 2:
+        i04--;
+        break;
+    case 3:
+        i04--;
+    case 4:
+        P04_VAR = DIF04;
+        i04--;
         break;
     }
 }
@@ -455,6 +572,7 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 ************************************************************/
 void UART_init(unsigned int bps)  //UART啟始程式
 {
+	P0M1=0x1F;
     P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
@@ -472,17 +590,24 @@ void UART_init(unsigned int bps)  //UART啟始程式
     TR1 = 1;          //開始計時
 }
 
-#ifdef MUSIC
 /***********************************************************
 *函數名稱: PCA中斷函數
 *功能描述: 自動令CEX0反相
 ************************************************************/
 void PCA_Interrupt() interrupt 10
 {
+#ifdef MUSIC
     CCF0 = 0;   //清除模組0的比較旗標
-    CL = CH =0;   //PCA計數器由0開始上數
-}
 #endif
+    CL=CH=0;   //PCA計數器由0開始上數
+#ifdef PCATIMER
+    if(CCF5)
+    {
+        CCF5=0; //清除模組0-5的比較旗標
+    }//第T*6秒動作，PCA計數器由0上數
+	P0_0 = P0_1 = P0_2 = P0_3 = P0_4 = 1;
+#endif
+}
 
 #ifdef TIMER0
 /***************************************/
@@ -491,32 +616,27 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 #ifdef CHANNEL16
     int pcai=7,pcaj=0;
     rayCHANNEL = 0;
-    //if(CCF5)
+    P1_0=0;
+    //Delay_ms(1);   //載入74165並列資料
+    P1_0=1 ;   //開始串列傳輸
+    while((S2CON & S2RI)==0); //若RI=0表示未接收完畢，再繼續檢查
+    S2CON &= ~S2RI;         //若RI=1表示已接收1個字元完畢，清除RI=0
+    while(pcai>=0)
     {
-        P1_0=0;
-        //Delay_ms(1);   //載入74165並列資料
-        P1_0=1 ;   //開始串列傳輸
-        while((S2CON & S2RI)==0); //若RI=0表示未接收完畢，再繼續檢查
-        S2CON &= ~S2RI;         //若RI=1表示已接收1個字元完畢，清除RI=0
-        while(pcai>=0)
+        if((S2BUF >> pcai) & 1)
         {
-            if((S2BUF >> pcai) & 1)
-            {
-                rayCHANNEL += (1<<pcaj);
-            }
-            pcai--;
-            pcaj++;
+            rayCHANNEL += (1<<pcaj);
         }
+        pcai--;
+        pcaj++;
+    }
 #ifdef LEDRay
-        LED=~rayCHANNEL;     //將接收到的字元由LED輸出
+    LED=~rayCHANNEL;     //將接收到的字元由LED輸出
 #endif
-        oneCHANNEL = (rayCHANNEL & 0x0F);
-        twoCHANNEL = (rayCHANNEL >> 4);
-        TL0=0;	//TL0=65536 - TT;
-        TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
-        //CL=CH=0;
-        //CCF5=0; //清除模組0-5的比較旗標
-    }//第T*6秒動作，PCA計數器由0上數
+    oneCHANNEL = (rayCHANNEL & 0x0F);
+    twoCHANNEL = (rayCHANNEL >> 4);
+    TL0=0;	//TL0=65536 - TT;
+    TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
 #endif
 }
 #endif
