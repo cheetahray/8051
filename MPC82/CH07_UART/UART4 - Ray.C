@@ -74,7 +74,9 @@ unsigned int  code Table[]  //定義音頻陣列資料,0為休止符
            0   ,   0,   0,   0,   0,   0,   0,  0
       };
 #endif
-
+#ifdef SIMULATION
+int notecount;
+#endif
 void consumeToken(unsigned char incomingByte);
 
 main()
@@ -150,6 +152,7 @@ main()
     TR0=1;	//啟動Timer0開始計時
 #endif
 #ifdef SIMULATION
+    notecount = 0;
     EX0=1;
     EX1=1;
     EX2=1;
@@ -181,7 +184,9 @@ void consumeToken(unsigned char incomingByte)
     if ( (incomingByte >> 4) == 9 ) // Note on
     {
         channel = (incomingByte & 0x0F);
-        //LED0=~channel;
+#ifdef SIMULATION
+        notecount = 0;
+#endif
 #ifdef LCD
         if(channel <= 0x09)
             LCD_Data(channel + '0');  //字元送到LCD顯示
@@ -196,18 +201,20 @@ void consumeToken(unsigned char incomingByte)
         channel = (incomingByte & 0x0F);
         action = OFF;
     }
-    else if(incomingByte < 0x80)//if (action != WAIT )
+    else if(incomingByte < 0x80)
     {
         if (0 == note) // note on, wait for note value
         {
             note=incomingByte;
-            if( oneCHANNEL == channel && action == ON )
+            if( oneCHANNEL == channel && action != OFF )
             {
 #ifdef MUSIC
                 CCAP0L=Table[note];	   //設定比較暫存器低位元組
                 CCAP0H=Table[note]>>8; //設定比較暫存器高位元組
 #endif
+#ifdef LEDRay
                 LED0=~note;  //將接收到的字元由LED輸出
+#endif
 #ifdef LCD
                 char raynote = (note & 0xF0);
                 raynote >>= 4;
@@ -224,10 +231,10 @@ void consumeToken(unsigned char incomingByte)
 #endif
             }
         }
-        else //if ( note != 0 && action != WAIT)  // velocity
+        else
         {
             velocity=incomingByte;
-            if(action == ON)
+            if(action != OFF)
             {
                 if( oneCHANNEL == channel )
                 {
@@ -236,9 +243,22 @@ void consumeToken(unsigned char incomingByte)
 #ifdef MUSIC
                         CR = 1;
 #endif
+                        switch(note)
+                        {
+                        default:
 #ifdef SIMULATION
-                        i14 = 4;
+                            switch(notecount++)
+                            {
+                            case 0:
+                                i14 = 4;
+                                break;
+                            case 1:
+                                i15 = 4;
+                                break;
+                            }
 #endif
+                            break;
+                        }
 #ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
                         //CCAP1H=0x20;  //設定(P13/CEX1)脈波時間，平均電壓為4.4V
@@ -248,7 +268,9 @@ void consumeToken(unsigned char incomingByte)
                         //CCAP5H=0xFF;  //設定(P17/CEX5)脈波時間，平均電壓為0.01V
                         //記得統一加上 inverse ~
 #endif
+#ifdef LEDRay
                         LED1=~velocity;  //將接收到的字元由LED輸出
+#endif
 #ifdef LCD
                         char raynote = (velocity & 0xF0);
                         raynote >>= 4;
@@ -269,39 +291,26 @@ void consumeToken(unsigned char incomingByte)
                         //i11 = 0xFF;
                     }
                 }
-                else if( 1 == channel )
-                {
-                    if( velocity != 0 )
-                    {
 #ifdef SIMULATION
-                        i15 = 4;
-#endif
-                    }
-                    else
-                    {
-                        //i11 = 0xFF;
-                    }
-                }
                 else if( 2 == channel )
                 {
                     if( velocity != 0 )
                     {
-#ifdef SIMULATION
                         i16 = 2;
-#endif
                     }
                     else
                     {
                         //i11 = 0xFF;
                     }
                 }
+#endif
                 else
                 {
                     //produceCount = produceCount;
                 }
                 //Midi_Send(0x90,note,velocity);
             }
-            else //if(action == OFF)
+            else
             {
                 //i11 = 0xFF;
                 //Midi_Send(0x80,note,velocity);
@@ -336,8 +345,6 @@ void softPWM()
 //*****************************************************
 void T2_int (void) interrupt 5   //Timer2中斷函數
 {
-    //if (TF2 ==1)  //若是計時溢位令LED遞加，溢位重新載入
-    //{
     TF2=0;    //清除TF2=0
     switch(i14)
     {
@@ -357,7 +364,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i14--;
         break;
     }
-	switch(i16)
+    switch(i16)
     {
     case 0:
         break;
@@ -370,7 +377,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i16--;
         break;
     }
-	switch(i15)
+    switch(i15)
     {
     case 0:
         break;
@@ -388,14 +395,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i15--;
         break;
     }
-    //LED1=~ii++; //LED遞加輸出
-    //}
-    //else  //若是T2EX腳輸入負緣觸發令LED=0，強迫重新載入
-    //{
-    //EXF2=0;   //清除EXF2=0
-    //i=0;      //i=0
-    // LED=~i;
-    //}
 }
 #endif
 /*****************************************************/
@@ -440,7 +439,9 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
     if(S2CON & S2RI)  //若為接收所產生的中斷
     {
         S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
+#ifdef LEDRay
         //LED = ~S2BUF;     //將接收到的字元由LED輸出
+#endif
 		//S2BUF = ~LED;     //將temp發射出去
     }
     else
@@ -506,7 +507,9 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
             pcai--;
             pcaj++;
         }
+#ifdef LEDRay
         LED=~rayCHANNEL;     //將接收到的字元由LED輸出
+#endif
         oneCHANNEL = (rayCHANNEL & 0x0F);
         twoCHANNEL = (rayCHANNEL >> 4);
         TL0=0;	//TL0=65536 - TT;
@@ -515,8 +518,6 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
         //CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
 #endif
-    //SPEAK=!SPEAK;     //喇叭反相輸出
-    //LED=~hh++; //LED遞加輸出
 }
 #endif
 
@@ -582,12 +583,12 @@ void EX0_int(void) interrupt 0   //INT0中斷函數0
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1中斷函數2
 {
-    i16 = 2;
+    i15 = 4;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2中斷函數6
 {
-    i15 = 4;
+    i16 = 2;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3中斷函數7
