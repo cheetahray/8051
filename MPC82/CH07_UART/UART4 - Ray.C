@@ -18,14 +18,14 @@ unsigned char oldCHANNEL=0xFF;
 #define PCATIMER
 #define TTT  256
 unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR;
-#define DIF00 0xE0
-#define DIF01 0xE0
-#define DIF02 0xE0
-#define DIF03 0xE0
-#define DIF04 0xE0
-#define DIF14 0xFE
-#define DIF15 0xE0
-#define DIF16 0xD0
+#define DIF00 0xEA	//D5~FF
+#define DIF01 0xEA	//D5~FF
+#define DIF02 0xEA	//D5~FF
+#define DIF03 0xC2	//85~FF
+#define DIF04 0xEB	//D7~FF
+#define DIF14 0xEC	//D9~FF
+#define DIF15 0xEA	//D5~FF
+#define DIF16 0xD5	//D6~FF
 #endif
 #define TIMER0
 #define SIMULATION
@@ -41,6 +41,7 @@ unsigned char i14,i15,i16,i00,i01,i02,i03,i04;
 #endif
 void softPWM();
 #ifdef PARSER
+#define IGNORE -1
 #define OFF 1
 #define ON 2
 #define WAIT 3
@@ -97,7 +98,7 @@ main()
 #endif
 #ifdef PARSER
     note = velocity = 0;
-    action = -1;
+    action = IGNORE;
 #endif
 #ifdef LCD
     line = 0;
@@ -196,7 +197,11 @@ main()
 void consumeToken(unsigned char incomingByte)
 {
 #ifdef PARSER
-    if ( (incomingByte >> 4) == 9 ) // Note on
+    if ( (incomingByte >> 4) > 9 )
+    {
+        action = IGNORE;
+    }
+    else if ( (incomingByte >> 4) == 9 ) // Note on
     {
         channel = (incomingByte & 0x0F);
 #ifdef SIMULATION
@@ -216,12 +221,12 @@ void consumeToken(unsigned char incomingByte)
         channel = (incomingByte & 0x0F);
         action = OFF;
     }
-    else if(incomingByte < 0x80)
+    else if(incomingByte < 0x80 && action != IGNORE)
     {
         if (0 == note) // note on, wait for note value
         {
             note=incomingByte;
-            if( oneCHANNEL == channel && action != OFF )
+            //if( oneCHANNEL == channel && action > OFF )
             {
 #ifdef MUSIC
                 CCAP0L=Table[note];	   //設定比較暫存器低位元組
@@ -249,7 +254,7 @@ void consumeToken(unsigned char incomingByte)
         else
         {
             velocity=incomingByte;
-            if(action != OFF)
+            if(action > OFF)
             {
                 if( oneCHANNEL == channel )
                 {
@@ -262,13 +267,22 @@ void consumeToken(unsigned char incomingByte)
                         {
                         default:
 #ifdef SIMULATION
-                            switch(notecount++)
+                            switch(note)
                             {
-                            case 0:
-                                i14 = 4;
+                            case 60:
+                                i00 = 4;
                                 break;
-                            case 1:
-                                i15 = 4;
+                            case 61:
+                                i01 = 4;
+                                break;
+                            case 62:
+                                i02 = 4;
+                                break;
+                            case 63:
+                                i03 = 4;
+                                break;
+                            case 64:
+                                i04 = 4;
                                 break;
                             }
 #endif
@@ -313,26 +327,11 @@ void consumeToken(unsigned char incomingByte)
                     {
                         switch(note)
                         {
-                        default:
-                            switch(notecount++)
-                            {
-                            case 0:
-                                i00 = 4;
-                                break;
-                            case 1:
-                                i01 = 4;
-                                break;
-                            case 2:
-                                i02 = 4;
-                                break;
-                            case 3:
-                                i03 = 4;
-                                break;
-                            case 4:
-                                i04 = 4;
-                                break;
-                            }
-
+                        case 60:
+                            i14 = 4;
+                            break;
+                        case 61:
+                            i15 = 4;
                             break;
                         }
                     }
@@ -345,7 +344,12 @@ void consumeToken(unsigned char incomingByte)
                 {
                     if( velocity != 0 )
                     {
-                        i16 = 2;
+                        switch(note)
+                        {
+                        case 60:
+                            i16 = 2;
+                            break;
+                        }
                     }
                     else
                     {
@@ -732,21 +736,21 @@ void LCD_init(void)    //LCD的啟始程式
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0中斷函數0
 {
-    i00 = 4;
+    i04 = 4;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1中斷函數2
 {
-    i01 = 4;
+    i14 = 4;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2中斷函數6
 {
-    i02 = 4;
+    i15 = 4;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3中斷函數7
 {
-    i03 = 4;
+    i16 = 2;
 }
 #endif
