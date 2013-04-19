@@ -21,7 +21,7 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR;
 #define DIF00 0xEA	//D5~FF
 #define DIF01 0xEA	//D5~FF
 #define DIF02 0xEA	//D5~FF
-#define DIF03 0xC2	//85~FF
+#define DIF03 0xEA	//85~FF
 #define DIF04 0xEB	//D7~FF
 #define DIF14 0xEC	//D9~FF
 #define DIF15 0xEA	//D5~FF
@@ -424,6 +424,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         break;
     case 3:
         i14--;
+        break;
     case 4:
         CCAP2H = ~DIF14;
         i14--;
@@ -442,6 +443,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         break;
     case 3:
         i15--;
+        break;
     case 4:
         CCAP3H = ~DIF15;
         i15--;
@@ -473,6 +475,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         break;
     case 3:
         i00--;
+        break;
     case 4:
         P00_VAR = DIF00;
         i00--;
@@ -509,6 +512,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         break;
     case 3:
         i02--;
+        break;
     case 4:
         P02_VAR = DIF02;
         i02--;
@@ -527,6 +531,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         break;
     case 3:
         i03--;
+        break;
     case 4:
         P03_VAR = DIF03;
         i03--;
@@ -545,6 +550,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         break;
     case 3:
         i04--;
+        break;
     case 4:
         P04_VAR = DIF04;
         i04--;
