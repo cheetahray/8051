@@ -24,8 +24,8 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR;
 #define DIF03 0xEA	//85~FF
 #define DIF04 0xEB	//D7~FF
 #define DIF14 0xEC	//D9~FF
-#define DIF15 0xEA	//D5~FF
-#define DIF16 0xD5	//D6~FF
+#define DIF15 0xFF	//D5~FF
+#define DIF16 0xD3	//D6~FF
 #endif
 #define TIMER0
 #define SIMULATION
@@ -196,12 +196,13 @@ main()
 
 void consumeToken(unsigned char incomingByte)
 {
+    unsigned char controlray = (incomingByte >> 4);
 #ifdef PARSER
-    if ( (incomingByte >> 4) > 9 )
+    if ( controlray > 9 )
     {
         action = IGNORE;
     }
-    else if ( (incomingByte >> 4) == 9 ) // Note on
+    else if ( controlray == 9 ) // Note on
     {
         channel = (incomingByte & 0x0F);
 #ifdef SIMULATION
@@ -216,7 +217,7 @@ void consumeToken(unsigned char incomingByte)
 #endif
         action = ON;
     }
-    else if ( (incomingByte >> 4) == 8 )// Note off
+    else if ( controlray == 8 )// Note off
     {
         channel = (incomingByte & 0x0F);
         action = OFF;
@@ -742,7 +743,7 @@ void LCD_init(void)    //LCD的啟始程式
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0中斷函數0
 {
-    i04 = 4;
+    i00 = 4;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1中斷函數2
