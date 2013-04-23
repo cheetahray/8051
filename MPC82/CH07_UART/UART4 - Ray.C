@@ -21,10 +21,10 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR;
 #define DIF00 0xEA	//D5~FF
 #define DIF01 0xEA	//D5~FF
 #define DIF02 0xEA	//D5~FF
-#define DIF03 0xEA	//85~FF
+#define DIF03 0xFE	//85~FF
 #define DIF04 0xEB	//D7~FF
-#define DIF14 0xEC	//D9~FF
-#define DIF15 0xFF	//D5~FF
+#define DIF14 0xEA	//D9~FF
+#define DIF15 0xF0	//D5~FF
 #define DIF16 0xD3	//D6~FF
 #endif
 #define TIMER0
@@ -329,10 +329,10 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 60:
-                            i14 = 4;
+                            i14 = 3;
                             break;
                         case 61:
-                            i15 = 4;
+                            i15 = 2;
                             break;
                         }
                     }
@@ -424,9 +424,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i14--;
         break;
     case 3:
-        i14--;
-        break;
-    case 4:
         CCAP2H = ~DIF14;
         i14--;
         break;
@@ -440,12 +437,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i15--;
         break;
     case 2:
-        i15--;
-        break;
-    case 3:
-        i15--;
-        break;
-    case 4:
         CCAP3H = ~DIF15;
         i15--;
         break;
@@ -748,12 +739,12 @@ void EX0_int(void) interrupt 0   //INT0い耞ㄧ计0
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1い耞ㄧ计2
 {
-    i14 = 4;
+    i14 = 3;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2い耞ㄧ计6
 {
-    i15 = 4;
+    i15 = 2;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3い耞ㄧ计7
