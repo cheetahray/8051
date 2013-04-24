@@ -4,7 +4,7 @@
 ************************************************/
 #include "..\MPC82.H"   //暫存器及組態定義
 #include "math.h"
-#define BUFFER
+//#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
 //#define CHANNEL16		  //P10 P12 P13
@@ -17,12 +17,17 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef	HARDRAYPWM
 #define PCATIMER
 #define TTT  256
-unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR;
-#define DIF00 0xEA	//D5~FF
+unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P27_VAR,P26_VAR;
+#define DIF00 0xFE	//D5~FF
 #define DIF01 0xEA	//D5~FF
 #define DIF02 0xEA	//D5~FF
 #define DIF03 0xFE	//85~FF
 #define DIF04 0xEB	//D7~FF
+#define DIF05 0xFE	//D7~FF
+#define DIF06 0xFE	//D7~FF
+#define DIF07 0xFE	//D7~FF
+#define DIF27 0xFE	//D7~FF
+#define DIF26 0xFE	//D7~FF
 #define DIF14 0xEA	//D9~FF
 #define DIF15 0xF0	//D5~FF
 #define DIF16 0xD3	//D6~FF
@@ -37,7 +42,7 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR;
 //#define LCD
 #define TT  57600  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i14,i15,i16,i00,i01,i02,i03,i04;
+unsigned char i14,i15,i16,i00,i01,i02,i03,i04, i05, i06, i07, i27, i26;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -151,9 +156,14 @@ main()
     P02_VAR=0;
     P03_VAR=0;
     P04_VAR=0;
+    P05_VAR=0;
+    P06_VAR=0;
+    P07_VAR=0;
+    P27_VAR=0;
+    P26_VAR=0;
 #endif
 #ifdef TIMER2
-    i14=i15=i16=i00=i01=i02=i03=i04=0;
+    i14=i15=i16=i00=i01=i02=i03=i04=i05=i06=i07=i27=i26=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -271,19 +281,34 @@ void consumeToken(unsigned char incomingByte)
                             switch(note)
                             {
                             case 60:
-                                i00 = 4;
+                                i00 = 3;
                                 break;
                             case 61:
-                                i01 = 4;
+                                i01 = 3;
                                 break;
                             case 62:
-                                i02 = 4;
+                                i02 = 3;
                                 break;
                             case 63:
-                                i03 = 4;
+                                i03 = 3;
                                 break;
                             case 64:
-                                i04 = 4;
+                                i04 = 3;
+                                break;
+                            case 65:
+                                i05 = 2;
+                                break;
+                            case 66:
+                                i06 = 2;
+                                break;
+                            case 67:
+                                i07 = 2;
+                                break;
+                            case 68:
+                                i27 = 2;
+                                break;
+                            case 69:
+                                i26 = 2;
                                 break;
                             }
 #endif
@@ -405,6 +430,16 @@ void softPWM()
         P0_3 = 0;
     if(CL > P04_VAR)
         P0_4 = 0;
+    if(CL > P05_VAR)
+        P0_5 = 0;
+    if(CL > P06_VAR)
+        P0_6 = 0;
+    if(CL > P07_VAR)
+        P0_7 = 0;
+    if(CL > P27_VAR)
+        P2_7 = 0;
+    if(CL > P26_VAR)
+        P2_6 = 0;
 #endif
 }
 #ifdef TIMER2
@@ -454,6 +489,71 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i16--;
         break;
     }
+    switch(i05)
+    {
+    case 0:
+        break;
+    case 1:
+        P05_VAR = 0x00;
+        i05--;
+        break;
+    case 2:
+        P05_VAR = DIF05;
+        i05--;
+        break;
+    }
+    switch(i06)
+    {
+    case 0:
+        break;
+    case 1:
+        P06_VAR = 0x00;
+        i06--;
+        break;
+    case 2:
+        P06_VAR = DIF06;
+        i06--;
+        break;
+    }
+    switch(i07)
+    {
+    case 0:
+        break;
+    case 1:
+        P07_VAR = 0x00;
+        i07--;
+        break;
+    case 2:
+        P07_VAR = DIF07;
+        i07--;
+        break;
+    }
+    switch(i27)
+    {
+    case 0:
+        break;
+    case 1:
+        P27_VAR = 0x00;
+        i27--;
+        break;
+    case 2:
+        P27_VAR = DIF27;
+        i27--;
+        break;
+    }
+    switch(i26)
+    {
+    case 0:
+        break;
+    case 1:
+        P26_VAR = 0x00;
+        i26--;
+        break;
+    case 2:
+        P26_VAR = DIF26;
+        i26--;
+        break;
+    }
     switch(i00)
     {
     case 0:
@@ -466,9 +566,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i00--;
         break;
     case 3:
-        i00--;
-        break;
-    case 4:
         P00_VAR = DIF00;
         i00--;
         break;
@@ -485,8 +582,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i01--;
         break;
     case 3:
-        i01--;
-    case 4:
         P01_VAR = DIF01;
         i01--;
         break;
@@ -503,9 +598,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i02--;
         break;
     case 3:
-        i02--;
-        break;
-    case 4:
         P02_VAR = DIF02;
         i02--;
         break;
@@ -522,9 +614,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i03--;
         break;
     case 3:
-        i03--;
-        break;
-    case 4:
         P03_VAR = DIF03;
         i03--;
         break;
@@ -541,9 +630,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i04--;
         break;
     case 3:
-        i04--;
-        break;
-    case 4:
         P04_VAR = DIF04;
         i04--;
         break;
@@ -608,8 +694,9 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 ************************************************************/
 void UART_init(unsigned int bps)  //UART啟始程式
 {
-    P0M1=0x1F;
-    P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
+    P0M1=0xFF;
+    //P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
+    P2M1=0xC0;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
 #ifdef CHANNEL16
@@ -641,7 +728,7 @@ void PCA_Interrupt() interrupt 10
     {
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
-    P0_0 = P0_1 = P0_2 = P0_3 = P0_4 = 1;
+    P0_0 = P0_1 = P0_2 = P0_3 = P0_4 = P0_5 = P0_6 = P0_7 = P2_7 = P2_6 = 1;
 #endif
 }
 
@@ -734,21 +821,21 @@ void LCD_init(void)    //LCD的啟始程式
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0中斷函數0
 {
-    i00 = 4;
+    i27 = 2;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1中斷函數2
 {
-    i14 = 3;
+    i26 = 2;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2中斷函數6
 {
-    i15 = 2;
+    i06 = 2;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3中斷函數7
 {
-    i16 = 2;
+    i07 = 2;
 }
 #endif
