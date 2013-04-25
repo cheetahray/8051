@@ -19,17 +19,17 @@ unsigned char oldCHANNEL=0xFF;
 #define TTT  256
 unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P27_VAR,P26_VAR;
 #define DIF00 0xFE	//D5~FF
-#define DIF01 0xEA	//D5~FF
-#define DIF02 0xEA	//D5~FF
+#define DIF01 0xFE	//D5~FF
+#define DIF02 0xFE	//D5~FF
 #define DIF03 0xFE	//85~FF
-#define DIF04 0xEB	//D7~FF
+#define DIF04 0xFE	//D7~FF
 #define DIF05 0xFE	//D7~FF
 #define DIF06 0xFE	//D7~FF
 #define DIF07 0xFE	//D7~FF
 #define DIF27 0xFE	//D7~FF
 #define DIF26 0xFE	//D7~FF
-#define DIF14 0xEA	//D9~FF
-#define DIF15 0xF0	//D5~FF
+#define DIF14 0xFE	//D9~FF
+#define DIF15 0xFE	//D5~FF
 #define DIF16 0xD3	//D6~FF
 #endif
 #define TIMER0
@@ -281,19 +281,19 @@ void consumeToken(unsigned char incomingByte)
                             switch(note)
                             {
                             case 60:
-                                i00 = 3;
+                                i00 = 2;
                                 break;
                             case 61:
-                                i01 = 3;
+                                i01 = 2;
                                 break;
                             case 62:
-                                i02 = 3;
+                                i02 = 2;
                                 break;
                             case 63:
-                                i03 = 3;
+                                i03 = 2;
                                 break;
                             case 64:
-                                i04 = 3;
+                                i04 = 2;
                                 break;
                             case 65:
                                 i05 = 2;
@@ -354,7 +354,7 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 60:
-                            i14 = 3;
+                            i14 = 2;
                             break;
                         case 61:
                             i15 = 2;
@@ -456,9 +456,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i14--;
         break;
     case 2:
-        i14--;
-        break;
-    case 3:
         CCAP2H = ~DIF14;
         i14--;
         break;
@@ -563,9 +560,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i00--;
         break;
     case 2:
-        i00--;
-        break;
-    case 3:
         P00_VAR = DIF00;
         i00--;
         break;
@@ -579,9 +573,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i01--;
         break;
     case 2:
-        i01--;
-        break;
-    case 3:
         P01_VAR = DIF01;
         i01--;
         break;
@@ -595,9 +586,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i02--;
         break;
     case 2:
-        i02--;
-        break;
-    case 3:
         P02_VAR = DIF02;
         i02--;
         break;
@@ -611,9 +599,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i03--;
         break;
     case 2:
-        i03--;
-        break;
-    case 3:
         P03_VAR = DIF03;
         i03--;
         break;
@@ -627,9 +612,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         i04--;
         break;
     case 2:
-        i04--;
-        break;
-    case 3:
         P04_VAR = DIF04;
         i04--;
         break;
@@ -821,17 +803,17 @@ void LCD_init(void)    //LCD币﹍祘Α
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0い耞ㄧ计0
 {
-    i27 = 2;
+    i00 = 2;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1い耞ㄧ计2
 {
-    i26 = 2;
+    i03 = 2;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2い耞ㄧ计6
 {
-    i06 = 2;
+    i15 = 2;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3い耞ㄧ计7
