@@ -18,6 +18,19 @@ unsigned char oldCHANNEL=0xFF;
 #define PCATIMER
 #define TTT  256
 unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P27_VAR,P26_VAR;
+#define DIF00 0xFE	//D5~FF
+#define DIF01 0xFE	//D5~FF
+#define DIF02 0xFE	//D5~FF
+#define DIF03 0xFE	//85~FF
+#define DIF04 0xFE	//D7~FF
+#define DIF05 0xFE	//D7~FF
+#define DIF06 0xFE	//D7~FF
+#define DIF07 0xFE	//D7~FF
+#define DIF27 0xFE	//D7~FF
+#define DIF26 0xFE	//D7~FF
+#define DIF14 0xFE	//D9~FF
+#define DIF15 0xFE	//D5~FF
+#define DIF16 0xD3	//D6~FF
 #endif
 #define TIMER0
 #define SIMULATION
@@ -27,7 +40,7 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P2
 #define TIMER2
 #define PARSER
 //#define LCD
-#define TT  57600  //Timer┑丁=(1/1.8432MHz)*57600=31250uS
+#define TT  32768  //Timer┑丁=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
 unsigned char i14,i15,i16,i00,i01,i02,i03,i04, i05, i06, i07, i27, i26;
 #endif
@@ -268,84 +281,44 @@ void consumeToken(unsigned char incomingByte)
                             switch(note)
                             {
                             case 60:
-                                if(i00 == 0)
-                                {
-                                    i00 = 3;
-                                    P00_VAR = 0xFF;
-                                }
-                                else
-                                {
-                                    i00 = 2;
-                                    P00_VAR = 0xA0;
-                                }
+                                i00 = 4;
+                                P00_VAR = DIF00;
                                 break;
                             case 61:
-                                if(i01 == 0)
-                                {
-                                    i01 = 3;
-                                    P01_VAR = 0xFF;
-                                }
-                                else
-                                {
-                                    i01 = 2;
-                                    P01_VAR = 0xA0;
-                                }
+                                i01 = 4;
+                                P01_VAR = DIF01;
                                 break;
                             case 62:
-                                if(i02 == 0)
-                                {
-                                    i02 = 3;
-                                    P02_VAR = 0xFF;
-                                }
-                                else
-                                {
-                                    i02 = 2;
-                                    P02_VAR = 0xA0;
-                                }
+                                i02 = 3;
+                                P02_VAR = DIF02;
                                 break;
                             case 63:
-                                if(i03 == 0)
-                                {
-                                    i03 = 3;
-                                    P03_VAR = 0xFF;
-                                }
-                                else
-                                {
-                                    i03 = 2;
-                                    P03_VAR = 0xA0;
-                                }
+                                i03 = 3;
+                                P03_VAR = DIF03;
                                 break;
                             case 64:
-                                if(i04 == 0)
-                                {
-                                    i04 = 3;
-                                    P04_VAR = 0xFF;
-                                }
-                                else
-                                {
-                                    i04 = 2;
-                                    P04_VAR = 0xA0;
-                                }
+                                i04 = 3;
+                                P04_VAR = DIF04;
                                 break;
                             case 65:
-                                i05 = 2;
-                                P05_VAR = 0xFF;
+                                i05 = 3;
+                                P05_VAR = DIF05;
                                 break;
                             case 66:
-                                i06 = 2;
-                                P06_VAR = 0xFF;
+                                i06 = 3;
+                                P06_VAR = DIF06;
                                 break;
                             case 67:
-                                i07 = 2;
-                                P07_VAR = 0xFF;
+                                i07 = 3;
+                                P07_VAR = DIF07;
                                 break;
                             case 68:
-                                i27 = 2;
-                                P27_VAR = 0xFF;
+                                i27 = 3;
+                                P27_VAR = DIF27;
                                 break;
                             case 69:
-                                i26 = 2;
-                                P26_VAR = 0xFF;
+                                i26 = 3;
+                                P26_VAR = DIF26;
                                 break;
                             }
 #endif
@@ -391,28 +364,12 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 60:
-                            if(i14 == 0)
-                            {
-                                i14 = 3;
-                                CCAP2H = ~0xFF;
-                            }
-                            else
-                            {
-                                i14 = 2;
-                                CCAP2H = ~0xA0;
-                            }
+                            i14 = 4;
+                            CCAP2H = ~DIF14;
                             break;
                         case 61:
-                            if(i15 == 0)
-                            {
-                                i15 = 3;
-                                CCAP3H = ~0xFF;
-                            }
-                            else
-                            {
-                                i15 = 2;
-                                CCAP3H = ~0xA0;
-                            }
+                            i15 = 4;
+                            CCAP3H = ~DIF15;
                             break;
                         }
                     }
@@ -428,8 +385,8 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 60:
-                            i16 = 2;
-                            CCAP4H = ~0xD3;
+                            i16 = 3;
+                            CCAP4H = ~DIF16;
                             break;
                         }
                     }
@@ -846,25 +803,21 @@ void LCD_init(void)    //LCD币﹍祘Α
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0い耞ㄧ计0
 {
-    i27 = 3;
-    P27_VAR = 0xFF;
+    i00 = 2;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1い耞ㄧ计2
 {
-    i26 = 3;
-    P26_VAR = 0xFF;
+    i03 = 2;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2い耞ㄧ计6
 {
-    i14 = 3;
-    CCAP2H = ~0xFF;
+    i15 = 2;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3い耞ㄧ计7
 {
-    i15 = 3;
-    CCAP3H = ~0xFF;
+    i07 = 2;
 }
 #endif
