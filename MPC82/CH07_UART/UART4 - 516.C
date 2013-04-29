@@ -2,13 +2,13 @@
 *動作：接收個人電腦的資料，送到LCD顯示
 *硬體：SW3-3(TxD1)ON
 ************************************************/
-#include "..\MPC82.H"   //暫存器及組態定義
+#include "..\REG_MG84FG516.H"   //暫存器及組態定義
 #include "math.h"
 //#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
-//#define CHANNEL16		  //P10 P12 P13
-//#define LEDRay
+#define CHANNEL16		  //P10 P12 P13
+#define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
 unsigned char oldCHANNEL=0xFF;
@@ -29,9 +29,9 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P2
 #define DIF07 0xFE	//D7~FF
 #define DIF20 0xFE	//D7~FF
 #define DIF21 0xFE	//D7~FF
-#define DIF14 0xFE	//D9~FF
-#define DIF15 0xFE	//D5~FF
-#define DIF16 0xD3	//D6~FF
+#define DIF24 0xFE	//D9~FF
+#define DIF25 0xFE	//D5~FF
+#define DIF26 0xD3	//D6~FF
 #endif
 #define TIMER0
 #define SIMULATION
@@ -245,7 +245,7 @@ void consumeToken(unsigned char incomingByte)
                 CCAP0H=Table[note]>>8; //設定比較暫存器高位元組
 #endif
 #ifdef LEDRay
-                LED0=~note;  //將接收到的字元由LED輸出
+                LED=~note;  //將接收到的字元由LED輸出
 #endif
 #ifdef LCD
                 char raynote = (note & 0xF0);
@@ -290,15 +290,15 @@ void consumeToken(unsigned char incomingByte)
                                 P01_VAR = DIF01;
                                 break;
                             case 62:
-                                i02 = 3;
+                                    i02 = 3;
                                 P02_VAR = DIF02;
                                 break;
                             case 63:
-                                i03 = 3;
+                                    i03 = 3;
                                 P03_VAR = DIF03;
                                 break;
                             case 64:
-                                i04 = 3;
+                                    i04 = 3;
                                 P04_VAR = DIF04;
                                 break;
                             case 65:
@@ -335,7 +335,7 @@ void consumeToken(unsigned char incomingByte)
                         //記得統一加上 inverse ~
 #endif
 #ifdef LEDRay
-                        LED1=~velocity;  //將接收到的字元由LED輸出
+                        LED=~velocity;  //將接收到的字元由LED輸出
 #endif
 #ifdef LCD
                         char raynote = (velocity & 0xF0);
@@ -366,11 +366,11 @@ void consumeToken(unsigned char incomingByte)
                         {
                         case 60:
                             i14 = 4;
-                            CCAP2H = ~DIF14;
+                            CCAP2H = ~DIF24;
                             break;
                         case 61:
                             i15 = 4;
-                            CCAP3H = ~DIF15;
+                            CCAP3H = ~DIF25;
                             break;
                         }
                     }
@@ -387,7 +387,7 @@ void consumeToken(unsigned char incomingByte)
                         {
                         case 60:
                             i16 = 3;
-                            CCAP4H = ~DIF16;
+                            CCAP4H = ~DIF26;
                             break;
                         }
                     }
@@ -677,16 +677,17 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 ************************************************************/
 void UART_init(unsigned int bps)  //UART啟始程式
 {
-    P0M1=0xFF;
+    P0M0=0xFF;
     //P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
-    P2M1=0x02;
+    P2M0=0x02;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
 #ifdef CHANNEL16
     S2CON = S2REN;// + S2SM1;
 #endif
     TMOD += T1_M1;  //設定TIMER1為MODE2
-    AUXR2 = T1X12 + URM0X6;// + S2TX12 + S2SMOD + S2TR;	// T1X12 for uart1	URM0X6 for uart2
+    AUXR2 = T1X12;// + S2TX12 + S2SMOD + S2TR;	// T1X12 for uart1	URM0X6 for uart2
+    S0CFG = URM0X6;
     PCON = SMOD;
 #ifdef DEBUG
     TH1=112;
