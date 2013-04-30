@@ -183,6 +183,11 @@ sfr IFMT      = 0xE5;
 sfr SCMD      = 0xE6;
 sfr ISPCR     = 0xE7;
 
+#define CKCON2  0x40
+#define XTAL    0x71
+#define PageP   0x04
+#define ISPEN   0x80   //1=≠PØ‡IAP/ISP•\Ø‡
+
 // (bits in TCON)
 sbit TF1      = TCON^7;
 sbit TR1      = TCON^6;

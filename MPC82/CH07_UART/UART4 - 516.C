@@ -7,7 +7,7 @@
 //#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
-#define CHANNEL16		  //P10 P12 P13
+//#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
@@ -43,7 +43,7 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P2
 //#define LCD
 #define TT  32768  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i14,i15,i16,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21;
+unsigned char i24,i25,i26,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -95,9 +95,17 @@ unsigned int  code Table[]  //定義音頻陣列資料,0為休止符
 int notecount;
 #endif
 void consumeToken(unsigned char incomingByte);
-
+unsigned char raycnt = 0;
 main()
 {
+    IFD = XTAL;
+    IFADRH = 0;
+    IFADRL = CKCON2;
+    IFMT = PageP;
+    ISPCR = ISPEN;
+    SCMD = 0x46;
+    SCMD = 0xb9; 
+    Delay_ms(30);
 #ifdef BUFFER
     produceCount = 0;
     consumeCount = 0;
@@ -132,7 +140,7 @@ main()
     AUXIE = EPCA; //致能PCA中斷
     CCF0 = 0;		//清除模組0的比較旗標
 #endif
-    //AUXIE += ES2;
+    //AUXIE |= ES2;
 #ifdef HARDRAYPWM
     /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
@@ -164,7 +172,7 @@ main()
     P21_VAR=0;
 #endif
 #ifdef TIMER2
-    i14=i15=i16=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=0;
+    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -172,7 +180,7 @@ main()
     TR2=1;
 #endif
 #ifdef TIMER0
-    TMOD += T0_M0;	//設定Timer0為mode1內部計時
+    TMOD |= T0_M0;	//設定Timer0為mode1內部計時
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
     ET0=1;	//致能Timer0中
@@ -245,7 +253,7 @@ void consumeToken(unsigned char incomingByte)
                 CCAP0H=Table[note]>>8; //設定比較暫存器高位元組
 #endif
 #ifdef LEDRay
-                LED=~note;  //將接收到的字元由LED輸出
+                LED=raycnt++;//~note;  //將接收到的字元由LED輸出
 #endif
 #ifdef LCD
                 char raynote = (note & 0xF0);
@@ -335,7 +343,7 @@ void consumeToken(unsigned char incomingByte)
                         //記得統一加上 inverse ~
 #endif
 #ifdef LEDRay
-                        LED=~velocity;  //將接收到的字元由LED輸出
+                        //LED=~velocity;  //將接收到的字元由LED輸出
 #endif
 #ifdef LCD
                         char raynote = (velocity & 0xF0);
@@ -365,11 +373,11 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 60:
-                            i14 = 4;
+                            i24 = 4;
                             CCAP2H = ~DIF24;
                             break;
                         case 61:
-                            i15 = 4;
+                            i25 = 4;
                             CCAP3H = ~DIF25;
                             break;
                         }
@@ -386,7 +394,7 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 60:
-                            i16 = 3;
+                            i26 = 3;
                             CCAP4H = ~DIF26;
                             break;
                         }
@@ -461,40 +469,40 @@ void softPWM()
 void T2_int (void) interrupt 5   //Timer2中斷函數
 {
     TF2=0;    //清除TF2=0
-    switch(i14)
+    switch(i24)
     {
     case 0:
         break;
     case 1:
         CCAP2H = ~0x00;
-        i14--;
+        i24--;
         break;
     default:
-        i14--;
+        i24--;
         break;
     }
-    switch(i15)
+    switch(i25)
     {
     case 0:
         break;
     case 1:
         CCAP3H = ~0x00;
-        i15--;
+        i25--;
         break;
     default:
-        i15--;
+        i25--;
         break;
     }
-    switch(i16)
+    switch(i26)
     {
     case 0:
         break;
     case 1:
         CCAP4H = ~0x00;
-        i16--;
+        i26--;
         break;
     default:
-        i16--;
+        i26--;
         break;
     }
     switch(i05)
@@ -679,15 +687,18 @@ void UART_init(unsigned int bps)  //UART啟始程式
 {
     P0M0=0xFF;
     //P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
-    P2M0=0x02;
+    P2M0=0xFF;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
 #ifdef CHANNEL16
-    S2CON = S2REN;// + S2SM1;
-#endif
-    TMOD += T1_M1;  //設定TIMER1為MODE2
-    AUXR2 = T1X12;// + S2TX12 + S2SMOD + S2TR;	// T1X12 for uart1	URM0X6 for uart2
+    SFRPI = 1;
     S0CFG = URM0X6;
+    S1CON = 0;
+    REN1 = 1;// + S2SM1;
+    SFRPI = 0;
+#endif
+    TMOD |= T1_M1;  //設定TIMER1為MODE2
+    AUXR2 = T1X12;// + S2TX12 + S2SMOD + S2TR;	// T1X12 for uart1	URM0X6 for uart2
     PCON = SMOD;
 #ifdef DEBUG
     TH1=112;
@@ -713,7 +724,7 @@ void PCA_Interrupt() interrupt 10
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
     P0 = 0xFF;//P0_0 = P0_1 = P0_2 = P0_3 = P0_4 = P0_5 = P0_6 = P0_7 = P2_7 = P2_6 = 1;
-    P2 = 0x02;
+    P20 = P21 = 1;
 #endif
 }
 
@@ -727,11 +738,11 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
     P1_0=0;
     //Delay_ms(1);   //載入74165並列資料
     P1_0=1 ;   //開始串列傳輸
-    while((S2CON & S2RI)==0); //若RI=0表示未接收完畢，再繼續檢查
-    S2CON &= ~S2RI;         //若RI=1表示已接收1個字元完畢，清除RI=0
+    while((S1CON & RI1)==0); //若RI=0表示未接收完畢，再繼續檢查
+    S1CON &= ~RI1;         //若RI=1表示已接收1個字元完畢，清除RI=0
     while(pcai>=0)
     {
-        if((S2BUF >> pcai) & 1)
+        if((S1BUF >> pcai) & 1)
         {
             rayCHANNEL += (1<<pcaj);
         }
@@ -800,27 +811,5 @@ void LCD_init(void)    //LCD的啟始程式
                     bit0:S=0,游標移位禁能*/
     LCD_Cmd(0x01); //清除顯示幕
     LCD_Cmd(0x02); //游標回原位
-}
-#endif
-#ifdef SIMULATION
-/*********************************/
-void EX0_int(void) interrupt 0   //INT0中斷函數0
-{
-    i00 = 2;
-}
-/*********************************************/
-void EX1_int(void) interrupt 2   //INT1中斷函數2
-{
-    i03 = 2;
-}
-/*********************************************/
-void EX2_int(void) interrupt 6   //INT2中斷函數6
-{
-    i15 = 2;
-}
-/*********************************************/
-void EX3_int(void) interrupt 7   //INT3中斷函數7
-{
-    i07 = 2;
 }
 #endif

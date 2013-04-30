@@ -19,19 +19,19 @@ unsigned char oldCHANNEL=0xFF;
 #define PCATIMER
 #define TTT  256
 unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P20_VAR,P21_VAR;
-#define DIF00 0xFE	//D5~FF
-#define DIF01 0xFE	//D5~FF
-#define DIF02 0xFE	//D5~FF
-#define DIF03 0xFE	//85~FF
-#define DIF04 0xFE	//D7~FF
-#define DIF05 0xFE	//D7~FF
-#define DIF06 0xFE	//D7~FF
-#define DIF07 0xFE	//D7~FF
-#define DIF20 0xFE	//D7~FF
-#define DIF21 0xFE	//D7~FF
-#define DIF14 0xFE	//D9~FF
-#define DIF15 0xFE	//D5~FF
-#define DIF16 0xD3	//D6~FF
+#define DIF00 0xD9	//D5~FF
+#define DIF01 0xDD	//D5~FF
+#define DIF02 0xDD	//D5~FF
+#define DIF03 0xDD	//85~FF
+#define DIF04 0xDD	//D7~FF
+#define DIF05 0xDD	//D7~FF
+#define DIF06 0xDD	//D7~FF
+#define DIF07 0xDD	//D7~FF
+#define DIF20 0xDD	//D7~FF
+#define DIF21 0xDD	//D7~FF
+#define DIF14 0xD0	//D9~FF
+#define DIF15 0xD0	//D5~FF
+#define DIF16 0xCF	//D6~FF
 #endif
 #define TIMER0
 #define SIMULATION
@@ -132,7 +132,7 @@ main()
     AUXIE = EPCA; //致能PCA中斷
     CCF0 = 0;		//清除模組0的比較旗標
 #endif
-    //AUXIE += ES2;
+    //AUXIE |= ES2;
 #ifdef HARDRAYPWM
     /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
@@ -172,7 +172,7 @@ main()
     TR2=1;
 #endif
 #ifdef TIMER0
-    TMOD += T0_M0;	//設定Timer0為mode1內部計時
+    TMOD |= T0_M0;	//設定Timer0為mode1內部計時
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
     ET0=1;	//致能Timer0中
@@ -335,7 +335,7 @@ void consumeToken(unsigned char incomingByte)
                         //記得統一加上 inverse ~
 #endif
 #ifdef LEDRay
-                        LED1=~velocity;  //將接收到的字元由LED輸出
+                        //LED1=~velocity;  //將接收到的字元由LED輸出
 #endif
 #ifdef LCD
                         char raynote = (velocity & 0xF0);
@@ -679,13 +679,13 @@ void UART_init(unsigned int bps)  //UART啟始程式
 {
     P0M1=0xFF;
     //P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
-    P2M1=0x02;
+    P2M1=0x03;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
 #ifdef CHANNEL16
     S2CON = S2REN;// + S2SM1;
 #endif
-    TMOD += T1_M1;  //設定TIMER1為MODE2
+    TMOD |= T1_M1;  //設定TIMER1為MODE2
     AUXR2 = T1X12 + URM0X6;// + S2TX12 + S2SMOD + S2TR;	// T1X12 for uart1	URM0X6 for uart2
     PCON = SMOD;
 #ifdef DEBUG
@@ -712,7 +712,7 @@ void PCA_Interrupt() interrupt 10
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
     P0 = 0xFF;//P0_0 = P0_1 = P0_2 = P0_3 = P0_4 = P0_5 = P0_6 = P0_7 = P2_7 = P2_6 = 1;
-    P2 = 0x02;
+    P2 = 0x03;
 #endif
 }
 
@@ -805,21 +805,25 @@ void LCD_init(void)    //LCD的啟始程式
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0中斷函數0
 {
-    i00 = 2;
+    i20 = 2;
+    P20_VAR = DIF20;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1中斷函數2
 {
-    i03 = 2;
+    i21 = 2;
+    P21_VAR = DIF21;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2中斷函數6
 {
-    i15 = 2;
+    i15 = 3;
+    CCAP3H = ~DIF15;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3中斷函數7
 {
-    i07 = 2;
+    i07 = 3;
+    P07_VAR = DIF07;
 }
 #endif
