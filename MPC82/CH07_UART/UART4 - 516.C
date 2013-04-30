@@ -7,7 +7,7 @@
 //#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
-//#define CHANNEL16		  //P10 P12 P13
+#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
@@ -104,7 +104,7 @@ main()
     IFMT = PageP;
     ISPCR = ISPEN;
     SCMD = 0x46;
-    SCMD = 0xb9; 
+    SCMD = 0xb9;
     Delay_ms(30);
 #ifdef BUFFER
     produceCount = 0;
@@ -298,15 +298,15 @@ void consumeToken(unsigned char incomingByte)
                                 P01_VAR = DIF01;
                                 break;
                             case 62:
-                                    i02 = 3;
+                                i02 = 3;
                                 P02_VAR = DIF02;
                                 break;
                             case 63:
-                                    i03 = 3;
+                                i03 = 3;
                                 P03_VAR = DIF03;
                                 break;
                             case 64:
-                                    i04 = 3;
+                                i04 = 3;
                                 P04_VAR = DIF04;
                                 break;
                             case 65:
@@ -690,13 +690,6 @@ void UART_init(unsigned int bps)  //UART啟始程式
     P2M0=0xFF;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
-#ifdef CHANNEL16
-    SFRPI = 1;
-    S0CFG = URM0X6;
-    S1CON = 0;
-    REN1 = 1;// + S2SM1;
-    SFRPI = 0;
-#endif
     TMOD |= T1_M1;  //設定TIMER1為MODE2
     AUXR2 = T1X12;// + S2TX12 + S2SMOD + S2TR;	// T1X12 for uart1	URM0X6 for uart2
     PCON = SMOD;
@@ -733,21 +726,17 @@ void PCA_Interrupt() interrupt 10
 void T0_int(void) interrupt 1  //Timer0中斷函數
 {
 #ifdef CHANNEL16
-    int pcai=7,pcaj=0;
+    int ll;
     rayCHANNEL = 0;
     P1_0=0;
     //Delay_ms(1);   //載入74165並列資料
     P1_0=1 ;   //開始串列傳輸
-    while((S1CON & RI1)==0); //若RI=0表示未接收完畢，再繼續檢查
-    S1CON &= ~RI1;         //若RI=1表示已接收1個字元完畢，清除RI=0
-    while(pcai>=0)
+    for(ll=0; ll<8; ll++)
     {
-        if((S1BUF >> pcai) & 1)
-        {
-            rayCHANNEL += (1<<pcaj);
-        }
-        pcai--;
-        pcaj++;
+        P13 = 0;
+        rayCHANNEL = rayCHANNEL << 1;
+        rayCHANNEL |= P12;
+        P13 = 1;
     }
 #ifdef LEDRay
     LED=~rayCHANNEL;     //將接收到的字元由LED輸出
