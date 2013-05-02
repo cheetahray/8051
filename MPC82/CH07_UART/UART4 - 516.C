@@ -253,7 +253,9 @@ void consumeToken(unsigned char incomingByte)
                 CCAP0H=Table[note]>>8; //設定比較暫存器高位元組
 #endif
 #ifdef LEDRay
+#ifndef CHANNEL16
                 LED=raycnt++;//~note;  //將接收到的字元由LED輸出
+#endif
 #endif
 #ifdef LCD
                 char raynote = (note & 0xF0);
@@ -686,7 +688,7 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 void UART_init(unsigned int bps)  //UART啟始程式
 {
     P0M0=0xFF;
-    //P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
+    P1M0 = 0x09; //設定P0為推挽式輸出(M0-1=01)
     P2M0=0xFF;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
@@ -727,22 +729,22 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 {
 #ifdef CHANNEL16
     int ll;
-    rayCHANNEL = 0;
     P1_0=0;
-    //Delay_ms(1);   //載入74165並列資料
+    rayCHANNEL = 0;
     P1_0=1 ;   //開始串列傳輸
-    for(ll=0; ll<8; ll++)
+    rayCHANNEL |= P12;
+    for(ll=0; ll<7; ll++)
     {
         P13 = 0;
-        rayCHANNEL = rayCHANNEL << 1;
-        rayCHANNEL |= P12;
+        rayCHANNEL <<= 1;
         P13 = 1;
+        rayCHANNEL |= P12;
     }
 #ifdef LEDRay
     LED=~rayCHANNEL;     //將接收到的字元由LED輸出
 #endif
-    oneCHANNEL = (rayCHANNEL & 0x0F);
-    twoCHANNEL = (rayCHANNEL >> 4);
+    twoCHANNEL = (rayCHANNEL & 0x0F);
+    oneCHANNEL = (rayCHANNEL >> 4);
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
 #endif
