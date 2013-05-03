@@ -319,15 +319,6 @@ sbit P02      = P0^2;
 sbit P01      = P0^1;
 sbit P00      = P0^0;
 
-sbit P0_7      = P0^7;
-sbit P0_6      = P0^6;
-sbit P0_5      = P0^5;
-sbit P0_4      = P0^4;
-sbit P0_3      = P0^3;
-sbit P0_2      = P0^2;
-sbit P0_1      = P0^1;
-sbit P0_0      = P0^0;
-
 // (bits in P1)
 sbit P17      = P1^7;
 sbit P16      = P1^6;
@@ -338,15 +329,6 @@ sbit P12      = P1^2;
 sbit P11      = P1^1;
 sbit P10      = P1^0;
 
-sbit P1_7      = P1^7;
-sbit P1_6      = P1^6;
-sbit P1_5      = P1^5;
-sbit P1_4      = P1^4;
-sbit P1_3      = P1^3;
-sbit P1_2      = P1^2;
-sbit P1_1      = P1^1;
-sbit P1_0      = P1^0;
-
 // (bits in P2)
 sbit P27      = P2^7;
 sbit P26      = P2^6;
@@ -356,15 +338,6 @@ sbit P23      = P2^3;
 sbit P22      = P2^2;
 sbit P21      = P2^1;
 sbit P20      = P2^0;
-
-sbit P2_7      = P2^7;
-sbit P2_6      = P2^6;
-sbit P2_5      = P2^5;
-sbit P2_4      = P2^4;
-sbit P2_3      = P2^3;
-sbit P2_2      = P2^2;
-sbit P2_1      = P2^1;
-sbit P2_0      = P2^0;
 
 // (bits in P3)
 sbit P37      = P3^7;
