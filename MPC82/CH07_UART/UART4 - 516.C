@@ -7,7 +7,7 @@
 //#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
-#define CHANNEL16		  //P10 P12 P13
+//#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
@@ -18,7 +18,7 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef	HARDRAYPWM
 #define PCATIMER
 #define TTT  256
-unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P20_VAR,P21_VAR;
+unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P20VAR,P21VAR;
 #define DIF00 0xFE	//D5~FF
 #define DIF01 0xFE	//D5~FF
 #define DIF02 0xFE	//D5~FF
@@ -29,6 +29,7 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P2
 #define DIF07 0xFE	//D7~FF
 #define DIF20 0xFE	//D7~FF
 #define DIF21 0xFE	//D7~FF
+#define DIF23 0xA0
 #define DIF24 0xFE	//D9~FF
 #define DIF25 0xFE	//D5~FF
 #define DIF26 0xD3	//D6~FF
@@ -43,7 +44,7 @@ unsigned char P00_VAR,P01_VAR,P02_VAR,P03_VAR,P04_VAR,P05_VAR,P06_VAR,P07_VAR,P2
 //#define LCD
 #define TT  32768  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i24,i25,i26,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21;
+unsigned char i24,i25,i26,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21, i23;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -95,7 +96,7 @@ unsigned int  code Table[]  //定義音頻陣列資料,0為休止符
 int notecount;
 #endif
 void consumeToken(unsigned char incomingByte);
-unsigned char raycnt = 0;
+
 main()
 {
     IFD = XTAL;
@@ -142,11 +143,10 @@ main()
 #endif
     //AUXIE |= ES2;
 #ifdef HARDRAYPWM
-    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    CCAPM0=CCAPM1=CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    /*CCAP0H=CCAP1H=*/
-    CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    CCAP0H=CCAP1H=CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
 #endif
 #ifdef PCATIMER
@@ -160,19 +160,19 @@ main()
     AUXIE = EPCA;      //致能PCA中斷
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
-    P00_VAR=0;
-    P01_VAR=0;
-    P02_VAR=0;
-    P03_VAR=0;
-    P04_VAR=0;
-    P05_VAR=0;
-    P06_VAR=0;
-    P07_VAR=0;
-    P20_VAR=0;
-    P21_VAR=0;
+    P00VAR=0;
+    P01VAR=0;
+    P02VAR=0;
+    P03VAR=0;
+    P04VAR=0;
+    P05VAR=0;
+    P06VAR=0;
+    P07VAR=0;
+    P20VAR=0;
+    P21VAR=0;
 #endif
 #ifdef TIMER2
-    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=0;
+    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i23=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -254,7 +254,7 @@ void consumeToken(unsigned char incomingByte)
 #endif
 #ifdef LEDRay
 #ifndef CHANNEL16
-                LED=raycnt++;//~note;  //將接收到的字元由LED輸出
+                LED=~note;  //將接收到的字元由LED輸出
 #endif
 #endif
 #ifdef LCD
@@ -287,52 +287,45 @@ void consumeToken(unsigned char incomingByte)
 #endif
                         switch(note)
                         {
-                        default:
-#ifdef SIMULATION
-                            switch(note)
-                            {
-                            case 60:
-                                i00 = 4;
-                                P00_VAR = DIF00;
-                                break;
-                            case 61:
-                                i01 = 4;
-                                P01_VAR = DIF01;
-                                break;
-                            case 62:
-                                i02 = 3;
-                                P02_VAR = DIF02;
-                                break;
-                            case 63:
-                                i03 = 3;
-                                P03_VAR = DIF03;
-                                break;
-                            case 64:
-                                i04 = 3;
-                                P04_VAR = DIF04;
-                                break;
-                            case 65:
-                                i05 = 3;
-                                P05_VAR = DIF05;
-                                break;
-                            case 66:
-                                i06 = 3;
-                                P06_VAR = DIF06;
-                                break;
-                            case 67:
-                                i07 = 3;
-                                P07_VAR = DIF07;
-                                break;
-                            case 68:
-                                i20 = 2;
-                                P20_VAR = DIF20;
-                                break;
-                            case 69:
-                                i21 = 2;
-                                P21_VAR = DIF21;
-                                break;
-                            }
-#endif
+                        case 60:
+                            i00 = 4;
+                            P00VAR = DIF00;
+                            break;
+                        case 61:
+                            i01 = 4;
+                            P01VAR = DIF01;
+                            break;
+                        case 62:
+                            i02 = 3;
+                            P02VAR = DIF02;
+                            break;
+                        case 63:
+                            i03 = 3;
+                            P03VAR = DIF03;
+                            break;
+                        case 64:
+                            i04 = 3;
+                            P04VAR = DIF04;
+                            break;
+                        case 65:
+                            i05 = 3;
+                            P05VAR = DIF05;
+                            break;
+                        case 66:
+                            i06 = 3;
+                            P06VAR = DIF06;
+                            break;
+                        case 67:
+                            i07 = 3;
+                            P07VAR = DIF07;
+                            break;
+                        case 68:
+                            i20 = 2;
+                            P20VAR = DIF20;
+                            break;
+                        case 69:
+                            i21 = 2;
+                            P21VAR = DIF21;
                             break;
                         }
 #ifdef HARDRAYPWM
@@ -343,9 +336,6 @@ void consumeToken(unsigned char incomingByte)
                         //CCAP4H=0xA0;  //設定(P16/CEX4)脈波時間，平均電壓為1.8V
                         //CCAP5H=0xFF;  //設定(P17/CEX5)脈波時間，平均電壓為0.01V
                         //記得統一加上 inverse ~
-#endif
-#ifdef LEDRay
-                        //LED=~velocity;  //將接收到的字元由LED輸出
 #endif
 #ifdef LCD
                         char raynote = (velocity & 0xF0);
@@ -389,7 +379,7 @@ void consumeToken(unsigned char incomingByte)
                         //i11 = 0xFF;
                     }
                 }
-                else if( 2 == channel )
+                else if( 5 == channel )
                 {
                     if( velocity != 0 )
                     {
@@ -400,6 +390,26 @@ void consumeToken(unsigned char incomingByte)
                             CCAP4H = ~DIF26;
                             break;
                         }
+                    }
+                    else
+                    {
+                        //i11 = 0xFF;
+                    }
+                }
+                else if( 3 == channel )
+                {
+                    if( velocity != 0 )
+                    {
+                        switch(note)
+                        {
+                        case 60:
+                            P32 = 1;
+                            break;
+                        case 61:
+                            P32 = 0;
+                        }
+                        i23 = 200;
+                        CCAP1H = ~DIF23;
                     }
                     else
                     {
@@ -444,26 +454,26 @@ void softPWM()
     }
 #endif
 #ifdef PCATIMER
-    if(CL > P00_VAR)
-        P0_0 = 0;
-    if(CL > P01_VAR)
-        P0_1 = 0;
-    if(CL > P02_VAR)
-        P0_2 = 0;
-    if(CL > P03_VAR)
-        P0_3 = 0;
-    if(CL > P04_VAR)
-        P0_4 = 0;
-    if(CL > P05_VAR)
-        P0_5 = 0;
-    if(CL > P06_VAR)
-        P0_6 = 0;
-    if(CL > P07_VAR)
-        P0_7 = 0;
-    if(CL > P21_VAR)
-        P2_1 = 0;
-    if(CL > P20_VAR)
-        P2_0 = 0;
+    if(CL > P00VAR)
+        P00 = 0;
+    if(CL > P01VAR)
+        P01 = 0;
+    if(CL > P02VAR)
+        P02 = 0;
+    if(CL > P03VAR)
+        P03 = 0;
+    if(CL > P04VAR)
+        P04 = 0;
+    if(CL > P05VAR)
+        P05 = 0;
+    if(CL > P06VAR)
+        P06 = 0;
+    if(CL > P07VAR)
+        P07 = 0;
+    if(CL > P20VAR)
+        P20 = 0;
+    if(CL > P21VAR)
+        P21 = 0;
 #endif
 }
 #ifdef TIMER2
@@ -512,7 +522,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P05_VAR = 0x00;
+        P05VAR = 0x00;
         i05--;
         break;
     default:
@@ -524,7 +534,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P06_VAR = 0x00;
+        P06VAR = 0x00;
         i06--;
         break;
     default:
@@ -536,7 +546,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P07_VAR = 0x00;
+        P07VAR = 0x00;
         i07--;
         break;
     default:
@@ -548,7 +558,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P20_VAR = 0x00;
+        P20VAR = 0x00;
         i20--;
         break;
     default:
@@ -560,19 +570,34 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P21_VAR = 0x00;
+        P21VAR = 0x00;
         i21--;
         break;
     default:
         i21--;
         break;
     }
-    switch(i00)
+    switch(i23)
     {
     case 0:
         break;
     case 1:
-        P00_VAR = 0x00;
+        CCAP1H = ~0x00;
+        i23--;
+        break;
+    default:
+        if(0 == P11 && i23 < 60 )
+            i23 = 1;
+        else
+            i23--;
+        break;
+    }
+	switch(i00)
+    {
+    case 0:
+        break;
+    case 1:
+        P00VAR = 0x00;
         i00--;
         break;
     default:
@@ -584,7 +609,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P01_VAR = 0x00;
+        P01VAR = 0x00;
         i01--;
         break;
     default:
@@ -596,7 +621,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P02_VAR = 0x00;
+        P02VAR = 0x00;
         i02--;
         break;
     default:
@@ -608,7 +633,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P03_VAR = 0x00;
+        P03VAR = 0x00;
         i03--;
         break;
     default:
@@ -620,7 +645,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-        P04_VAR = 0x00;
+        P04VAR = 0x00;
         i04--;
         break;
     default:
@@ -718,8 +743,8 @@ void PCA_Interrupt() interrupt 10
     {
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
-    P0 = 0xFF;//P0_0 = P0_1 = P0_2 = P0_3 = P0_4 = P0_5 = P0_6 = P0_7 = P2_7 = P2_6 = 1;
-    P20 = P21 = 1;
+    P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
+    P2 = 0x03;//P20 = P21 = 1;
 #endif
 }
 
@@ -760,7 +785,7 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 void LCD_Data(char dat)  //傳送資料到LCD
 {
     Data=dat; //資料送到BUS
-    P0_7=0;    //過濾顯示字型資料
+    P07=0;    //過濾顯示字型資料
     RS=1;
     RW=0;
     EN=1;//資料寫入到LCD內
