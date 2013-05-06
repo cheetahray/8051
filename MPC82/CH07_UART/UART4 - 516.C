@@ -29,7 +29,7 @@ unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P20VAR,P21
 #define DIF07 0xFE	//D7~FF
 #define DIF20 0xFE	//D7~FF
 #define DIF21 0xFE	//D7~FF
-#define DIF23 0xA0
+#define DIF23 0xFE
 #define DIF24 0xFE	//D9~FF
 #define DIF25 0xFE	//D5~FF
 #define DIF26 0xD3	//D6~FF
@@ -586,10 +586,9 @@ void T2_int (void) interrupt 5   //Timer2¤¤Â_¨ç¼Æ
         i23--;
         break;
     default:
-        if(0 == P11 && i23 < 60 )
-            i23 = 1;
-        else
-            i23--;
+        if(0 == P11 && i23 < 150 )
+            CCAP1H = ~0x00;
+        i23--;
         break;
     }
 	switch(i00)
