@@ -29,6 +29,7 @@ unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P20VAR,P21
 #define DIF07 0xFE	//D7~FF
 #define DIF20 0xFE	//D7~FF
 #define DIF21 0xFE	//D7~FF
+#define DIF22 0xFE
 #define DIF23 0xFE
 #define DIF24 0xFE	//D9~FF
 #define DIF25 0xFE	//D5~FF
@@ -44,7 +45,7 @@ unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P20VAR,P21
 //#define LCD
 #define TT  32768  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i24,i25,i26,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21, i23;
+unsigned char i24,i25,i26,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21, i22, i23;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -172,7 +173,7 @@ main()
     P21VAR=0;
 #endif
 #ifdef TIMER2
-    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i23=0;
+    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i22=i23=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -396,6 +397,23 @@ void consumeToken(unsigned char incomingByte)
                         //i11 = 0xFF;
                     }
                 }
+                else if( 2 == channel )
+                {
+                    if( velocity != 0 )
+                    {
+                        switch(note)
+                        {
+                        case 60:
+                            i22 = 4;
+                            CCAP0H = ~DIF22;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        //i11 = 0xFF;
+                    }
+                }
                 else if( 3 == channel )
                 {
                     if( velocity != 0 )
@@ -577,21 +595,35 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i21--;
         break;
     }
+    switch(i22)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP0H = ~0x00;
+        i22--;
+        break;
+    default:
+        i22--;
+        break;
+    }
     switch(i23)
     {
     case 0:
         break;
     case 1:
         CCAP1H = ~0x00;
+        P32 = 0;
         i23--;
         break;
     default:
-        if(0 == P11 && i23 < 150 )
-            CCAP1H = ~0x00;
-        i23--;
+        if(0 == P11 && i23 < 160 )
+            i23 = 1;
+        else
+            i23--;
         break;
     }
-	switch(i00)
+    switch(i00)
     {
     case 0:
         break;
@@ -712,8 +744,8 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 void UART_init(unsigned int bps)  //UART啟始程式
 {
     P0M0=0xFF;
-    P1M0 = 0x09; //設定P0為推挽式輸出(M0-1=01)
-    P2M0=0xFF;
+    P1M0=0x09; //設定P0為推挽式輸出(M0-1=01)
+    P2M0=0x7F;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
     TMOD |= T1_M1;  //設定TIMER1為MODE2
@@ -743,7 +775,7 @@ void PCA_Interrupt() interrupt 10
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
     P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
-    P2 = 0x03;//P20 = P21 = 1;
+    P20 = P21 = 1;
 #endif
 }
 

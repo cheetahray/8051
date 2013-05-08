@@ -18,7 +18,7 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef	HARDRAYPWM
 #define PCATIMER
 #define TTT  256
-unsigned char P00VAR, P01VAR, P02VAR, P03VAR, P04VAR, P05VAR, P06VAR, P07VAR, P20VAR, P21VAR, P23VAR;
+unsigned char P00VAR, P01VAR, P02VAR, P03VAR, P04VAR, P05VAR, P06VAR, P07VAR, P20VAR, P21VAR, P22VAR, P23VAR;
 #define DIF00 0xD9	//D5~FF
 #define DIF01 0xDD	//D5~FF
 #define DIF02 0xDD	//D5~FF
@@ -29,6 +29,7 @@ unsigned char P00VAR, P01VAR, P02VAR, P03VAR, P04VAR, P05VAR, P06VAR, P07VAR, P2
 #define DIF07 0xDD	//D7~FF
 #define DIF20 0xDD	//D7~FF
 #define DIF21 0xDD	//D7~FF
+#define DIF22 0xFF
 #define DIF23 0xFE
 #define DIF14 0xD0	//D9~FF
 #define DIF15 0xD0	//D5~FF
@@ -44,7 +45,7 @@ unsigned char P00VAR, P01VAR, P02VAR, P03VAR, P04VAR, P05VAR, P06VAR, P07VAR, P2
 //#define LCD
 #define TT  32768  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i14,i15,i16,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21, i23;
+unsigned char i14,i15,i16,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21, i22, i23;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -162,10 +163,11 @@ main()
     P07VAR=0;
     P20VAR=0;
     P21VAR=0;
+    P22VAR=0;
     P23VAR=0;
 #endif
 #ifdef TIMER2
-    i14=i15=i16=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i23=0;
+    i14=i15=i16=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i22=i23=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -246,7 +248,9 @@ void consumeToken(unsigned char incomingByte)
                 CCAP0H=Table[note]>>8; //設定比較暫存器高位元組
 #endif
 #ifdef LEDRay
+#ifndef CHANNEL16
                 LED0=~note;  //將接收到的字元由LED輸出
+#endif
 #endif
 #ifdef LCD
                 char raynote = (note & 0xF0);
@@ -370,7 +374,7 @@ void consumeToken(unsigned char incomingByte)
                         //i11 = 0xFF;
                     }
                 }
-                else if( 2 == channel )
+                else if( 5 == channel )
                 {
                     if( velocity != 0 )
                     {
@@ -387,7 +391,24 @@ void consumeToken(unsigned char incomingByte)
                         //i11 = 0xFF;
                     }
                 }
-                else if( 4 == channel )
+                else if( 2 == channel )
+                {
+                    if( velocity != 0 )
+                    {
+                        switch(note)
+                        {
+                        case 60:
+                            i22 = 4;
+                            P22VAR = DIF22;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        //i11 = 0xFF;
+                    }
+                }
+                else if( 3 == channel )
                 {
                     if( velocity != 0 )
                     {
@@ -399,7 +420,7 @@ void consumeToken(unsigned char incomingByte)
                         case 61:
                             P32 = 0;
                         }
-                        i23 = 115;
+                        i23 = 200;
                         P23VAR = DIF23;
                     }
                     else
@@ -465,6 +486,8 @@ void softPWM()
         P20 = 0;
     if(CL > P21VAR)
         P21 = 0;
+    if(CL > P22VAR)
+        P22 = 0;
     if(CL > P23VAR)
         P23 = 0;
 #endif
@@ -570,6 +593,18 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i21--;
         break;
     }
+    switch(i22)
+    {
+    case 0:
+        break;
+    case 1:
+        P22VAR = 0x00;
+        i22--;
+        break;
+    default:
+        i22--;
+        break;
+    }
     switch(i23)
     {
     case 0:
@@ -579,7 +614,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         i23--;
         break;
     default:
-        if(0 == P11 && i23 < 60 )
+        if(0 == P11 && i23 < 160 )
             i23 = 1;
         else
             i23--;
@@ -707,7 +742,7 @@ void UART_init(unsigned int bps)  //UART啟始程式
 {
     P0M1=0xFF;
     //P1M1=0x70; //設定P0為推挽式輸出(M0-1=01)
-    P2M1=0x03;
+    P2M1=0x0F;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
 #ifdef CHANNEL16
@@ -740,7 +775,7 @@ void PCA_Interrupt() interrupt 10
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
     P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
-    P2 = 0x0B;//P20 = P21 = P23 = 1;
+    P2 = 0x0F;//P20 = P21 = P22 = P23 = 1;
 #endif
 }
 
@@ -768,8 +803,8 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 #ifdef LEDRay
     LED=~rayCHANNEL;     //將接收到的字元由LED輸出
 #endif
-    oneCHANNEL = (rayCHANNEL & 0x0F);
-    twoCHANNEL = (rayCHANNEL >> 4);
+    twoCHANNEL = (rayCHANNEL & 0x0F);
+    oneCHANNEL = (rayCHANNEL >> 4);
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
 #endif
@@ -845,8 +880,8 @@ void EX1_int(void) interrupt 2   //INT1中斷函數2
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2中斷函數6
 {
-    i15 = 3;
-    CCAP3H = ~DIF15;
+    i22 = 4;
+    P22VAR = DIF22;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3中斷函數7
