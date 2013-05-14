@@ -7,7 +7,7 @@
 //#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
-//#define CHANNEL16		  //P10 P12 P13
+#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
@@ -53,7 +53,7 @@ void softPWM();
 #define OFF 1
 #define ON 2
 #define WAIT 3
-unsigned char rayCHANNEL = 0, oneCHANNEL = 0, twoCHANNEL = 0;//#define rayCHANNEL 0x00
+unsigned char rayCHANNEL = 0, oneCHANNEL = 0,twoCHANNEL = 0;//#define rayCHANNEL 0x00
 unsigned char channel;
 unsigned char note;
 unsigned char velocity;
@@ -247,7 +247,7 @@ void consumeToken(unsigned char incomingByte)
         if (0 == note) // note on, wait for note value
         {
             note=incomingByte;
-            //if( oneCHANNEL == channel && action > OFF )
+            if( action > OFF && oneCHANNEL == channel )
             {
 #ifdef MUSIC
                 CCAP0L=Table[note];	   //設定比較暫存器低位元組
@@ -279,56 +279,108 @@ void consumeToken(unsigned char incomingByte)
             velocity=incomingByte;
             if(action > OFF)
             {
-                if( oneCHANNEL == channel )
+                if( velocity != 0 && oneCHANNEL == channel )
                 {
-                    if( velocity != 0 )
+                    switch( oneCHANNEL )
                     {
 #ifdef MUSIC
                         CR = 1;
 #endif
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
+                    case 6:
+                        break;
+                    case 7:
+                        break;
+                    case 8:
+                        break;
+                    case 9:
+                        break;
+                    case 10:
+                        break;
+                    case 11:
                         switch(note)
                         {
-                        case 60:
+                        case 41:
+                            i26 = 3;
+                            CCAP4H = ~DIF26;
+                            break;
+                        case 48:
+                            i24 = 4;
+                            CCAP2H = ~DIF24;
+                            break;
+                        case 49:
+                            i25 = 4;
+                            CCAP3H = ~DIF25;
+                            break;
+                        case 55:
                             i00 = 4;
                             P00VAR = DIF00;
                             break;
-                        case 61:
+                        case 56:
                             i01 = 4;
                             P01VAR = DIF01;
                             break;
-                        case 62:
+                        case 57:
                             i02 = 3;
                             P02VAR = DIF02;
                             break;
-                        case 63:
+                        case 58:
                             i03 = 3;
                             P03VAR = DIF03;
                             break;
-                        case 64:
+                        case 59:
                             i04 = 3;
                             P04VAR = DIF04;
                             break;
-                        case 65:
+                        case 60:
                             i05 = 3;
                             P05VAR = DIF05;
                             break;
-                        case 66:
+                        case 61:
                             i06 = 3;
                             P06VAR = DIF06;
                             break;
-                        case 67:
+                        case 62:
                             i07 = 3;
                             P07VAR = DIF07;
                             break;
-                        case 68:
+                        case 63:
                             i20 = 2;
                             P20VAR = DIF20;
                             break;
-                        case 69:
+                        case 64:
                             i21 = 2;
                             P21VAR = DIF21;
                             break;
+                        case 70:
+                            i22 = 4;
+                            CCAP0H = ~DIF22;
+                            break;
+                        case 71:
+                            break;
+                        case 72:
+                            P32 = 1;
+                            i23 = 200;
+                            CCAP1H = ~DIF23;
+                            break;
+                        case 73:
+                            P32 = 0;
+                            i23 = 200;
+                            CCAP1H = ~DIF23;
+							break;
                         }
+                        break;
 #ifdef HARDRAYPWM
                         //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
                         //CCAP1H=0x20;  //設定(P13/CEX1)脈波時間，平均電壓為4.4V
@@ -353,88 +405,7 @@ void consumeToken(unsigned char incomingByte)
                         LCD_Data(' ');
 #endif
                     }
-                    else
-                    {
-                        //i11 = 0xFF;
-                    }
                 }
-#ifdef SIMULATION
-                else if( 1 == channel )
-                {
-                    if( velocity != 0 )
-                    {
-                        switch(note)
-                        {
-                        case 60:
-                            i24 = 4;
-                            CCAP2H = ~DIF24;
-                            break;
-                        case 61:
-                            i25 = 4;
-                            CCAP3H = ~DIF25;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        //i11 = 0xFF;
-                    }
-                }
-                else if( 5 == channel )
-                {
-                    if( velocity != 0 )
-                    {
-                        switch(note)
-                        {
-                        case 60:
-                            i26 = 3;
-                            CCAP4H = ~DIF26;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        //i11 = 0xFF;
-                    }
-                }
-                else if( 2 == channel )
-                {
-                    if( velocity != 0 )
-                    {
-                        switch(note)
-                        {
-                        case 60:
-                            i22 = 4;
-                            CCAP0H = ~DIF22;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        //i11 = 0xFF;
-                    }
-                }
-                else if( 3 == channel )
-                {
-                    if( velocity != 0 )
-                    {
-                        switch(note)
-                        {
-                        case 60:
-                            P32 = 1;
-                            break;
-                        case 61:
-                            P32 = 0;
-                        }
-                        i23 = 200;
-                        CCAP1H = ~DIF23;
-                    }
-                    else
-                    {
-                        //i11 = 0xFF;
-                    }
-                }
-#endif
                 else
                 {
                     //produceCount = produceCount;
@@ -499,188 +470,215 @@ void softPWM()
 void T2_int (void) interrupt 5   //Timer2中斷函數
 {
     TF2=0;    //清除TF2=0
-    switch(i24)
+    switch( oneCHANNEL )
     {
     case 0:
         break;
     case 1:
-        CCAP2H = ~0x00;
-        i24--;
         break;
-    default:
-        i24--;
+    case 2:
         break;
-    }
-    switch(i25)
-    {
-    case 0:
+    case 3:
         break;
-    case 1:
-        CCAP3H = ~0x00;
-        i25--;
+    case 4:
         break;
-    default:
-        i25--;
+    case 5:
         break;
-    }
-    switch(i26)
-    {
-    case 0:
+    case 6:
         break;
-    case 1:
-        CCAP4H = ~0x00;
-        i26--;
+    case 7:
         break;
-    default:
-        i26--;
+    case 8:
         break;
-    }
-    switch(i05)
-    {
-    case 0:
+    case 9:
         break;
-    case 1:
-        P05VAR = 0x00;
-        i05--;
+    case 10:
         break;
-    default:
-        i05--;
-        break;
-    }
-    switch(i06)
-    {
-    case 0:
-        break;
-    case 1:
-        P06VAR = 0x00;
-        i06--;
-        break;
-    default:
-        i06--;
-        break;
-    }
-    switch(i07)
-    {
-    case 0:
-        break;
-    case 1:
-        P07VAR = 0x00;
-        i07--;
-        break;
-    default:
-        i07--;
-        break;
-    }
-    switch(i20)
-    {
-    case 0:
-        break;
-    case 1:
-        P20VAR = 0x00;
-        i20--;
-        break;
-    default:
-        i20--;
-        break;
-    }
-    switch(i21)
-    {
-    case 0:
-        break;
-    case 1:
-        P21VAR = 0x00;
-        i21--;
-        break;
-    default:
-        i21--;
-        break;
-    }
-    switch(i22)
-    {
-    case 0:
-        break;
-    case 1:
-        CCAP0H = ~0x00;
-        i22--;
-        break;
-    default:
-        i22--;
-        break;
-    }
-    switch(i23)
-    {
-    case 0:
-        break;
-    case 1:
-        CCAP1H = ~0x00;
-        P32 = 0;
-        i23--;
-        break;
-    default:
-        if(0 == P11 && i23 < 160 )
-            i23 = 1;
-        else
+    case 11:
+        switch(i24)
+        {
+        case 0:
+            break;
+        case 1:
+            CCAP2H = ~0x00;
+            i24--;
+            break;
+        default:
+            i24--;
+            break;
+        }
+        switch(i25)
+        {
+        case 0:
+            break;
+        case 1:
+            CCAP3H = ~0x00;
+            i25--;
+            break;
+        default:
+            i25--;
+            break;
+        }
+        switch(i26)
+        {
+        case 0:
+            break;
+        case 1:
+            CCAP4H = ~0x00;
+            i26--;
+            break;
+        default:
+            i26--;
+            break;
+        }
+        switch(i05)
+        {
+        case 0:
+            break;
+        case 1:
+            P05VAR = 0x00;
+            i05--;
+            break;
+        default:
+            i05--;
+            break;
+        }
+        switch(i06)
+        {
+        case 0:
+            break;
+        case 1:
+            P06VAR = 0x00;
+            i06--;
+            break;
+        default:
+            i06--;
+            break;
+        }
+        switch(i07)
+        {
+        case 0:
+            break;
+        case 1:
+            P07VAR = 0x00;
+            i07--;
+            break;
+        default:
+            i07--;
+            break;
+        }
+        switch(i20)
+        {
+        case 0:
+            break;
+        case 1:
+            P20VAR = 0x00;
+            i20--;
+            break;
+        default:
+            i20--;
+            break;
+        }
+        switch(i21)
+        {
+        case 0:
+            break;
+        case 1:
+            P21VAR = 0x00;
+            i21--;
+            break;
+        default:
+            i21--;
+            break;
+        }
+        switch(i22)
+        {
+        case 0:
+            break;
+        case 1:
+            CCAP0H = ~0x00;
+            i22--;
+            break;
+        default:
+            i22--;
+            break;
+        }
+        switch(i23)
+        {
+        case 0:
+            break;
+        case 1:
+            CCAP1H = ~0x00;
+            P32 = 0;
             i23--;
-        break;
-    }
-    switch(i00)
-    {
-    case 0:
-        break;
-    case 1:
-        P00VAR = 0x00;
-        i00--;
-        break;
-    default:
-        i00--;
-        break;
-    }
-    switch(i01)
-    {
-    case 0:
-        break;
-    case 1:
-        P01VAR = 0x00;
-        i01--;
-        break;
-    default:
-        i01--;
-        break;
-    }
-    switch(i02)
-    {
-    case 0:
-        break;
-    case 1:
-        P02VAR = 0x00;
-        i02--;
-        break;
-    default:
-        i02--;
-        break;
-    }
-    switch(i03)
-    {
-    case 0:
-        break;
-    case 1:
-        P03VAR = 0x00;
-        i03--;
-        break;
-    default:
-        i03--;
-        break;
-    }
-    switch(i04)
-    {
-    case 0:
-        break;
-    case 1:
-        P04VAR = 0x00;
-        i04--;
-        break;
-    default:
-        i04--;
+            break;
+        default:
+            if(0 == P11 && i23 < 160 )
+                i23 = 1;
+            else
+                i23--;
+            break;
+        }
+        switch(i00)
+        {
+        case 0:
+            break;
+        case 1:
+            P00VAR = 0x00;
+            i00--;
+            break;
+        default:
+            i00--;
+            break;
+        }
+        switch(i01)
+        {
+        case 0:
+            break;
+        case 1:
+            P01VAR = 0x00;
+            i01--;
+            break;
+        default:
+            i01--;
+            break;
+        }
+        switch(i02)
+        {
+        case 0:
+            break;
+        case 1:
+            P02VAR = 0x00;
+            i02--;
+            break;
+        default:
+            i02--;
+            break;
+        }
+        switch(i03)
+        {
+        case 0:
+            break;
+        case 1:
+            P03VAR = 0x00;
+            i03--;
+            break;
+        default:
+            i03--;
+            break;
+        }
+        switch(i04)
+        {
+        case 0:
+            break;
+        case 1:
+            P04VAR = 0x00;
+            i04--;
+            break;
+        default:
+            i04--;
+            break;
+        }
         break;
     }
 }
@@ -785,9 +783,9 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 {
 #ifdef CHANNEL16
     int ll;
-    P1_0=0;
+    P10=0;
     rayCHANNEL = 0;
-    P1_0=1 ;   //開始串列傳輸
+    P10=1 ;   //開始串列傳輸
     rayCHANNEL |= P12;
     for(ll=0; ll<7; ll++)
     {

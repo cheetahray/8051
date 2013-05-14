@@ -19,21 +19,21 @@ unsigned char oldCHANNEL=0xFF;
 #define PCATIMER
 #define TTT  256
 unsigned char P00VAR, P01VAR, P02VAR, P03VAR, P04VAR, P05VAR, P06VAR, P07VAR, P20VAR, P21VAR, P22VAR, P23VAR;
-#define DIF00 0xD9	//D5~FF
-#define DIF01 0xDD	//D5~FF
-#define DIF02 0xDD	//D5~FF
-#define DIF03 0xDD	//85~FF
-#define DIF04 0xDD	//D7~FF
-#define DIF05 0xDD	//D7~FF
-#define DIF06 0xDD	//D7~FF
-#define DIF07 0xDD	//D7~FF
-#define DIF20 0xDD	//D7~FF
-#define DIF21 0xDD	//D7~FF
-#define DIF22 0xFF
-#define DIF23 0xFE
-#define DIF14 0xD0	//D9~FF
-#define DIF15 0xD0	//D5~FF
-#define DIF16 0xCF	//D6~FF
+#define DIF00 0x10	//D5~FF
+#define DIF01 0x30	//D5~FF
+#define DIF02 0x40	//D5~FF
+#define DIF03 0x53	//85~FF
+#define DIF04 0x60	//D7~FF
+#define DIF05 0x70	//D7~FF
+#define DIF06 0x90	//D7~FF
+#define DIF07 0xA0	//D7~FF
+#define DIF20 0xC1	//D7~FF
+#define DIF21 0xD0	//D7~FF
+#define DIF22 0xE0
+#define DIF23 0xF0
+#define DIF14 0x80	//D9~FF
+#define DIF15 0xB2	//D5~FF
+#define DIF16 0xFF	//D6~FF
 #endif
 #define TIMER0
 #define SIMULATION
@@ -136,10 +136,14 @@ main()
 #endif
     //AUXIE |= ES2;
 #ifdef HARDRAYPWM
-    /*CCAPM0=CCAPM1=*/CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    CCAPM0=CCAPM1=CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    /*CCAP0H=CCAP1H=*/CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    CCAP0H=~0x19;
+    CCAP1H=~0x4C;
+    CCAP2H=~DIF14;
+    CCAP3H=~DIF15;
+    CCAP4H/*=CCAP5H*/=~DIF16;//0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
 #endif
 #ifdef PCATIMER
@@ -153,18 +157,18 @@ main()
     AUXIE = EPCA;      //致能PCA中斷
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
-    P00VAR=0;
-    P01VAR=0;
-    P02VAR=0;
-    P03VAR=0;
-    P04VAR=0;
-    P05VAR=0;
-    P06VAR=0;
-    P07VAR=0;
-    P20VAR=0;
-    P21VAR=0;
-    P22VAR=0;
-    P23VAR=0;
+    P00VAR=DIF00;
+    P01VAR=DIF01;
+    P02VAR=DIF02;
+    P03VAR=DIF03;
+    P04VAR=DIF04;
+    P05VAR=DIF05;
+    P06VAR=DIF06;
+    P07VAR=DIF07;
+    P20VAR=DIF20;
+    P21VAR=DIF21;
+    P22VAR=DIF22;
+    P23VAR=DIF23;
 #endif
 #ifdef TIMER2
     i14=i15=i16=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i22=i23=0;
