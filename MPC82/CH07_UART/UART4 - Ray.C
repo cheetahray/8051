@@ -31,7 +31,7 @@ unsigned char P00VAR, P01VAR, P02VAR, P03VAR, P04VAR, P05VAR, P06VAR, P07VAR, P2
 #define DIF21 0xD0	//D7~FF
 #define DIF22 0xE0
 #define DIF23 0xF0
-#define DIF14 0x80	//D9~FF
+#define DIF14 0xFF	//D9~FF
 #define DIF15 0xB2	//D5~FF
 #define DIF16 0xFF	//D6~FF
 #endif
@@ -139,11 +139,7 @@ main()
     CCAPM0=CCAPM1=CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    CCAP0H=~0x19;
-    CCAP1H=~0x4C;
-    CCAP2H=~DIF14;
-    CCAP3H=~DIF15;
-    CCAP4H/*=CCAP5H*/=~DIF16;//0x00; //設定(P12/CEX0)，平均電壓為0V
+    CCAP0H=CCAP1H=CCAP2H=CCAP3H=CCAP4H/*=CCAP5H*/=~0x00; //設定(P12/CEX0)，平均電壓為0V
     CR = 1;
 #endif
 #ifdef PCATIMER
@@ -423,6 +419,7 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 61:
                             P32 = 0;
+							break;
                         }
                         i23 = 200;
                         P23VAR = DIF23;
@@ -872,14 +869,12 @@ void LCD_init(void)    //LCD的啟始程式
 /*********************************/
 void EX0_int(void) interrupt 0   //INT0中斷函數0
 {
-    i20 = 2;
-    P20VAR = DIF20;
 }
 /*********************************************/
 void EX1_int(void) interrupt 2   //INT1中斷函數2
 {
-    i21 = 2;
-    P21VAR = DIF21;
+    i14 = 3;
+    CCAP2H = ~DIF14;
 }
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2中斷函數6

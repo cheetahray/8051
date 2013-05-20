@@ -7,7 +7,7 @@
 //#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
-#define CHANNEL16		  //P10 P12 P13
+//#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
@@ -18,22 +18,8 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef	HARDRAYPWM
 #define PCATIMER
 #define TTT  256
-unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P20VAR,P21VAR;
-#define DIF00 0xFE	//D5~FF
-#define DIF01 0xFE	//D5~FF
-#define DIF02 0xFE	//D5~FF
-#define DIF03 0xFE	//85~FF
-#define DIF04 0xFE	//D7~FF
-#define DIF05 0xFE	//D7~FF
-#define DIF06 0xFE	//D7~FF
-#define DIF07 0xFE	//D7~FF
-#define DIF20 0xFE	//D7~FF
-#define DIF21 0xFE	//D7~FF
-#define DIF22 0xFE
-#define DIF23 0xFE
-#define DIF24 0xFE	//D9~FF
-#define DIF25 0xFE	//D5~FF
-#define DIF26 0xD3	//D6~FF
+unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P32VAR,P33VAR,P34VAR,P35VAR;
+unsigned char ohno[36];
 #endif
 #define TIMER0
 #define SIMULATION
@@ -45,7 +31,7 @@ unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P20VAR,P21
 //#define LCD
 #define TT  32768  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i24,i25,i26,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21, i22, i23;
+unsigned char i24,i25,i26,i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i32,i33,i34,i35,i10000;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -53,7 +39,7 @@ void softPWM();
 #define OFF 1
 #define ON 2
 #define WAIT 3
-unsigned char rayCHANNEL = 0, oneCHANNEL = 0,twoCHANNEL = 0;//#define rayCHANNEL 0x00
+unsigned char rayCHANNEL = 0, oneCHANNEL = 10,twoCHANNEL = 0;//#define rayCHANNEL 0x00
 unsigned char channel;
 unsigned char note;
 unsigned char velocity;
@@ -100,6 +86,7 @@ void consumeToken(unsigned char incomingByte);
 
 main()
 {
+    int mm;
     IFD = XTAL;
     IFADRH = 0;
     IFADRL = CKCON2;
@@ -161,19 +148,12 @@ main()
     AUXIE = EPCA;      //致能PCA中斷
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
-    P00VAR=0;
-    P01VAR=0;
-    P02VAR=0;
-    P03VAR=0;
-    P04VAR=0;
-    P05VAR=0;
-    P06VAR=0;
-    P07VAR=0;
-    P20VAR=0;
-    P21VAR=0;
+    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P32VAR=P33VAR=P34VAR=P35VAR=0;
+    for(mm=0; mm<36; mm++)
+        ohno[mm]= 0;
 #endif
 #ifdef TIMER2
-    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i22=i23=0;
+    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i32=i33=i34=i35=i10000=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -252,6 +232,156 @@ void consumeToken(unsigned char incomingByte)
 #ifdef MUSIC
                 CCAP0L=Table[note];	   //設定比較暫存器低位元組
                 CCAP0H=Table[note]>>8; //設定比較暫存器高位元組
+#else
+                switch( oneCHANNEL )
+                {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    break;
+                case 9:
+                    break;
+                case 10:
+                    switch(note)
+                    {
+                    case 72:
+                        ohno[0] = 1;
+						break;
+                    case 73:
+                        ohno[1] = 1;
+						ohno[0] = 1;
+						break;
+                    case 74:
+                        ohno[2] = 1;
+						ohno[0] = 1;
+						break;
+                    case 75:
+                        ohno[3] = 1;
+						ohno[0] = 1;
+						break;
+                    case 76:
+                        if(ohno[0])
+                        {
+                            ;
+                        }
+                        else
+                        {
+                            ohno[4] = 1;
+                            ohno[0] = 1;
+                        }
+                        break;
+                    case 77:
+                        if(ohno[0])
+                        {
+                            ;
+                        }
+                        else
+                        {
+                            ohno[5] = 1;
+                            ohno[0] = 1;
+                        }
+                        break;
+                    case 78:
+                        ohno[6] = 1;
+                        break;
+                    case 79:
+                        if(ohno[7])
+                        {
+                            ;
+                        }
+                        else
+                        {
+                            ohno[7] = 1;
+                        }
+                        break;
+                    case 80:
+                        if(ohno[7])
+                        {
+                            ;
+                        }
+                        else
+                        {
+                            ohno[8] = 1;
+                            ohno[7] = 1;
+                        }
+                        break;
+                    case 81:
+                        if(ohno[7])
+                        {
+                            if(i22>1)
+                            {
+                                ohno[18] = 1;
+                            }
+                        }
+                        else
+                        {
+                            ohno[9] = 1;
+                            ohno[7] = 1;
+                        }
+                        break;
+                    case 82:
+                        if(ohno[7])
+                        {
+                            ohno[15] = 1;
+                            ohno[18] = 1;
+                        }
+                        else
+                        {
+                            ohno[10] = 1;
+                            ohno[7] = 1;
+                        }
+                        break;
+                    case 83:
+                        if(ohno[7])
+                        {
+                            ohno[16] = 1;
+                            ohno[18] = 1;
+                        }
+                        else
+                        {
+                            ohno[11] = 1;
+                            ohno[7] = 1;
+                        }
+                        break;
+                    case 84:
+                        if(ohno[7])
+                        {
+                            ohno[17] = 1;
+                            ohno[18] = 1;
+                        }
+                        else
+                        {
+                            ohno[12] = 1;
+                            ohno[7] = 1;
+                        }
+                        break;
+                    case 85:
+                        ohno[13] = 1;
+                        ohno[18] = 1;
+                        break;
+                    case 86:
+                        ohno[14] = 1;
+                        ohno[18] = 1;
+                        break;
+                    }
+                    break;
+                case 11:
+                    break;
+                }
 #endif
 #ifdef LEDRay
 #ifndef CHANNEL16
@@ -281,11 +411,11 @@ void consumeToken(unsigned char incomingByte)
             {
                 if( velocity != 0 && oneCHANNEL == channel )
                 {
-                    switch( oneCHANNEL )
-                    {
 #ifdef MUSIC
                         CR = 1;
 #endif
+                    switch( oneCHANNEL )
+                    {
                     case 0:
                         break;
                     case 1:
@@ -307,78 +437,253 @@ void consumeToken(unsigned char incomingByte)
                     case 9:
                         break;
                     case 10:
+                        switch(note)
+                        {
+                        case 72:
+                            i00 = 2;
+                            P00VAR = 0xFF;
+                            break;
+                        case 73:
+                            i01 = 2;
+                            P01VAR = 0xFF;
+                            i00 = 2;
+                            P00VAR = 0xFF;
+                            break;
+                        case 74:
+                            i02 = 2;
+                            P02VAR = 0xFF;
+                            i00 = 2;
+                            P00VAR = 0xFF;
+                            break;
+                        case 75:
+                            i03 = 2;
+                            P03VAR = 0xFF;
+                            i00 = 2;
+                            P00VAR = 0xFF;
+                            break;
+                        case 76:
+                            if(ohno[0])
+                            {
+                                i22 = 2;
+                                CCAP0H = ~0xFF;
+                            }
+                            else
+                            {
+                                i04 = 2;
+                                P04VAR = 0xFF;
+                                i00 = 2;
+                                P00VAR = 0xFF;
+                            }
+                            break;
+                        case 77:
+                            if(ohno[0])
+                            {
+                                i23 = 2;
+                                CCAP1H = ~0xFF;
+                                i22 = 2;
+                                CCAP0H = ~0xFF;
+                            }
+                            else
+                            {
+                                i05 = 2;
+                                P05VAR = 0xFF;
+                                i00 = 2;
+                                P00VAR = 0xFF;
+                            }
+                            break;
+                        case 78:
+                            i06 = 2;
+                            P06VAR = 0xFF;
+                            i22 = 2;
+                            CCAP1H = ~0xFF;
+                            break;
+                        case 79:
+                            if(ohno[7])
+                            {
+                                i24 = 2;
+                                CCAP2H = ~0xFF;
+                                i22 = 2;
+                                CCAP0H = ~0xFF;
+                            }
+                            else
+                            {
+                                i07 = 2;
+                                P07VAR = 0xFF;
+                            }
+                            break;
+                        case 80:
+                            if(ohno[7])
+                            {
+                                i25 = 2;
+                                CCAP3H = ~0xFF;
+                                i22 = 2;
+                                CCAP0H = ~0xFF;
+                            }
+                            else
+                            {
+                                i11 = 2;
+                                P11VAR = 0xFF;
+                                i07 = 2;
+                                P07VAR = 0xFF;
+                            }
+                            break;
+                        case 81:
+                            if(ohno[7])
+                            {
+                                if(i22>1)
+                                {
+                                    i35 = 2;
+                                    P35VAR = 0xFF;
+                                }
+                                else
+                                {
+                                    i26 = 2;
+                                    CCAP4H = ~0xFF;
+                                    i22 = 2;
+                                    CCAP0H = ~0xFF;
+                                }
+                            }
+                            else
+                            {
+                                i14 = 2;
+                                P14VAR = 0xFF;
+                                i07 = 2;
+                                P07VAR = 0xFF;
+                            }
+                            break;
+                        case 82:
+                            if(ohno[7])
+                            {
+                                i32 = 2;
+                                P32VAR = 0xFF;
+                                i35 = 2;
+                                P35VAR = 0xFF;
+                            }
+                            else
+                            {
+                                i15 = 2;
+                                P15VAR = 0xFF;
+                                i07 = 2;
+                                P07VAR = 0xFF;
+                            }
+                            break;
+                        case 83:
+                            if(ohno[7])
+                            {
+                                i33 = 2;
+                                P33VAR = 0xFF;
+                                i35 = 2;
+                                P35VAR = 0xFF;
+                            }
+                            else
+                            {
+                                i16 = 2;
+                                P16VAR = 0xFF;
+                                i07 = 2;
+                                P07VAR = 0xFF;
+                            }
+                            break;
+                        case 84:
+                            if(ohno[7])
+                            {
+                                i34 = 2;
+                                P34VAR = 0xFF;
+                                i35 = 2;
+                                P35VAR = 0xFF;
+                            }
+                            else
+                            {
+                                i17 = 2;
+                                P17VAR = 0xFF;
+                                i07 = 2;
+                                P07VAR = 0xFF;
+                            }
+                            break;
+                        case 85:
+                            i20 = 2;
+                            P20VAR = 0xFF;
+                            i35 = 2;
+                            P35VAR = 0xFF;
+                            break;
+                        case 86:
+                            i21 = 2;
+                            P21VAR = 0xFF;
+                            i35 = 2;
+                            P35VAR = 0xFF;
+                            break;
+                        }
                         break;
                     case 11:
                         switch(note)
                         {
                         case 41:
                             i26 = 3;
-                            CCAP4H = ~DIF26;
+                            CCAP4H = ~0xD3;
                             break;
                         case 48:
                             i24 = 4;
-                            CCAP2H = ~DIF24;
+                            CCAP2H = ~0xFE;
                             break;
                         case 49:
                             i25 = 4;
-                            CCAP3H = ~DIF25;
+                            CCAP3H = ~0xFE;
                             break;
                         case 55:
                             i00 = 4;
-                            P00VAR = DIF00;
+                            P00VAR = 0xFE;
                             break;
                         case 56:
                             i01 = 4;
-                            P01VAR = DIF01;
+                            P01VAR = 0xFE;
                             break;
                         case 57:
                             i02 = 3;
-                            P02VAR = DIF02;
+                            P02VAR = 0xFE;
                             break;
                         case 58:
                             i03 = 3;
-                            P03VAR = DIF03;
+                            P03VAR = 0xFE;
                             break;
                         case 59:
                             i04 = 3;
-                            P04VAR = DIF04;
+                            P04VAR = 0xFE;
                             break;
                         case 60:
                             i05 = 3;
-                            P05VAR = DIF05;
+                            P05VAR = 0xFE;
                             break;
                         case 61:
                             i06 = 3;
-                            P06VAR = DIF06;
+                            P06VAR = 0xFE;
                             break;
                         case 62:
                             i07 = 3;
-                            P07VAR = DIF07;
+                            P07VAR = 0xFE;
                             break;
                         case 63:
                             i20 = 2;
-                            P20VAR = DIF20;
+                            P20VAR = 0xFE;
                             break;
                         case 64:
                             i21 = 2;
-                            P21VAR = DIF21;
+                            P21VAR = 0xFE;
                             break;
                         case 70:
                             i22 = 4;
-                            CCAP0H = ~DIF22;
+                            CCAP0H = ~0xFE;
                             break;
                         case 71:
                             break;
                         case 72:
                             P32 = 1;
                             i23 = 200;
-                            CCAP1H = ~DIF23;
+                            CCAP1H = ~0xFE;
                             break;
                         case 73:
                             P32 = 0;
                             i23 = 200;
-                            CCAP1H = ~DIF23;
-							break;
+                            CCAP1H = ~0xFE;
+                            break;
                         }
                         break;
 #ifdef HARDRAYPWM
@@ -443,26 +748,44 @@ void softPWM()
     }
 #endif
 #ifdef PCATIMER
-    if(CL > P00VAR)
+    if(ohno[0] && CL > P00VAR)
         P00 = 0;
-    if(CL > P01VAR)
+    if(ohno[1] && CL > P01VAR)
         P01 = 0;
-    if(CL > P02VAR)
+    if(ohno[2] && CL > P02VAR)
         P02 = 0;
-    if(CL > P03VAR)
+    if(ohno[3] && CL > P03VAR)
         P03 = 0;
-    if(CL > P04VAR)
+    if(ohno[4] && CL > P04VAR)
         P04 = 0;
-    if(CL > P05VAR)
+    if(ohno[5] && CL > P05VAR)
         P05 = 0;
-    if(CL > P06VAR)
+    if(ohno[6] && CL > P06VAR)
         P06 = 0;
-    if(CL > P07VAR)
+    if(ohno[7] && CL > P07VAR)
         P07 = 0;
-    if(CL > P20VAR)
+    if(ohno[8] && CL > P11VAR)
+        P11 = 0;
+    if(ohno[9] && CL > P14VAR)
+        P14 = 0;
+    if(ohno[10] && CL > P15VAR)
+        P15 = 0;
+    if(ohno[11] && CL > P16VAR)
+        P16 = 0;
+    if(ohno[12] && CL > P17VAR)
+        P17 = 0;
+    if(ohno[13] && CL > P20VAR)
         P20 = 0;
-    if(CL > P21VAR)
+    if(ohno[14] && CL > P21VAR)
         P21 = 0;
+    if(ohno[15] && CL > P32VAR)
+        P32 = 0;
+    if(ohno[16] && CL > P33VAR)
+        P33 = 0;
+    if(ohno[17] && CL > P34VAR)
+        P34 = 0;
+    if(ohno[18] && CL > P35VAR)
+        P35 = 0;
 #endif
 }
 #ifdef TIMER2
@@ -470,6 +793,317 @@ void softPWM()
 void T2_int (void) interrupt 5   //Timer2中斷函數
 {
     TF2=0;    //清除TF2=0
+    switch(i00)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[0] = 0;
+        P00 = 0;
+        i00--;
+        break;
+    default:
+        i00--;
+        break;
+    }
+    switch(i01)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[1] = 0;
+        P01 = 0;
+        i01--;
+        break;
+    default:
+        i01--;
+        break;
+    }
+    switch(i02)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[2] = 0;
+        P02 = 0;
+		i02--;
+        break;
+    default:
+        i02--;
+        break;
+    }
+    switch(i03)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[3] = 0;
+        P03 = 0;
+        i03--;
+        break;
+    default:
+        i03--;
+        break;
+    }
+    switch(i04)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[4] = 0;
+        P04 = 0;
+        i04--;
+        break;
+    default:
+        i04--;
+        break;
+    }
+    switch(i05)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[5] = 0;
+        P05 = 0;
+        i05--;
+        break;
+    default:
+        i05--;
+        break;
+    }
+    switch(i06)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[6] = 0;
+        P06 = 0;
+        i06--;
+        break;
+    default:
+        i06--;
+        break;
+    }
+    switch(i07)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[7] = 0;
+        P07 = 0;
+        i07--;
+        break;
+    default:
+        i07--;
+        break;
+    }
+    switch(i11)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[8] = 0;
+        P11 = 0;
+        i11--;
+        break;
+    default:
+        i11--;
+        break;
+    }
+    switch(i14)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[9] = 0;
+        P14 = 0;
+        i14--;
+        break;
+    default:
+        i14--;
+        break;
+    }
+    switch(i15)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[10] = 0;
+        P15 = 0;
+        i15--;
+        break;
+    default:
+        i15--;
+        break;
+    }
+    switch(i16)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[11] = 0;
+        P16 = 0;
+        i16--;
+        break;
+    default:
+        i16--;
+        break;
+    }
+    switch(i17)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[12] = 0;
+        P17 = 0;
+        i17--;
+        break;
+    default:
+        i17--;
+        break;
+    }
+    switch(i20)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[13] = 0;
+        P20 = 0;
+        i20--;
+        break;
+    default:
+        i20--;
+        break;
+    }
+    switch(i21)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[14] = 0;
+        P21 = 0;
+        i21--;
+        break;
+    default:
+        i21--;
+        break;
+    }
+    switch(i22)
+    {
+    case 0:
+        break;
+    case 1:
+		CCAP0H = ~0x00;
+        i22--;
+        break;
+    default:
+        i22--;
+        break;
+    }
+    switch(i23)
+    {
+    case 0:
+        break;
+    case 1:
+		CCAP1H = ~0x00;
+        //P32 = 0;
+        i23--;
+        break;
+    default:
+        //if(0 == P11 && i23 < 160 )
+        //i23 = 1;
+        //else
+        i23--;
+        break;
+    }
+    switch(i24)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP2H = ~0x00;
+        i24--;
+        break;
+    default:
+        i24--;
+        break;
+    }
+    switch(i25)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP3H = ~0x00;
+        i25--;
+        break;
+    default:
+        i25--;
+        break;
+    }
+    switch(i26)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP4H = ~0x00;
+        i26--;
+        break;
+    default:
+        i26--;
+        break;
+    }
+    switch(i32)
+    {
+    case 0:
+        break;
+    case 1:
+	    ohno[15] = 0;
+        P32 = 0;
+        i32--;
+        break;
+    default:
+        i32--;
+        break;
+    }
+    switch(i33)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[16] = 0;
+        P33 = 0;
+        i33--;
+        break;
+    default:
+        i33--;
+        break;
+    }
+    switch(i34)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[17] = 0;
+        P34 = 0;
+        i34--;
+        break;
+    default:
+        i34--;
+        break;
+    }
+    switch(i35)
+    {
+    case 0:
+        break;
+    case 1:
+		ohno[18] = 0;
+        P35 = 0;
+        i35--;
+        break;
+    default:
+        i35--;
+        break;
+    }
     switch( oneCHANNEL )
     {
     case 0:
@@ -495,190 +1129,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 10:
         break;
     case 11:
-        switch(i24)
-        {
-        case 0:
-            break;
-        case 1:
-            CCAP2H = ~0x00;
-            i24--;
-            break;
-        default:
-            i24--;
-            break;
-        }
-        switch(i25)
-        {
-        case 0:
-            break;
-        case 1:
-            CCAP3H = ~0x00;
-            i25--;
-            break;
-        default:
-            i25--;
-            break;
-        }
-        switch(i26)
-        {
-        case 0:
-            break;
-        case 1:
-            CCAP4H = ~0x00;
-            i26--;
-            break;
-        default:
-            i26--;
-            break;
-        }
-        switch(i05)
-        {
-        case 0:
-            break;
-        case 1:
-            P05VAR = 0x00;
-            i05--;
-            break;
-        default:
-            i05--;
-            break;
-        }
-        switch(i06)
-        {
-        case 0:
-            break;
-        case 1:
-            P06VAR = 0x00;
-            i06--;
-            break;
-        default:
-            i06--;
-            break;
-        }
-        switch(i07)
-        {
-        case 0:
-            break;
-        case 1:
-            P07VAR = 0x00;
-            i07--;
-            break;
-        default:
-            i07--;
-            break;
-        }
-        switch(i20)
-        {
-        case 0:
-            break;
-        case 1:
-            P20VAR = 0x00;
-            i20--;
-            break;
-        default:
-            i20--;
-            break;
-        }
-        switch(i21)
-        {
-        case 0:
-            break;
-        case 1:
-            P21VAR = 0x00;
-            i21--;
-            break;
-        default:
-            i21--;
-            break;
-        }
-        switch(i22)
-        {
-        case 0:
-            break;
-        case 1:
-            CCAP0H = ~0x00;
-            i22--;
-            break;
-        default:
-            i22--;
-            break;
-        }
-        switch(i23)
-        {
-        case 0:
-            break;
-        case 1:
-            CCAP1H = ~0x00;
-            P32 = 0;
-            i23--;
-            break;
-        default:
-            if(0 == P11 && i23 < 160 )
-                i23 = 1;
-            else
-                i23--;
-            break;
-        }
-        switch(i00)
-        {
-        case 0:
-            break;
-        case 1:
-            P00VAR = 0x00;
-            i00--;
-            break;
-        default:
-            i00--;
-            break;
-        }
-        switch(i01)
-        {
-        case 0:
-            break;
-        case 1:
-            P01VAR = 0x00;
-            i01--;
-            break;
-        default:
-            i01--;
-            break;
-        }
-        switch(i02)
-        {
-        case 0:
-            break;
-        case 1:
-            P02VAR = 0x00;
-            i02--;
-            break;
-        default:
-            i02--;
-            break;
-        }
-        switch(i03)
-        {
-        case 0:
-            break;
-        case 1:
-            P03VAR = 0x00;
-            i03--;
-            break;
-        default:
-            i03--;
-            break;
-        }
-        switch(i04)
-        {
-        case 0:
-            break;
-        case 1:
-            P04VAR = 0x00;
-            i04--;
-            break;
-        default:
-            i04--;
-            break;
-        }
         break;
     }
 }
@@ -742,8 +1192,9 @@ void S2CON_int (void)  interrupt 12  //串列中斷函數
 void UART_init(unsigned int bps)  //UART啟始程式
 {
     P0M0=0xFF;
-    P1M0=0x09; //設定P0為推挽式輸出(M0-1=01)
+    P1M0=0xFB; //設定P0為推挽式輸出(M0-1=01)
     P2M0=0x7F;
+    P3M1=0xFC;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
     TMOD |= T1_M1;  //設定TIMER1為MODE2
@@ -772,8 +1223,44 @@ void PCA_Interrupt() interrupt 10
     {
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
-    P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
-    P20 = P21 = 1;
+    if(ohno[0])
+        P00 = 1;
+    if(ohno[1])
+        P01 = 1;
+    if(ohno[2])
+        P02 = 1;
+    if(ohno[3])
+        P03 = 1;
+    if(ohno[4])
+        P04 = 1;
+    if(ohno[5])
+        P05 = 1;
+    if(ohno[6])
+        P06 = 1;
+    if(ohno[7])
+        P07 = 1;
+    if(ohno[8])
+        P11 = 1;
+    if(ohno[9])
+        P14 = 1;
+    if(ohno[10])
+        P15 = 1;
+    if(ohno[11])
+        P16 = 1;
+    if(ohno[12])
+        P17 = 1;
+    if(ohno[13])
+        P20 = 1;
+    if(ohno[14])
+        P21 = 1;
+    if(ohno[15])
+        P32 = 1;
+    if(ohno[16])
+        P33 = 1;
+    if(ohno[17])
+        P34 = 1;
+    if(ohno[18])
+        P35 = 1;
 #endif
 }
 
@@ -782,25 +1269,28 @@ void PCA_Interrupt() interrupt 10
 void T0_int(void) interrupt 1  //Timer0中斷函數
 {
 #ifdef CHANNEL16
-    int ll;
-    P10=0;
-    rayCHANNEL = 0;
-    P10=1 ;   //開始串列傳輸
-    rayCHANNEL |= P12;
-    for(ll=0; ll<7; ll++)
+    if(i10000++ == 0)
     {
-        P13 = 0;
-        rayCHANNEL <<= 1;
-        P13 = 1;
+        int ll;
+        P10=0;
+        rayCHANNEL = 0;
+        P10=1 ;   //開始串列傳輸
         rayCHANNEL |= P12;
-    }
+        for(ll=0; ll<7; ll++)
+        {
+            P13 = 0;
+            rayCHANNEL <<= 1;
+            P13 = 1;
+            rayCHANNEL |= P12;
+        }
 #ifdef LEDRay
-    LED=~rayCHANNEL;     //將接收到的字元由LED輸出
+        LED=~rayCHANNEL;     //將接收到的字元由LED輸出
 #endif
-    twoCHANNEL = (rayCHANNEL & 0x0F);
-    oneCHANNEL = (rayCHANNEL >> 4);
-    TL0=0;	//TL0=65536 - TT;
-    TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
+        twoCHANNEL = (rayCHANNEL & 0x0F);
+        oneCHANNEL = (rayCHANNEL >> 4);
+        TL0=0;	//TL0=65536 - TT;
+        TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
+    }
 #endif
 }
 #endif
