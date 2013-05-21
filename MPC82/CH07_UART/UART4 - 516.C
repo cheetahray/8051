@@ -18,8 +18,7 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef	HARDRAYPWM
 #define PCATIMER
 #define TTT  256
-unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P32VAR,P33VAR,P34VAR,P35VAR;
-unsigned char ohno[36];
+unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P32VAR,P36VAR,P34VAR,P35VAR;
 #endif
 #define TIMER0
 #define SIMULATION
@@ -31,7 +30,7 @@ unsigned char ohno[36];
 //#define LCD
 #define TT  32768  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i24,i25,i26,i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i32,i33,i34,i35,i10000;
+unsigned char i24,i25,i26,i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i32,i36,i34,i35,i10000;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -86,7 +85,6 @@ void consumeToken(unsigned char incomingByte);
 
 main()
 {
-    int mm;
     IFD = XTAL;
     IFADRH = 0;
     IFADRL = CKCON2;
@@ -148,12 +146,10 @@ main()
     AUXIE = EPCA;      //致能PCA中斷
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
-    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P32VAR=P33VAR=P34VAR=P35VAR=0;
-    for(mm=0; mm<36; mm++)
-        ohno[mm]= 0;
+    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P32VAR=P36VAR=P34VAR=P35VAR=0;
 #endif
 #ifdef TIMER2
-    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i32=i33=i34=i35=i10000=0;
+    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i32=i36=i34=i35=i10000=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -232,156 +228,6 @@ void consumeToken(unsigned char incomingByte)
 #ifdef MUSIC
                 CCAP0L=Table[note];	   //設定比較暫存器低位元組
                 CCAP0H=Table[note]>>8; //設定比較暫存器高位元組
-#else
-                switch( oneCHANNEL )
-                {
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    break;
-                case 6:
-                    break;
-                case 7:
-                    break;
-                case 8:
-                    break;
-                case 9:
-                    break;
-                case 10:
-                    switch(note)
-                    {
-                    case 72:
-                        ohno[0] = 1;
-						break;
-                    case 73:
-                        ohno[1] = 1;
-						ohno[0] = 1;
-						break;
-                    case 74:
-                        ohno[2] = 1;
-						ohno[0] = 1;
-						break;
-                    case 75:
-                        ohno[3] = 1;
-						ohno[0] = 1;
-						break;
-                    case 76:
-                        if(ohno[0])
-                        {
-                            ;
-                        }
-                        else
-                        {
-                            ohno[4] = 1;
-                            ohno[0] = 1;
-                        }
-                        break;
-                    case 77:
-                        if(ohno[0])
-                        {
-                            ;
-                        }
-                        else
-                        {
-                            ohno[5] = 1;
-                            ohno[0] = 1;
-                        }
-                        break;
-                    case 78:
-                        ohno[6] = 1;
-                        break;
-                    case 79:
-                        if(ohno[7])
-                        {
-                            ;
-                        }
-                        else
-                        {
-                            ohno[7] = 1;
-                        }
-                        break;
-                    case 80:
-                        if(ohno[7])
-                        {
-                            ;
-                        }
-                        else
-                        {
-                            ohno[8] = 1;
-                            ohno[7] = 1;
-                        }
-                        break;
-                    case 81:
-                        if(ohno[7])
-                        {
-                            if(i22>1)
-                            {
-                                ohno[18] = 1;
-                            }
-                        }
-                        else
-                        {
-                            ohno[9] = 1;
-                            ohno[7] = 1;
-                        }
-                        break;
-                    case 82:
-                        if(ohno[7])
-                        {
-                            ohno[15] = 1;
-                            ohno[18] = 1;
-                        }
-                        else
-                        {
-                            ohno[10] = 1;
-                            ohno[7] = 1;
-                        }
-                        break;
-                    case 83:
-                        if(ohno[7])
-                        {
-                            ohno[16] = 1;
-                            ohno[18] = 1;
-                        }
-                        else
-                        {
-                            ohno[11] = 1;
-                            ohno[7] = 1;
-                        }
-                        break;
-                    case 84:
-                        if(ohno[7])
-                        {
-                            ohno[17] = 1;
-                            ohno[18] = 1;
-                        }
-                        else
-                        {
-                            ohno[12] = 1;
-                            ohno[7] = 1;
-                        }
-                        break;
-                    case 85:
-                        ohno[13] = 1;
-                        ohno[18] = 1;
-                        break;
-                    case 86:
-                        ohno[14] = 1;
-                        ohno[18] = 1;
-                        break;
-                    }
-                    break;
-                case 11:
-                    break;
-                }
 #endif
 #ifdef LEDRay
 #ifndef CHANNEL16
@@ -412,7 +258,7 @@ void consumeToken(unsigned char incomingByte)
                 if( velocity != 0 && oneCHANNEL == channel )
                 {
 #ifdef MUSIC
-                        CR = 1;
+                    CR = 1;
 #endif
                     switch( oneCHANNEL )
                     {
@@ -462,7 +308,7 @@ void consumeToken(unsigned char incomingByte)
                             P00VAR = 0xFF;
                             break;
                         case 76:
-                            if(ohno[0])
+                            if(P00)
                             {
                                 i22 = 2;
                                 CCAP0H = ~0xFF;
@@ -476,7 +322,7 @@ void consumeToken(unsigned char incomingByte)
                             }
                             break;
                         case 77:
-                            if(ohno[0])
+                            if(P00)
                             {
                                 i23 = 2;
                                 CCAP1H = ~0xFF;
@@ -498,7 +344,7 @@ void consumeToken(unsigned char incomingByte)
                             CCAP1H = ~0xFF;
                             break;
                         case 79:
-                            if(ohno[7])
+                            if(P07)
                             {
                                 i24 = 2;
                                 CCAP2H = ~0xFF;
@@ -512,7 +358,7 @@ void consumeToken(unsigned char incomingByte)
                             }
                             break;
                         case 80:
-                            if(ohno[7])
+                            if(P07)
                             {
                                 i25 = 2;
                                 CCAP3H = ~0xFF;
@@ -528,7 +374,7 @@ void consumeToken(unsigned char incomingByte)
                             }
                             break;
                         case 81:
-                            if(ohno[7])
+                            if(P07)
                             {
                                 if(i22>1)
                                 {
@@ -552,7 +398,7 @@ void consumeToken(unsigned char incomingByte)
                             }
                             break;
                         case 82:
-                            if(ohno[7])
+                            if(P07)
                             {
                                 i32 = 2;
                                 P32VAR = 0xFF;
@@ -568,10 +414,10 @@ void consumeToken(unsigned char incomingByte)
                             }
                             break;
                         case 83:
-                            if(ohno[7])
+                            if(P07)
                             {
-                                i33 = 2;
-                                P33VAR = 0xFF;
+                                i36 = 2;
+                                P36VAR = 0xFF;
                                 i35 = 2;
                                 P35VAR = 0xFF;
                             }
@@ -584,7 +430,7 @@ void consumeToken(unsigned char incomingByte)
                             }
                             break;
                         case 84:
-                            if(ohno[7])
+                            if(P07)
                             {
                                 i34 = 2;
                                 P34VAR = 0xFF;
@@ -748,43 +594,43 @@ void softPWM()
     }
 #endif
 #ifdef PCATIMER
-    if(ohno[0] && CL > P00VAR)
+    if(CL > P00VAR)
         P00 = 0;
-    if(ohno[1] && CL > P01VAR)
+    if(CL > P01VAR)
         P01 = 0;
-    if(ohno[2] && CL > P02VAR)
+    if(CL > P02VAR)
         P02 = 0;
-    if(ohno[3] && CL > P03VAR)
+    if(CL > P03VAR)
         P03 = 0;
-    if(ohno[4] && CL > P04VAR)
+    if(CL > P04VAR)
         P04 = 0;
-    if(ohno[5] && CL > P05VAR)
+    if(CL > P05VAR)
         P05 = 0;
-    if(ohno[6] && CL > P06VAR)
+    if(CL > P06VAR)
         P06 = 0;
-    if(ohno[7] && CL > P07VAR)
+    if(CL > P07VAR)
         P07 = 0;
-    if(ohno[8] && CL > P11VAR)
+    if(CL > P11VAR)
         P11 = 0;
-    if(ohno[9] && CL > P14VAR)
+    if(CL > P14VAR)
         P14 = 0;
-    if(ohno[10] && CL > P15VAR)
+    if(CL > P15VAR)
         P15 = 0;
-    if(ohno[11] && CL > P16VAR)
+    if(CL > P16VAR)
         P16 = 0;
-    if(ohno[12] && CL > P17VAR)
+    if(CL > P17VAR)
         P17 = 0;
-    if(ohno[13] && CL > P20VAR)
+    if(CL > P20VAR)
         P20 = 0;
-    if(ohno[14] && CL > P21VAR)
+    if(CL > P21VAR)
         P21 = 0;
-    if(ohno[15] && CL > P32VAR)
+    if(CL > P32VAR)
         P32 = 0;
-    if(ohno[16] && CL > P33VAR)
-        P33 = 0;
-    if(ohno[17] && CL > P34VAR)
+    if(CL > P36VAR)
+        P36 = 0;
+    if(CL > P34VAR)
         P34 = 0;
-    if(ohno[18] && CL > P35VAR)
+    if(CL > P35VAR)
         P35 = 0;
 #endif
 }
@@ -798,8 +644,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[0] = 0;
-        P00 = 0;
+        P00VAR = 0x00;
         i00--;
         break;
     default:
@@ -811,8 +656,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[1] = 0;
-        P01 = 0;
+        P01VAR = 0x00;
         i01--;
         break;
     default:
@@ -824,9 +668,8 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[2] = 0;
-        P02 = 0;
-		i02--;
+        P02VAR = 0x00;
+        i02--;
         break;
     default:
         i02--;
@@ -837,8 +680,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[3] = 0;
-        P03 = 0;
+        P03VAR = 0x00;
         i03--;
         break;
     default:
@@ -850,8 +692,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[4] = 0;
-        P04 = 0;
+        P04VAR = 0x00;
         i04--;
         break;
     default:
@@ -863,8 +704,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[5] = 0;
-        P05 = 0;
+        P05VAR = 0x00;
         i05--;
         break;
     default:
@@ -876,8 +716,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[6] = 0;
-        P06 = 0;
+        P06VAR = 0x00;
         i06--;
         break;
     default:
@@ -889,8 +728,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[7] = 0;
-        P07 = 0;
+        P07VAR = 0x00;
         i07--;
         break;
     default:
@@ -902,8 +740,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[8] = 0;
-        P11 = 0;
+        P11VAR = 0;
         i11--;
         break;
     default:
@@ -915,8 +752,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[9] = 0;
-        P14 = 0;
+        P14VAR = 0;
         i14--;
         break;
     default:
@@ -928,8 +764,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[10] = 0;
-        P15 = 0;
+        P15VAR = 0;
         i15--;
         break;
     default:
@@ -941,8 +776,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[11] = 0;
-        P16 = 0;
+        P16VAR = 0;
         i16--;
         break;
     default:
@@ -954,8 +788,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[12] = 0;
-        P17 = 0;
+        P17VAR = 0;
         i17--;
         break;
     default:
@@ -967,8 +800,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[13] = 0;
-        P20 = 0;
+        P20VAR = 0x00;
         i20--;
         break;
     default:
@@ -980,8 +812,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[14] = 0;
-        P21 = 0;
+        P21VAR = 0x00;
         i21--;
         break;
     default:
@@ -993,7 +824,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		CCAP0H = ~0x00;
+        CCAP0H = ~0x00;
         i22--;
         break;
     default:
@@ -1005,7 +836,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		CCAP1H = ~0x00;
+        CCAP1H = ~0x00;
         //P32 = 0;
         i23--;
         break;
@@ -1057,25 +888,23 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-	    ohno[15] = 0;
-        P32 = 0;
+        P32VAR = 0;
         i32--;
         break;
     default:
         i32--;
         break;
     }
-    switch(i33)
+    switch(i36)
     {
     case 0:
         break;
     case 1:
-		ohno[16] = 0;
-        P33 = 0;
-        i33--;
+        P36VAR = 0;
+        i36--;
         break;
     default:
-        i33--;
+        i36--;
         break;
     }
     switch(i34)
@@ -1083,8 +912,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[17] = 0;
-        P34 = 0;
+        P34VAR = 0;
         i34--;
         break;
     default:
@@ -1096,8 +924,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 0:
         break;
     case 1:
-		ohno[18] = 0;
-        P35 = 0;
+        P35VAR = 0;
         i35--;
         break;
     default:
@@ -1194,7 +1021,7 @@ void UART_init(unsigned int bps)  //UART啟始程式
     P0M0=0xFF;
     P1M0=0xFB; //設定P0為推挽式輸出(M0-1=01)
     P2M0=0x7F;
-    P3M1=0xFC;
+    P3M1=0xF4;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
     TMOD |= T1_M1;  //設定TIMER1為MODE2
@@ -1223,44 +1050,10 @@ void PCA_Interrupt() interrupt 10
     {
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
-    if(ohno[0])
-        P00 = 1;
-    if(ohno[1])
-        P01 = 1;
-    if(ohno[2])
-        P02 = 1;
-    if(ohno[3])
-        P03 = 1;
-    if(ohno[4])
-        P04 = 1;
-    if(ohno[5])
-        P05 = 1;
-    if(ohno[6])
-        P06 = 1;
-    if(ohno[7])
-        P07 = 1;
-    if(ohno[8])
-        P11 = 1;
-    if(ohno[9])
-        P14 = 1;
-    if(ohno[10])
-        P15 = 1;
-    if(ohno[11])
-        P16 = 1;
-    if(ohno[12])
-        P17 = 1;
-    if(ohno[13])
-        P20 = 1;
-    if(ohno[14])
-        P21 = 1;
-    if(ohno[15])
-        P32 = 1;
-    if(ohno[16])
-        P33 = 1;
-    if(ohno[17])
-        P34 = 1;
-    if(ohno[18])
-        P35 = 1;
+    P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
+    P1 |= 0xF2;
+    P20 = P21 = 1;
+    P32 = P34 = P35 = P36 = 1;
 #endif
 }
 
