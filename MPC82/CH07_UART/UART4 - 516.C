@@ -39,7 +39,9 @@ void softPWM();
 #define ON 2
 #define WAIT 3
 unsigned char rayCHANNEL = 0, oneCHANNEL = 10,twoCHANNEL = 0;//#define rayCHANNEL 0x00
-#define e04 5
+#define e04 4
+#define e05	25
+unsigned char ohno[4];
 unsigned char channel;
 unsigned char note;
 unsigned char velocity;
@@ -148,6 +150,7 @@ main()
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
     P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P32VAR=P36VAR=P34VAR=P35VAR=0;
+    ohno[0] = ohno[1] = ohno[2] = ohno[3] = 0;
 #endif
 #ifdef TIMER2
     i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i32=i36=i34=i35=i10000=0;
@@ -286,153 +289,201 @@ void consumeToken(unsigned char incomingByte)
                     case 10:
                         switch(note)
                         {
-                        case 72:
+                        case 60:
                             i00 = e04;
+                            P00VAR = 0xD0;
+                            ohno[1] = 1;
                             break;
-                        case 73:
-                            i01 = e04;
+                        case 61:
+                            i01 = e05;
                             P01VAR = 0xFF;
                             i00 = e04;
+                            P00VAR = 0xD0;
+                            ohno[1] = 1;
                             break;
-                        case 74:
-                            i02 = e04;
+                        case 62:
+                            i02 = e05;
                             P02VAR = 0xFF;
                             i00 = e04;
+                            P00VAR = 0xD0;
+                            ohno[1] = 1;
                             break;
-                        case 75:
-                            i03 = e04;
+                        case 63:
+                            i03 = e05;
                             P03VAR = 0xFF;
                             i00 = e04;
+                            P00VAR = 0xD0;
+                            ohno[1] = 1;
                             break;
-                        case 76:
-                            if(i00)
+                        case 64:
+                            if(ohno[1])
                             {
-                                i22 = 2;
+                                i22 = e04;
+                                CCAP0H = ~0xD0;
+                                ohno[2] = 1;
                             }
                             else
                             {
-                                i04 = e04;
+                                i04 = e05;
                                 P04VAR = 0xFF;
                                 i00 = e04;
+                                P00VAR = 0xD0;
+                                ohno[1] = 1;
                             }
                             break;
-                        case 77:
-                            if(i00)
+                        case 65:
+                            if(ohno[1])
                             {
-                                i23 = e04;
+                                i23 = e05;
                                 CCAP1H = ~0xFF;
                                 i22 = e04;
+                                CCAP0H = ~0xD0;
+                                ohno[2] = 1;
                             }
                             else
                             {
-                                i05 = e04;
+                                i05 = e05;
                                 P05VAR = 0xFF;
                                 i00 = e04;
+                                P00VAR = 0xD0;
+                                ohno[1] = 1;
                             }
                             break;
-                        case 78:
-                            i06 = e04;
+                        case 66:
+                            i06 = e05;
                             P06VAR = 0xFF;
                             i22 = e04;
+                            CCAP0H = ~0xD0;
+                            ohno[2] = 1;
                             break;
-                        case 79:
-                            if(i07)
+                        case 67:
+                            if(ohno[2])
                             {
-                                i24 = e04;
+                                i07 = e04;
+                                P07VAR = 0xD0;
+                                ohno[0] = 1;
+                            }
+                            else
+                            {
+                                i24 = e05;
                                 CCAP2H = ~0xFF;
                                 i22 = e04;
-                            }
-                            else
-                            {
-                                i07 = e04;
+                                CCAP0H = ~0xD0;
+                                ohno[2] = 1;
                             }
                             break;
-                        case 80:
-                            if(i07)
+                        case 68:
+                            if(ohno[2])
                             {
-                                i25 = e04;
-                                CCAP3H = ~0xFF;
-                                i22 = e04;
-                            }
-                            else
-                            {
-                                i11 = e04;
+                                i11 = e05;
                                 P11VAR = 0xFF;
                                 i07 = e04;
+                                P07VAR = 0xD0;
+                                ohno[0] = 1;
+                            }
+                            else
+                            {
+                                i25 = e05;
+                                CCAP3H = ~0xFF;
+                                i22 = e04;
+                                CCAP0H = ~0xD0;
+                                ohno[2] = 1;
                             }
                             break;
-                        case 81:
-                            if(i07)
+                        case 69:
+                            if(ohno[2])
                             {
-                                if(i22)
+                                if(ohno[0])
                                 {
                                     i35 = e04;
+                                    P35VAR = 0xD0;
+                                    ohno[3] = 1;
                                 }
                                 else
                                 {
-                                    i26 = e04;
-                                    CCAP4H = ~0xFF;
-                                    i22 = e04;
+                                    i14 = e05;
+                                    P14VAR = 0xFF;
+                                    i07 = e04;
+                                    P07VAR = 0xD0;
+                                    ohno[0] = 1;
                                 }
                             }
                             else
                             {
-                                i14 = e04;
-                                P14VAR = 0xFF;
-                                i07 = e04;
+                                i26 = e05;
+                                CCAP4H = ~0xFF;
+                                i22 = e04;
+                                CCAP0H = ~0xD0;
+                                ohno[2] = 1;
                             }
                             break;
-                        case 82:
-                            if(i07)
+                        case 70:
+                            if(ohno[3])
                             {
-                                i32 = e04;
-                                P32VAR = 0xFF;
-                                i35 = e04;
-                            }
-                            else
-                            {
-                                i15 = e04;
+                                i15 = e05;
                                 P15VAR = 0xFF;
                                 i07 = e04;
-                            }
-                            break;
-                        case 83:
-                            if(i07)
-                            {
-                                i36 = e04;
-                                P36VAR = 0xFF;
-                                i35 = e04;
+                                P07VAR = 0xD0;
+                                ohno[0] = 1;
                             }
                             else
                             {
-                                i16 = e04;
+                                i32 = e05;
+                                P32VAR = 0xFF;
+                                i35 = e04;
+                                P35VAR = 0xD0;
+                                ohno[3] = 1;
+                            }
+                            break;
+                        case 71:
+                            if(ohno[3])
+                            {
+                                i16 = e05;
                                 P16VAR = 0xFF;
                                 i07 = e04;
-                            }
-                            break;
-                        case 84:
-                            if(i07)
-                            {
-                                i34 = e04;
-                                P34VAR = 0xFF;
-                                i35 = e04;
+                                P07VAR = 0xD0;
+                                ohno[0] = 1;
                             }
                             else
                             {
-                                i17 = e04;
-                                P17VAR = 0xFF;
-                                i07 = e04;
+                                i36 = e05;
+                                P36VAR = 0xFF;
+                                i35 = e04;
+                                P35VAR = 0xD0;
+                                ohno[3] = 1;
                             }
                             break;
-                        case 85:
-                            i20 = e04;
+                        case 72:
+                            if(ohno[3])
+                            {
+                                i17 = e05;
+                                P17VAR = 0xFF;
+                                i07 = e04;
+                                P07VAR = 0xD0;
+                                ohno[0] = 1;
+                            }
+                            else
+                            {
+                                i34 = e05;
+                                P34VAR = 0xFF;
+                                i35 = e04;
+                                P35VAR = 0xD0;
+                                ohno[3] = 1;
+                            }
+                            break;
+                        case 73:
+                            i20 = e05;
                             P20VAR = 0xFF;
                             i35 = e04;
+                            P35VAR = 0xD0;
+                            ohno[3] = 1;
                             break;
-                        case 86:
-                            i21 = e04;
+                        case 74:
+                            i21 = e05;
                             P21VAR = 0xFF;
                             i35 = e04;
+                            P35VAR = 0xD0;
+                            ohno[3] = 1;
                             break;
                         }
                         break;
@@ -616,310 +667,6 @@ void softPWM()
 void T2_int (void) interrupt 5   //Timer2中斷函數
 {
     TF2=0;    //清除TF2=0
-    switch(i00)
-    {
-    case 0:
-        break;
-    case 1:
-        P00VAR = 0x00;
-        i00--;
-        break;
-	case 3:
-		P00VAR = 0xFF;
-        i00--;
-    default:
-        i00--;
-        break;
-    }
-    switch(i01)
-    {
-    case 0:
-        break;
-    case 1:
-        P01VAR = 0x00;
-        i01--;
-        break;
-    default:
-        i01--;
-        break;
-    }
-    switch(i02)
-    {
-    case 0:
-        break;
-    case 1:
-        P02VAR = 0x00;
-        i02--;
-        break;
-    default:
-        i02--;
-        break;
-    }
-    switch(i03)
-    {
-    case 0:
-        break;
-    case 1:
-        P03VAR = 0x00;
-        i03--;
-        break;
-    default:
-        i03--;
-        break;
-    }
-    switch(i04)
-    {
-    case 0:
-        break;
-    case 1:
-        P04VAR = 0x00;
-        i04--;
-        break;
-    default:
-        i04--;
-        break;
-    }
-    switch(i05)
-    {
-    case 0:
-        break;
-    case 1:
-        P05VAR = 0x00;
-        i05--;
-        break;
-    default:
-        i05--;
-        break;
-    }
-    switch(i06)
-    {
-    case 0:
-        break;
-    case 1:
-        P06VAR = 0x00;
-        i06--;
-        break;
-    default:
-        i06--;
-        break;
-    }
-    switch(i07)
-    {
-    case 0:
-        break;
-    case 1:
-        P07VAR = 0x00;
-        i07--;
-        break;
-	case 3:
-		P07VAR = 0xFF;
-        i07--;
-    default:
-        i07--;
-        break;
-    }
-    switch(i11)
-    {
-    case 0:
-        break;
-    case 1:
-        P11VAR = 0;
-        i11--;
-        break;
-    default:
-        i11--;
-        break;
-    }
-    switch(i14)
-    {
-    case 0:
-        break;
-    case 1:
-        P14VAR = 0;
-        i14--;
-        break;
-    default:
-        i14--;
-        break;
-    }
-    switch(i15)
-    {
-    case 0:
-        break;
-    case 1:
-        P15VAR = 0;
-        i15--;
-        break;
-    default:
-        i15--;
-        break;
-    }
-    switch(i16)
-    {
-    case 0:
-        break;
-    case 1:
-        P16VAR = 0;
-        i16--;
-        break;
-    default:
-        i16--;
-        break;
-    }
-    switch(i17)
-    {
-    case 0:
-        break;
-    case 1:
-        P17VAR = 0;
-        i17--;
-        break;
-    default:
-        i17--;
-        break;
-    }
-    switch(i20)
-    {
-    case 0:
-        break;
-    case 1:
-        P20VAR = 0x00;
-        i20--;
-        break;
-    default:
-        i20--;
-        break;
-    }
-    switch(i21)
-    {
-    case 0:
-        break;
-    case 1:
-        P21VAR = 0x00;
-        i21--;
-        break;
-    default:
-        i21--;
-        break;
-    }
-    switch(i22)
-    {
-    case 0:
-        break;
-    case 1:
-        CCAP0H = ~0x00;
-        i22--;
-        break;
-	case 3:
-		CCAP0H = ~0xFF;
-        i22--;
-    default:
-        i22--;
-        break;
-    }
-    switch(i23)
-    {
-    case 0:
-        break;
-    case 1:
-        CCAP1H = ~0x00;
-        //P32 = 0;
-        i23--;
-        break;
-    default:
-        //if(0 == P11 && i23 < 160 )
-        //i23 = 1;
-        //else
-        i23--;
-        break;
-    }
-    switch(i24)
-    {
-    case 0:
-        break;
-    case 1:
-        CCAP2H = ~0x00;
-        i24--;
-        break;
-    default:
-        i24--;
-        break;
-    }
-    switch(i25)
-    {
-    case 0:
-        break;
-    case 1:
-        CCAP3H = ~0x00;
-        i25--;
-        break;
-    default:
-        i25--;
-        break;
-    }
-    switch(i26)
-    {
-    case 0:
-        break;
-    case 1:
-        CCAP4H = ~0x00;
-        i26--;
-        break;
-    default:
-        i26--;
-        break;
-    }
-    switch(i32)
-    {
-    case 0:
-        break;
-    case 1:
-        P32VAR = 0;
-        i32--;
-        break;
-    default:
-        i32--;
-        break;
-    }
-    switch(i36)
-    {
-    case 0:
-        break;
-    case 1:
-        P36VAR = 0;
-        i36--;
-        break;
-    default:
-        i36--;
-        break;
-    }
-    switch(i34)
-    {
-    case 0:
-        break;
-    case 1:
-        P34VAR = 0;
-        i34--;
-        break;
-    default:
-        i34--;
-        break;
-    }
-    switch(i35)
-    {
-    case 0:
-        break;
-    case 1:
-        P35VAR = 0;
-        i35--;
-        break;
-	case 3:
-		P35VAR = 0xFF;
-        i35--;
-    default:
-        i35--;
-        break;
-    }
     switch( oneCHANNEL )
     {
     case 0:
@@ -943,6 +690,418 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     case 9:
         break;
     case 10:
+        switch(i00)
+        {
+        case 0:
+            break;
+        case 1:
+            P00VAR = 0x00;
+            i00--;
+            break;
+        default:
+            i00--;
+            break;
+        }
+        switch(i01)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[1] = 0;
+            P01VAR = 0x00;
+            i01--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P01VAR = 0xA0;
+            	i01--;
+            	break;
+            */
+        default:
+            i01--;
+            break;
+        }
+        switch(i02)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[1] = 0;
+            P02VAR = 0x00;
+            i02--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P02VAR = 0xA0;
+            	i02--;
+            */
+        default:
+            i02--;
+            break;
+        }
+        switch(i03)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[1] = 0;
+            P03VAR = 0x00;
+            i03--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P03VAR = 0xA0;
+            	i03--;
+            */
+        default:
+            i03--;
+            break;
+        }
+        switch(i04)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[1] = 0;
+            P04VAR = 0x00;
+            i04--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P04VAR = 0xA0;
+                i04--;
+            */
+        default:
+            i04--;
+            break;
+        }
+        switch(i05)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[1] = 0;
+            P05VAR = 0x00;
+            i05--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P05VAR = 0xA0;
+                i05--;
+            */
+        default:
+            i05--;
+            break;
+        }
+        switch(i06)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[2] = 0;
+            P06VAR = 0x00;
+            i06--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P06VAR = 0xA0;
+                i06--;
+            */
+        default:
+            i06--;
+            break;
+        }
+        switch(i07)
+        {
+        case 0:
+            break;
+        case 1:
+            P07VAR = 0x00;
+            i07--;
+            break;
+        default:
+            i07--;
+            break;
+        }
+        switch(i11)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[0] = 0;
+            P11VAR = 0;
+            i11--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P11VAR = 0xA0;
+                i11--;
+            */
+        default:
+            i11--;
+            break;
+        }
+        switch(i14)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[0] = 0;
+            P14VAR = 0;
+            i14--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P14VAR = 0xA0;
+                i14--;
+            */
+        default:
+            i14--;
+            break;
+        }
+        switch(i15)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[0] = 0;
+            P15VAR = 0;
+            i15--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P15VAR = 0xA0;
+                i15--;
+            */
+        default:
+            i15--;
+            break;
+        }
+        switch(i16)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[0] = 0;
+            P16VAR = 0;
+            i16--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P16VAR = 0xA0;
+                i16--;
+            */
+        default:
+            i16--;
+            break;
+        }
+        switch(i17)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[0] = 0;
+            P17VAR = 0;
+            i17--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P17VAR = 0xA0;
+                i17--;
+            */
+        default:
+            i17--;
+            break;
+        }
+        switch(i20)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[3] = 0;
+            P20VAR = 0x00;
+            i20--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P20VAR = 0xA0;
+                i20--;
+            */
+        default:
+            i20--;
+            break;
+        }
+        switch(i21)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[3] = 0;
+            P21VAR = 0x00;
+            i21--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P21VAR = 0xA0;
+                i21--;
+            */
+        default:
+            i21--;
+            break;
+        }
+        switch(i22)
+        {
+        case 0:
+            break;
+        case 1:
+            CCAP0H = ~0x00;
+            i22--;
+        default:
+            i22--;
+            break;
+        }
+        switch(i23)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[2] = 0;
+            CCAP1H = ~0x00;
+            //P32 = 0;
+            i23--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	CCAP1H = ~0xA0;
+                i23--;
+            */
+        default:
+            //if(0 == P11 && i23 < 160 )
+            //i23 = 1;
+            //else
+            i23--;
+            break;
+        }
+        switch(i24)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[2] = 0;
+            CCAP2H = ~0x00;
+            i24--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	CCAP2H = ~0xA0;
+                i24--;
+            */
+        default:
+            i24--;
+            break;
+        }
+        switch(i25)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[2] = 0;
+            CCAP3H = ~0x00;
+            i25--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	CCAP3H = ~0xA0;
+                i25--;
+            */
+        default:
+            i25--;
+            break;
+        }
+        switch(i26)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[2] = 0;
+            CCAP4H = ~0x00;
+            i26--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	CCAP4H = ~0xA0;
+                i26--;
+            */
+        default:
+            i26--;
+            break;
+        }
+        switch(i32)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[3] = 0;
+            P32VAR = 0;
+            i32--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P32VAR = 0xA0;
+                i32--;
+            */
+        default:
+            i32--;
+            break;
+        }
+        switch(i36)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[3] = 0;
+            P36VAR = 0;
+            i36--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P36VAR = 0xA0;
+                i36--;
+            */
+        default:
+            i36--;
+            break;
+        }
+        switch(i34)
+        {
+        case 0:
+            break;
+        case 1:
+            ohno[3] = 0;
+            P34VAR = 0;
+            i34--;
+            break;
+            /*
+            case ((e05-e04)>>1):
+            	P34VAR = 0xA0;
+                i34--;
+            */
+        default:
+            i34--;
+            break;
+        }
+        switch(i35)
+        {
+        case 0:
+            break;
+        case 1:
+            P35VAR = 0;
+            i35--;
+            break;
+        default:
+            i35--;
+            break;
+        }
         break;
     case 11:
         break;
