@@ -19,17 +19,17 @@ unsigned char oldCHANNEL=0xFF;
 #define PCATIMER
 #define TTT  256
 unsigned char P00VAR, P01VAR, P02VAR, P03VAR, P04VAR, P05VAR, P06VAR, P07VAR, P20VAR, P21VAR, P22VAR, P23VAR;
-#define DIF00 0x10	//D5~FF
-#define DIF01 0x30	//D5~FF
-#define DIF02 0x40	//D5~FF
-#define DIF03 0x53	//85~FF
-#define DIF04 0x60	//D7~FF
-#define DIF05 0x70	//D7~FF
-#define DIF06 0x90	//D7~FF
-#define DIF07 0xA0	//D7~FF
-#define DIF20 0xC1	//D7~FF
-#define DIF21 0xD0	//D7~FF
-#define DIF22 0xE0
+#define DIF00 0xF0	//D5~FF
+#define DIF01 0xF0	//D5~FF
+#define DIF02 0xF0	//D5~FF
+#define DIF03 0xF3	//85~FF
+#define DIF04 0xF0	//D7~FF
+#define DIF05 0xF0	//D7~FF
+#define DIF06 0xF0	//D7~FF
+#define DIF07 0xF0	//D7~FF
+#define DIF20 0xF1	//D7~FF
+#define DIF21 0xF0	//D7~FF
+#define DIF22 0xF0
 #define DIF23 0xF0
 #define DIF14 0xFF	//D9~FF
 #define DIF15 0xB2	//D5~FF
@@ -95,6 +95,7 @@ unsigned int  code Table[]  //﹚竡繵皚戈,0ヰゎ才
 #endif
 #ifdef SIMULATION
 int notecount;
+unsigned char pressure=0;	
 #endif
 void consumeToken(unsigned char incomingByte);
 
@@ -153,18 +154,18 @@ main()
     AUXIE = EPCA;      //璓PCAい耞
     CCF5=0;  //睲埃家舱0-5ゑ耕篨夹
     //CR = 1;
-    P00VAR=DIF00;
-    P01VAR=DIF01;
-    P02VAR=DIF02;
-    P03VAR=DIF03;
-    P04VAR=DIF04;
-    P05VAR=DIF05;
-    P06VAR=DIF06;
-    P07VAR=DIF07;
-    P20VAR=DIF20;
-    P21VAR=DIF21;
-    P22VAR=DIF22;
-    P23VAR=DIF23;
+    P00VAR=0;
+    P01VAR=0;
+    P02VAR=0;
+    P03VAR=0;
+    P04VAR=0;
+    P05VAR=0;
+    P06VAR=0;
+    P07VAR=0;
+    P20VAR=0;
+    P21VAR=0;
+    P22VAR=0;
+    P23VAR=0;
 #endif
 #ifdef TIMER2
     i14=i15=i16=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i22=i23=0;
@@ -808,6 +809,66 @@ void T0_int(void) interrupt 1  //Timer0い耞ㄧ计
     oneCHANNEL = (rayCHANNEL >> 4);
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0パ0秨﹍璸		//TH0=65536 - TT >> 8; //砞﹚璸
+#else
+	switch(pressure++)
+	{
+		case 0:
+			i00 = 3;
+			P00VAR = DIF00;
+		break;
+		case 18:
+			i01 = 3;
+			P01VAR = DIF01;
+		break;
+		case 36:
+			i02 = 3;
+			P02VAR = DIF02;
+		break;
+		case 54:
+			i03 = 3;
+			P03VAR = DIF03;
+		break;
+		case 72:
+			i04 = 3;
+			P04VAR = DIF04;
+		break;
+		case 90:
+			i05 = 3;
+			P05VAR = DIF05;
+		break;
+		case 108:
+			i06 = 3;
+			P06VAR = DIF06;
+		break;
+		case 126:
+			i07 = 3;
+			P07VAR = DIF07;
+		break;
+		case 144:
+			i14 = 3;
+			CCAP2H = ~DIF14;
+		break;
+		case 162:
+			i16 = 3;
+			CCAP4H = ~DIF16;
+		break;
+		case 180:
+			i20 = 3;
+			P20VAR = DIF20;
+		break;
+		case 198:
+			i21 = 3;
+			P21VAR = DIF21;
+		break;
+		case 216:
+			i22 = 3;
+			P22VAR = DIF22;
+		break;
+		case 234:
+			i23 = 3;
+			P23VAR = DIF23;
+		break;
+	}
 #endif
 }
 #endif
@@ -879,13 +940,13 @@ void EX1_int(void) interrupt 2   //INT1い耞ㄧ计2
 /*********************************************/
 void EX2_int(void) interrupt 6   //INT2い耞ㄧ计6
 {
-    i22 = 4;
-    P22VAR = DIF22;
+    i16 = 3;
+    CCAP4H = ~DIF16;
 }
 /*********************************************/
 void EX3_int(void) interrupt 7   //INT3い耞ㄧ计7
 {
-    i23 = 115;
+    i23 = 3;
     P23VAR = DIF23;
 }
 #endif

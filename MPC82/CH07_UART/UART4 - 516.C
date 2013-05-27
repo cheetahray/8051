@@ -39,7 +39,7 @@ void softPWM();
 #define ON 2
 #define WAIT 3
 unsigned char rayCHANNEL = 0, oneCHANNEL = 10,twoCHANNEL = 0;//#define rayCHANNEL 0x00
-#define e04 4
+#define e04 3
 #define e05	25
 unsigned char ohno[4];
 unsigned char channel;
@@ -150,7 +150,7 @@ main()
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
     P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P32VAR=P36VAR=P34VAR=P35VAR=0;
-    ohno[0] = ohno[1] = ohno[2] = ohno[3] = 0;
+    ohno[0] = ohno[1] = ohno[2] = ohno[3] = 1;
 #endif
 #ifdef TIMER2
     i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i32=i36=i34=i35=i10000=0;
@@ -291,35 +291,35 @@ void consumeToken(unsigned char incomingByte)
                         {
                         case 60:
                             i00 = e04;
-                            P00VAR = 0xD0;
+                            P00VAR = 0xFF;
                             ohno[1] = 1;
                             break;
                         case 61:
                             i01 = e05;
                             P01VAR = 0xFF;
                             i00 = e04;
-                            P00VAR = 0xD0;
+                            P00VAR = 0xFF;
                             ohno[1] = 1;
                             break;
                         case 62:
                             i02 = e05;
                             P02VAR = 0xFF;
                             i00 = e04;
-                            P00VAR = 0xD0;
+                            P00VAR = 0xFF;
                             ohno[1] = 1;
                             break;
                         case 63:
                             i03 = e05;
                             P03VAR = 0xFF;
                             i00 = e04;
-                            P00VAR = 0xD0;
+                            P00VAR = 0xFF;
                             ohno[1] = 1;
                             break;
                         case 64:
                             if(ohno[1])
                             {
                                 i22 = e04;
-                                CCAP0H = ~0xD0;
+                                CCAP0H = ~0xFF;
                                 ohno[2] = 1;
                             }
                             else
@@ -327,7 +327,7 @@ void consumeToken(unsigned char incomingByte)
                                 i04 = e05;
                                 P04VAR = 0xFF;
                                 i00 = e04;
-                                P00VAR = 0xD0;
+                                P00VAR = 0xFF;
                                 ohno[1] = 1;
                             }
                             break;
@@ -337,7 +337,7 @@ void consumeToken(unsigned char incomingByte)
                                 i23 = e05;
                                 CCAP1H = ~0xFF;
                                 i22 = e04;
-                                CCAP0H = ~0xD0;
+                                CCAP0H = ~0xFF;
                                 ohno[2] = 1;
                             }
                             else
@@ -345,7 +345,7 @@ void consumeToken(unsigned char incomingByte)
                                 i05 = e05;
                                 P05VAR = 0xFF;
                                 i00 = e04;
-                                P00VAR = 0xD0;
+                                P00VAR = 0xFF;
                                 ohno[1] = 1;
                             }
                             break;
@@ -353,14 +353,14 @@ void consumeToken(unsigned char incomingByte)
                             i06 = e05;
                             P06VAR = 0xFF;
                             i22 = e04;
-                            CCAP0H = ~0xD0;
+                            CCAP0H = ~0xFF;
                             ohno[2] = 1;
                             break;
                         case 67:
                             if(ohno[2])
                             {
                                 i07 = e04;
-                                P07VAR = 0xD0;
+                                P07VAR = 0xFF;
                                 ohno[0] = 1;
                             }
                             else
@@ -368,7 +368,7 @@ void consumeToken(unsigned char incomingByte)
                                 i24 = e05;
                                 CCAP2H = ~0xFF;
                                 i22 = e04;
-                                CCAP0H = ~0xD0;
+                                CCAP0H = ~0xFF;
                                 ohno[2] = 1;
                             }
                             break;
@@ -378,7 +378,7 @@ void consumeToken(unsigned char incomingByte)
                                 i11 = e05;
                                 P11VAR = 0xFF;
                                 i07 = e04;
-                                P07VAR = 0xD0;
+                                P07VAR = 0xFF;
                                 ohno[0] = 1;
                             }
                             else
@@ -386,7 +386,7 @@ void consumeToken(unsigned char incomingByte)
                                 i25 = e05;
                                 CCAP3H = ~0xFF;
                                 i22 = e04;
-                                CCAP0H = ~0xD0;
+                                CCAP0H = ~0xFF;
                                 ohno[2] = 1;
                             }
                             break;
@@ -396,7 +396,7 @@ void consumeToken(unsigned char incomingByte)
                                 if(ohno[0])
                                 {
                                     i35 = e04;
-                                    P35VAR = 0xD0;
+                                    P35VAR = 0xFF;
                                     ohno[3] = 1;
                                 }
                                 else
@@ -404,7 +404,7 @@ void consumeToken(unsigned char incomingByte)
                                     i14 = e05;
                                     P14VAR = 0xFF;
                                     i07 = e04;
-                                    P07VAR = 0xD0;
+                                    P07VAR = 0xFF;
                                     ohno[0] = 1;
                                 }
                             }
@@ -413,7 +413,7 @@ void consumeToken(unsigned char incomingByte)
                                 i26 = e05;
                                 CCAP4H = ~0xFF;
                                 i22 = e04;
-                                CCAP0H = ~0xD0;
+                                CCAP0H = ~0xFF;
                                 ohno[2] = 1;
                             }
                             break;
@@ -423,7 +423,7 @@ void consumeToken(unsigned char incomingByte)
                                 i15 = e05;
                                 P15VAR = 0xFF;
                                 i07 = e04;
-                                P07VAR = 0xD0;
+                                P07VAR = 0xFF;
                                 ohno[0] = 1;
                             }
                             else
@@ -431,7 +431,7 @@ void consumeToken(unsigned char incomingByte)
                                 i32 = e05;
                                 P32VAR = 0xFF;
                                 i35 = e04;
-                                P35VAR = 0xD0;
+                                P35VAR = 0xFF;
                                 ohno[3] = 1;
                             }
                             break;
@@ -441,7 +441,7 @@ void consumeToken(unsigned char incomingByte)
                                 i16 = e05;
                                 P16VAR = 0xFF;
                                 i07 = e04;
-                                P07VAR = 0xD0;
+                                P07VAR = 0xFF;
                                 ohno[0] = 1;
                             }
                             else
@@ -449,7 +449,7 @@ void consumeToken(unsigned char incomingByte)
                                 i36 = e05;
                                 P36VAR = 0xFF;
                                 i35 = e04;
-                                P35VAR = 0xD0;
+                                P35VAR = 0xFF;
                                 ohno[3] = 1;
                             }
                             break;
@@ -459,7 +459,7 @@ void consumeToken(unsigned char incomingByte)
                                 i17 = e05;
                                 P17VAR = 0xFF;
                                 i07 = e04;
-                                P07VAR = 0xD0;
+                                P07VAR = 0xFF;
                                 ohno[0] = 1;
                             }
                             else
@@ -467,7 +467,7 @@ void consumeToken(unsigned char incomingByte)
                                 i34 = e05;
                                 P34VAR = 0xFF;
                                 i35 = e04;
-                                P35VAR = 0xD0;
+                                P35VAR = 0xFF;
                                 ohno[3] = 1;
                             }
                             break;
@@ -475,14 +475,14 @@ void consumeToken(unsigned char incomingByte)
                             i20 = e05;
                             P20VAR = 0xFF;
                             i35 = e04;
-                            P35VAR = 0xD0;
+                            P35VAR = 0xFF;
                             ohno[3] = 1;
                             break;
                         case 74:
                             i21 = e05;
                             P21VAR = 0xFF;
                             i35 = e04;
-                            P35VAR = 0xD0;
+                            P35VAR = 0xFF;
                             ohno[3] = 1;
                             break;
                         }
@@ -1085,6 +1085,23 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             case ((e05-e04)>>1):
             	P34VAR = 0xA0;
                 i34--;
+            */
+            /*
+            case (e05-3):
+            	i07 = e04;
+            	P07VAR = 0xFF;
+            	i34--;
+            break;
+            case (e05-2):
+            	i00 = e04;
+            	P00VAR = 0xFF;
+            	i34--;
+            break;
+            case (e05-1):
+            	i22 = e04;
+            	CCAP0H = ~0xFF;
+            	i34--;
+            break;
             */
         default:
             i34--;
