@@ -816,30 +816,31 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 			i00 = 3;
 			P00VAR = DIF00;
 		break;
-		case 18:
-			i01 = 3;
-			P01VAR = DIF01;
-		break;
 		case 36:
+			i07 = 3;
+			P07VAR = DIF07;
+		break;
+		case 72:
 			i02 = 3;
 			P02VAR = DIF02;
 		break;
-		case 54:
+		case 108:
 			i03 = 3;
 			P03VAR = DIF03;
 		break;
-		case 72:
+		case 144:
 			i04 = 3;
 			P04VAR = DIF04;
 		break;
-		case 90:
+		case 180:
 			i05 = 3;
 			P05VAR = DIF05;
 		break;
-		case 108:
+		case 216:
 			i06 = 3;
 			P06VAR = DIF06;
 		break;
+		/*
 		case 126:
 			i07 = 3;
 			P07VAR = DIF07;
@@ -867,6 +868,7 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 		case 234:
 			i23 = 3;
 			P23VAR = DIF23;
+		*/
 		break;
 	}
 #endif

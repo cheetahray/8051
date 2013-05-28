@@ -7,7 +7,7 @@
 //#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
-//#define CHANNEL16		  //P10 P12 P13
+#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //夹非块ㄧ计
@@ -38,7 +38,7 @@ void softPWM();
 #define OFF 1
 #define ON 2
 #define WAIT 3
-unsigned char rayCHANNEL = 0, oneCHANNEL = 10,twoCHANNEL = 0;//#define rayCHANNEL 0x00
+unsigned char rayCHANNEL = 0, oneCHANNEL = 10,twoCHANNEL = 24;//#define rayCHANNEL 0x00
 #define e04 3
 #define e05	60
 unsigned char ohno[4];
@@ -226,7 +226,7 @@ void consumeToken(unsigned char incomingByte)
     {
         if (0 == note) // note on, wait for note value
         {
-            note=incomingByte;
+            note=incomingByte-twoCHANNEL;
             if( action > OFF && oneCHANNEL == channel )
             {
 #ifdef MUSIC
@@ -289,33 +289,33 @@ void consumeToken(unsigned char incomingByte)
                     case 10:
                         switch(note)
                         {
-                        case 60:
+                        case 36:
                             i24 = e04;
                             CCAP2H = ~0xFF;
                             ohno[1] = 1;
                             break;
-                        case 61:
+                        case 37:
                             i01 = e05;
                             P01VAR = 0xFF;
                             i24 = e04;
                             CCAP2H = ~0xFF;
                             ohno[1] = 1;
                             break;
-                        case 62:
+                        case 38:
                             i02 = e05;
                             P02VAR = 0xFF;
                             i24 = e04;
                             CCAP2H = ~0xFF;
                             ohno[1] = 1;
                             break;
-                        case 63:
+                        case 39:
                             i03 = e05;
                             P03VAR = 0xFF;
                             i24 = e04;
                             CCAP2H = ~0xFF;
                             ohno[1] = 1;
                             break;
-                        case 64:
+                        case 40:
                             if(ohno[1])
                             {
                                 i22 = e04;
@@ -331,7 +331,7 @@ void consumeToken(unsigned char incomingByte)
                                 ohno[1] = 1;
                             }
                             break;
-                        case 65:
+                        case 41:
                             if(ohno[1])
                             {
                                 i07 = e05;
@@ -349,14 +349,14 @@ void consumeToken(unsigned char incomingByte)
                                 ohno[1] = 1;
                             }
                             break;
-                        case 66:
+                        case 42:
                             i06 = e05;
                             P06VAR = 0xFF;
                             i22 = e04;
                             CCAP0H = ~0xFF;
                             ohno[2] = 1;
                             break;
-                        case 67:
+                        case 43:
                             if(ohno[2])
                             {
                                 i23 = e04;
@@ -372,7 +372,7 @@ void consumeToken(unsigned char incomingByte)
                                 ohno[2] = 1;
                             }
                             break;
-                        case 68:
+                        case 44:
                             if(ohno[2])
                             {
                                 i11 = e05;
@@ -390,7 +390,7 @@ void consumeToken(unsigned char incomingByte)
                                 ohno[2] = 1;
                             }
                             break;
-                        case 69:
+                        case 45:
                             if(ohno[2])
                             {
                                 if(ohno[0])
@@ -417,7 +417,7 @@ void consumeToken(unsigned char incomingByte)
                                 ohno[2] = 1;
                             }
                             break;
-                        case 70:
+                        case 46:
                             if(ohno[3])
                             {
                                 i15 = e05;
@@ -435,7 +435,7 @@ void consumeToken(unsigned char incomingByte)
                                 ohno[3] = 1;
                             }
                             break;
-                        case 71:
+                        case 47:
                             if(ohno[3])
                             {
                                 i16 = e05;
@@ -453,7 +453,7 @@ void consumeToken(unsigned char incomingByte)
                                 ohno[3] = 1;
                             }
                             break;
-                        case 72:
+                        case 48:
                             if(ohno[3])
                             {
                                 i17 = e05;
@@ -468,14 +468,14 @@ void consumeToken(unsigned char incomingByte)
                                 P34VAR = 0xFF;
                             }
                             break;
-                        case 73:
+                        case 49:
                             i20 = e05;
                             P20VAR = 0xFF;
                             i25 = e04;
                             CCAP3H = ~0xFF;
                             ohno[3] = 1;
                             break;
-                        case 74:
+                        case 50:
                             i21 = e05;
                             P21VAR = 0xFF;
                             i25 = e04;
@@ -1231,7 +1231,7 @@ void PCA_Interrupt() interrupt 10
 void T0_int(void) interrupt 1  //Timer0い耞ㄧ计
 {
 #ifdef CHANNEL16
-    if(i10000++ == 0)
+    if(i10000++ == 255)
     {
         int ll;
         P10=0;
@@ -1248,7 +1248,7 @@ void T0_int(void) interrupt 1  //Timer0い耞ㄧ计
 #ifdef LEDRay
         LED=~rayCHANNEL;     //盢钡ΜじパLED块
 #endif
-        twoCHANNEL = (rayCHANNEL & 0x0F);
+        twoCHANNEL = (rayCHANNEL & 0x0F) << 1;
         oneCHANNEL = (rayCHANNEL >> 4);
         TL0=0;	//TL0=65536 - TT;
         TH0=0;	//Timer0パ0秨﹍璸		//TH0=65536 - TT >> 8; //砞﹚璸
