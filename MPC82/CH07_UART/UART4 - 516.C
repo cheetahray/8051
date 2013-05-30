@@ -7,7 +7,7 @@
 //#define BUFFER
 //#define MUSIC		 //P12	   	CR
 //#define DEBUG
-#define CHANNEL16		  //P10 P12 P13
+//#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //夹非块ㄧ计
@@ -83,6 +83,7 @@ unsigned int  code Table[]  //﹚竡繵皚戈,0ヰゎ才
 #endif
 #ifdef SIMULATION
 int notecount;
+unsigned int pressure = 0;
 #endif
 void consumeToken(unsigned char incomingByte);
 
@@ -1252,6 +1253,45 @@ void T0_int(void) interrupt 1  //Timer0い耞ㄧ计
         oneCHANNEL = (rayCHANNEL >> 4);
         TL0=0;	//TL0=65536 - TT;
         TH0=0;	//Timer0パ0秨﹍璸		//TH0=65536 - TT >> 8; //砞﹚璸
+    }
+#elif defined(SIMULATION)
+	switch(pressure++)
+    {
+    case 0:
+        i01 = 3;
+        P01VAR = 210;
+		P5 = 2;
+        break;
+    case 9362:
+        i02 = 3;
+        P02VAR = 210;
+		P5 = 4;
+        break;
+    case 18724:
+        i03 = 3;
+        P03VAR = 210;
+		P5 = 8;
+        break;
+    case 28086:
+        i04 = 3;
+        P04VAR = 210;
+		P5 = 16;
+        break;
+    case 37448:
+        i05 = 3;
+        P05VAR = 210;
+		P5 = 32;
+        break;
+    case 46810:
+        i06 = 3;
+        P06VAR = 210;
+		P5 = 64;
+        break;
+    case 56172:
+        i07 = 3;
+        P07VAR = 210;
+		P5 = 128;
+        break;
     }
 #endif
 }
