@@ -28,7 +28,7 @@ unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14
 #define TIMER2
 #define PARSER
 //#define LCD
-#define TT  32768  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
+#define TT  34286  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
 unsigned char i24,i25,i26,i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i32,i36,i34,i35,i10000;
 #endif
@@ -1220,6 +1220,36 @@ void PCA_Interrupt() interrupt 10
     {
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
+#ifdef SIMULATION
+    if(0 == i01 && P01VAR != 0)
+    {
+        i01 = 3;
+    }
+    if(0 == i02 && P02VAR != 0)
+    {
+        i02 = 3;
+    }
+    if(0 == i03 && P03VAR != 0)
+    {
+        i03 = 3;
+    }
+    if(0 == i04 && P04VAR != 0)
+    {
+        i04 = 3;
+    }
+    if(0 == i05 && P05VAR != 0)
+    {
+        i05 = 3;
+    }
+    if(0 == i06 && P06VAR != 0)
+    {
+        i06 = 3;
+    }
+    if(0 == i07 && P07VAR != 0)
+    {
+        i07 = 3;
+    }
+#endif
     P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
     P1 |= 0xF2;
     P20 = P21 = 1;
@@ -1255,42 +1285,35 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
         TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
     }
 #elif defined(SIMULATION)
-	switch(pressure++)
+    switch(pressure++)
     {
     case 0:
-        i01 = 3;
         P01VAR = 210;
-		P5 = 2;
+        P5 = 2;
         break;
     case 9362:
-        i02 = 3;
         P02VAR = 210;
-		P5 = 4;
+        P5 = 4;
         break;
     case 18724:
-        i03 = 3;
         P03VAR = 210;
-		P5 = 8;
+        P5 = 8;
         break;
     case 28086:
-        i04 = 3;
         P04VAR = 210;
-		P5 = 16;
+        P5 = 16;
         break;
     case 37448:
-        i05 = 3;
         P05VAR = 210;
-		P5 = 32;
+        P5 = 32;
         break;
     case 46810:
-        i06 = 3;
         P06VAR = 210;
-		P5 = 64;
+        P5 = 64;
         break;
     case 56172:
-        i07 = 3;
         P07VAR = 210;
-		P5 = 128;
+        P5 = 128;
         break;
     }
 #endif
