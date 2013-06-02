@@ -18,7 +18,7 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef	HARDRAYPWM
 #define PCATIMER
 #define TTT  256
-unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P32VAR,P36VAR,P34VAR,P35VAR;
+unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P22VAR,P23VAR,P24VAR,P25VAR,P26VAR,P32VAR,P36VAR,P34VAR,P35VAR;
 #endif
 #define TIMER0
 #define SIMULATION
@@ -150,7 +150,7 @@ main()
     AUXIE = EPCA;      //璓PCAい耞
     CCF5=0;  //睲埃家舱0-5ゑ耕篨夹
     //CR = 1;
-    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P32VAR=P36VAR=P34VAR=P35VAR=0;
+    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P22VAR=P23VAR=P24VAR=P25VAR=P26VAR=P32VAR=P36VAR=P34VAR=P35VAR=0;
     ohno[0] = ohno[1] = ohno[2] = ohno[3] = 0;
 #endif
 #ifdef TIMER2
@@ -953,7 +953,9 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         case 1:
             CCAP0H = ~0x00;
+            P22VAR = 0;
             i22--;
+			break;
         default:
             i22--;
             break;
@@ -965,6 +967,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 1:
             ohno[2] = 0;
             CCAP1H = ~0x00;
+            P23VAR = 0;
             //P32 = 0;
             i23--;
             break;
@@ -987,6 +990,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 1:
             ohno[2] = 0;
             CCAP2H = ~0x00;
+            P24VAR = 0;
             i24--;
             break;
             /*
@@ -1005,6 +1009,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 1:
             ohno[2] = 0;
             CCAP3H = ~0x00;
+            P25VAR = 0;
             i25--;
             break;
             /*
@@ -1023,6 +1028,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 1:
             ohno[2] = 0;
             CCAP4H = ~0x00;
+            P26VAR = 0;
             i26--;
             break;
             /*
@@ -1221,33 +1227,66 @@ void PCA_Interrupt() interrupt 10
         CCF5=0; //睲埃家舱0-5ゑ耕篨夹
     }//材T*6笆PCA璸计竟パ0计
 #ifdef SIMULATION
-    if(0 == i01 && P01VAR != 0)
+    if(P01VAR != 0 && 0 == i01)
     {
         i01 = 3;
     }
-    if(0 == i02 && P02VAR != 0)
+    if(P02VAR != 0 && 0 == i02)
     {
         i02 = 3;
     }
-    if(0 == i03 && P03VAR != 0)
+    if(P03VAR != 0 && 0 == i03)
     {
         i03 = 3;
     }
-    if(0 == i04 && P04VAR != 0)
+    if(P04VAR != 0 && 0 == i04)
     {
         i04 = 3;
     }
-    if(0 == i05 && P05VAR != 0)
+    if(P05VAR != 0 && 0 == i05)
     {
         i05 = 3;
     }
-    if(0 == i06 && P06VAR != 0)
+    if(P06VAR != 0 && 0 == i06)
     {
         i06 = 3;
     }
-    if(0 == i07 && P07VAR != 0)
+    if(P07VAR != 0 && 0 == i07)
     {
         i07 = 3;
+    }
+    if(P20VAR != 0 && 0 == i20)
+    {
+        i20 = 3;
+    }
+    if(P21VAR != 0 && 0 == i21)
+    {
+        i21 = 3;
+    }
+    if(P22VAR != 0 && 0 == i22)
+    {
+        CCAP0H = ~P22VAR;
+        i22 = 3;
+    }
+    if(P23VAR != 0 && 0 == i23)
+    {
+        CCAP1H = ~P23VAR;
+        i23 = 3;
+    }
+    if(P24VAR != 0 && 0 == i24)
+    {
+        CCAP2H = ~P24VAR;
+        i24 = 3;
+    }
+    if(P25VAR != 0 && 0 == i25)
+    {
+        CCAP3H = ~P25VAR;
+        i25 = 3;
+    }
+    if(P26VAR != 0 && 0 == i26)
+    {
+        CCAP4H = ~P26VAR;
+        i26 = 3;
     }
 #endif
     P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
@@ -1288,32 +1327,116 @@ void T0_int(void) interrupt 1  //Timer0い耞ㄧ计
     switch(pressure++)
     {
     case 0:
-        P01VAR = 210;
+        P21VAR = 210;
+        P5 = 1;
+        break;
+    case 2340:
+        P22VAR = 210;
         P5 = 2;
         break;
-    case 9362:
-        P02VAR = 210;
+    case 4681:
+        P23VAR = 210;
         P5 = 4;
         break;
-    case 18724:
-        P03VAR = 210;
+    case 7201:
+        P24VAR = 210;
         P5 = 8;
         break;
-    case 28086:
-        P04VAR = 210;
+    case 9362:
+        P25VAR = 210;
         P5 = 16;
         break;
+    case 11702:
+        P26VAR = 210;
+        P5 = 32;
+        break;
+    case 14043:
+        P20VAR = 210;
+        P5 = 64;
+        break;
+    case 16383:
+        P21VAR = 210;
+        P5 = 1;
+        break;
+    case 18724:
+        P22VAR = 210;
+        P5 = 2;
+        break;
+    case 21064:
+        P23VAR = 210;
+        P5 = 4;
+        break;
+    case 23405:
+        P24VAR = 210;
+        P5 = 8;
+        break;
+    case 25745:
+        P25VAR = 210;
+        P5 = 16;
+        break;
+    case 28086:
+        P26VAR = 210;
+        P5 = 32;
+        break;
+    case 30426:
+        P20VAR = 210;
+        P5 = 64;
+        break;
+    case 32767:
+        P21VAR = 210;
+        P5 = 1;
+        break;
+    case 35107:
+        P22VAR = 210;
+        P5 = 2;
+        break;
     case 37448:
-        P05VAR = 210;
+        P23VAR = 210;
+        P5 = 4;
+        break;
+    case 39788:
+        P24VAR = 210;
+        P5 = 8;
+        break;
+    case 42129:
+        P25VAR = 210;
+        P5 = 16;
+        break;
+    case 44469:
+        P26VAR = 210;
         P5 = 32;
         break;
     case 46810:
-        P06VAR = 210;
+        P20VAR = 210;
         P5 = 64;
         break;
+    case 49150:
+        P21VAR = 210;
+        P5 = 1;
+        break;
+    case 51491:
+        P22VAR = 210;
+        P5 = 2;
+        break;
+    case 53831:
+        P23VAR = 210;
+        P5 = 4;
+        break;
     case 56172:
-        P07VAR = 210;
-        P5 = 128;
+        P24VAR = 210;
+        P5 = 8;
+        break;
+    case 58512:
+        P25VAR = 210;
+        P5 = 16;
+        break;
+    case 60853:
+        P26VAR = 210;
+        P5 = 32;
+        break;
+    case 63193:
+        P20VAR = 210;
+        P5 = 64;
         break;
     }
 #endif
