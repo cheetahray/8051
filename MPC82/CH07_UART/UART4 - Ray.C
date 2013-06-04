@@ -95,7 +95,7 @@ unsigned int  code Table[]  //定義音頻陣列資料,0為休止符
 #endif
 #ifdef SIMULATION
 int notecount;
-unsigned char pressure=0;	
+unsigned char pressure=0;
 #endif
 void consumeToken(unsigned char incomingByte);
 
@@ -420,7 +420,7 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 61:
                             P32 = 0;
-							break;
+                            break;
                         }
                         i23 = 200;
                         P23VAR = DIF23;
@@ -810,67 +810,67 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
 #else
-	switch(pressure++)
-	{
-		case 0:
-			i00 = 3;
-			P00VAR = DIF00;
-		break;
-		case 36:
-			i07 = 3;
-			P07VAR = DIF07;
-		break;
-		case 72:
-			i02 = 3;
-			P02VAR = DIF02;
-		break;
-		case 108:
-			i03 = 3;
-			P03VAR = DIF03;
-		break;
-		case 144:
-			i04 = 3;
-			P04VAR = DIF04;
-		break;
-		case 180:
-			i05 = 3;
-			P05VAR = DIF05;
-		break;
-		case 216:
-			i06 = 3;
-			P06VAR = DIF06;
-		break;
-		/*
-		case 126:
-			i07 = 3;
-			P07VAR = DIF07;
-		break;
-		case 144:
-			i14 = 3;
-			CCAP2H = ~DIF14;
-		break;
-		case 162:
-			i16 = 3;
-			CCAP4H = ~DIF16;
-		break;
-		case 180:
-			i20 = 3;
-			P20VAR = DIF20;
-		break;
-		case 198:
-			i21 = 3;
-			P21VAR = DIF21;
-		break;
-		case 216:
-			i22 = 3;
-			P22VAR = DIF22;
-		break;
-		case 234:
-			i23 = 3;
-			P23VAR = DIF23;
-		*/
-		break;
-	}
+    /*
+    switch(pressure++)
+    {
+    	case 0:
+    		i00 = 3;
+    		P00VAR = DIF00;
+    	break;
+    	case 36:
+    		i07 = 3;
+    		P07VAR = DIF07;
+    	break;
+    	case 72:
+    		i02 = 3;
+    		P02VAR = DIF02;
+    	break;
+    	case 108:
+    		i03 = 3;
+    		P03VAR = DIF03;
+    	break;
+    	case 144:
+    		i04 = 3;
+    		P04VAR = DIF04;
+    	break;
+    	case 180:
+    		i05 = 3;
+    		P05VAR = DIF05;
+    	break;
+    	case 216:
+    		i06 = 3;
+    		P06VAR = DIF06;
+    	break;
+    	case 126:
+    		i07 = 3;
+    		P07VAR = DIF07;
+    	break;
+    	case 144:
+    		i14 = 3;
+    		CCAP2H = ~DIF14;
+    	break;
+    	case 162:
+    		i16 = 3;
+    		CCAP4H = ~DIF16;
+    	break;
+    	case 180:
+    		i20 = 3;
+    		P20VAR = DIF20;
+    	break;
+    	case 198:
+    		i21 = 3;
+    		P21VAR = DIF21;
+    	break;
+    	case 216:
+    		i22 = 3;
+    		P22VAR = DIF22;
+    	break;
+    	case 234:
+    		i23 = 3;
+    		P23VAR = DIF23;
+    	break;
+    }
+    */
 #endif
 }
 #endif

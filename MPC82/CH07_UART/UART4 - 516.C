@@ -4,8 +4,6 @@
 ************************************************/
 #include "..\REG_MG84FG516.H"   //暫存器及組態定義
 #include "math.h"
-//#define BUFFER
-//#define MUSIC		 //P12	   	CR
 //#define DEBUG
 //#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
@@ -13,24 +11,19 @@
 #include <stdio.h>   //加入標準輸出入函數
 unsigned char oldCHANNEL=0xFF;
 #endif
-#ifndef MUSIC
 #define HARDRAYPWM		  //P14 P15 P16		CR
 #ifdef	HARDRAYPWM
 #define PCATIMER
 #define TTT  256
-unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P22VAR,P23VAR,P24VAR,P25VAR,P26VAR,P32VAR,P36VAR,P34VAR,P35VAR;
+unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P22VAR,P23VAR,P24VAR,P25VAR,P26VAR,P32VAR,P33VAR,P34VAR,P35VAR,P36VAR,P37VAR,P40VAR,P41VAR,P42VAR,P43VAR,P46VAR;
 #endif
 #define TIMER0
 #define SIMULATION
-#else
-#include "MUSIC.H"
-#endif
 #define TIMER2
 #define PARSER
-//#define LCD
 #define TT  34286  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i24,i25,i26,i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i32,i36,i34,i35,i10000;
+unsigned char i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i24,i25,i26,i32,i33,i34,i35,i36,i37,i40,i41,i42,i43,i46,i10000;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -46,40 +39,6 @@ unsigned char channel;
 unsigned char note;
 unsigned char velocity;
 unsigned int action; //1 =note off ; 2=note on ; 3= wait
-#endif
-#ifdef LCD
-unsigned char jj=0;
-unsigned char line;
-#endif
-#ifdef BUFFER
-#define BUFFER_SIZE 900
-volatile unsigned int produceCount, consumeCount;
-unsigned char buffer[BUFFER_SIZE];
-/*
- = { 0x90,0x48,0x50,0x91,0x3C,0x50,0x92,0x54,0x50,0x90,0x48,0x0,0x90,0x49,0x50,0x91,0x3C,0x0,0x91,0x3D,0x50,0x92,0x54,0x0,0x92,0x55,0x50,0x90,0x4A,0x50,0x91,0x3E,0x50,0x92,0x56,0x50,0x80,
-0x49,0x0,0x81,0x3D,0x0,0x82,0x55,0x0,0x90,0x4B,0x50,0x91,0x3F,0x50,0x92,0x57,0x50,0x80,0x4A,0x0,0x81,0x3E,0x0,0x82,0x56,0x0,0x90,0x4C,0x50,0x91,0x40,0x50,0x92,0x58,0x50,0x80,0x4B,0x0,
-0x81,0x3F,0x0,0x82,0x57,0x0,0x90,0x4D,0x50,0x91,0x41,0x50,0x92,0x59,0x50,0x80,0x4C,0x0,0x81,0x40,0x0,0x82,0x58,0x0,0x90,0x4E,0x50,0x91,0x42,0x50,0x92,0x5A,0x50,0x80,0x4D,0x0,0x81,0x41,0x0,
-0x82,0x59,0x0,0x90,0x4F,0x50,0x91,0x43,0x50,0x92,0x5B,0x50,0x80,0x4E,0x0,0x81,0x42,0x0,0x82,0x5A,0x0,0x90,0x50,0x50,0x91,0x44,0x50,0x92,0x5C,0x50,0x80,0x4F,0x0,0x81,0x43,0x0,0x82,0x5B,
-0x0,0x90,0x51,0x50,0x91,0x45,0x50,0x92,0x5D,0x50,0x80,0x50,0x0,0x81,0x44,0x0,0x82,0x5C,0x0,0x90,0x52,0x50,0x91,0x46,0x50,0x92,0x5E,0x50,0x80,0x51,0x0,0x81,0x45,0x0,0x82,0x5D,0x0,
-0x90,0x53,0x0,0x91,0x47,0x50,0x92,0x5F,0x50,0x80,0x52,0x0,0x81,0x46,0x0,0x82,0x5E,0x0,0x90,0x54,0x50,0x91,0x48,0x50,0x92,0x60,0x50,0x80,0x53,0x0,0x81,0x47,0x0,0x82,0x5F,0x0,0x90,0x55,
-0x50,0x91,0x49,0x50,0x92,0x61,0x50,0x80,0x54,0x0,0x81,0x48,0x0,0x82,0x60,0x0,0x90,0x56,0x50,0x91,0x4A,0x50,0x92,0x62,0x50,0x80,0x55,0x0,0x81,0x49,0x0,0x82,0x61,0x0,0x90,0x57,0x50,0x91,
-0x4B,0x50,0x92,0x63,0x50,0x80,0x56,0x0,0x81,0x4A,0x0,0x82,0x62,0x0,0x80,0x57,0x0,0x81,0x4B,0x0,0x82,0x63,0x0 };
-*/
-#endif
-#ifdef MUSIC
-unsigned int  code Table[]  //定義音頻陣列資料,0為休止符
-    = {    0   ,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-           0   ,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-           0   ,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-           DO1 ,DO_1,RE1 ,RE_1,MI1 ,FA1 ,FA_1,SO1 ,SO_1,LA1 ,LA_1,SI1 ,
-           DO2 ,DO_2,RE2 ,RE_2,MI2 ,FA2 ,FA_2,SO2 ,SO_2,LA2 ,LA_2,SI2 ,
-           DO3 ,DO_3,RE3 ,RE_3,MI3 ,FA3 ,FA_3,SO3 ,SO_3,LA3 ,LA_3,SI3 ,
-           DO4 ,DO_4,RE4 ,RE_4,MI4 ,FA4 ,FA_4,SO4 ,SO_4,LA4 ,LA_4,SI4 ,
-           DO5 ,DO_5,RE5 ,RE_5,MI5 ,FA5 ,FA_5,SO5 ,SO_5,LA5 ,LA_5,SI5 ,
-           DO6 ,DO_6,RE6 ,RE_6,MI6 ,FA6 ,FA_6,SO6 ,SO_6,LA6 ,LA_6,SI6 ,
-           DO7 ,DO_7,RE7 ,RE_7,MI7 ,FA7 ,FA_7,SO7 ,SO_7,LA7 ,LA_7,SI7 ,
-           0   ,   0,   0,   0,   0,   0,   0,  0
-      };
 #endif
 #ifdef SIMULATION
 int notecount;
@@ -97,19 +56,9 @@ main()
     SCMD = 0x46;
     SCMD = 0xb9;
     Delay_ms(30);
-#ifdef BUFFER
-    produceCount = 0;
-    consumeCount = 0;
-#endif
 #ifdef PARSER
     note = velocity = 0;
     action = IGNORE;
-#endif
-#ifdef LCD
-    line = 0;
-    LCD_init();   	//LCD啟始程式
-    LCD_Cmd(0x80);        //游標由第一行開始顯示
-    LCD_Cmd(0x0f);//*0000 1111,顯示幕ON,顯示游標,游標閃爍
 #endif
     TMOD = 0;
     UART_init(31250);      //設定串列環境及鮑率
@@ -123,14 +72,6 @@ main()
     RCAP2=T2R=65536-TT; //設定Timer2及T2自動載入暫存器
 #endif
     EA=1;
-#ifdef MUSIC
-    CCAPM0 = ECOM+MAT+TOG+ECCF; //MAT=1，PAC計數與CCAP0匹配時，令CCF0=1
-    //ECOM=1，致能比較器功能
-    //TOG=1，(CH:CL)=CCAP0時，令CEX0腳反相
-    //ECCF=1，致能有匹配(CCF0=1)時，產生中斷
-    AUXIE = EPCA; //致能PCA中斷
-    CCF0 = 0;		//清除模組0的比較旗標
-#endif
     //AUXIE |= ES2;
 #ifdef HARDRAYPWM
     CCAPM0=CCAPM1=CCAPM2=CCAPM3=CCAPM4/*=CCAPM5*/=ECOM+PWM; //致能CEX1比較器及PWM輸出
@@ -150,11 +91,11 @@ main()
     AUXIE = EPCA;      //致能PCA中斷
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
-    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P22VAR=P23VAR=P24VAR=P25VAR=P26VAR=P32VAR=P36VAR=P34VAR=P35VAR=0;
+    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P22VAR=P23VAR=P24VAR=P25VAR=P26VAR=P32VAR=P33VAR=P34VAR=P35VAR=P36VAR=P40VAR=P41VAR=P42VAR=P43VAR=P46VAR=0;
     ohno[0] = ohno[1] = ohno[2] = ohno[3] = 0;
 #endif
 #ifdef TIMER2
-    i24=i25=i26=i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i32=i36=i34=i35=i10000=0;
+    i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i24=i25=i26=i32=i33=i34=i35=i36=i37=i40=i41=i42=i43=i46=i10000=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -170,28 +111,10 @@ main()
 #endif
 #ifdef SIMULATION
     notecount = 0;
-    EX0=1;
-    EX1=1;
-    EX2=1;
-    EX3=1;//致能外部INT0~3中斷
-    IT0=1;
-    IT1=1;
-    IT2=1;
-    IT3=1;//設定INT0~3腳負緣觸發中斷
 #endif
     while(1)
     {
-#ifdef BUFFER
-        while (abs(produceCount - consumeCount) == 0)
-        {
-            softPWM();
-        }
-        consumeToken( buffer[consumeCount++]);
-        if( consumeCount >= BUFFER_SIZE )
-            consumeCount = 0;
-#else
         softPWM();	//自我空轉，表示可做其它工作
-#endif
     }
 }
 
@@ -209,13 +132,6 @@ void consumeToken(unsigned char incomingByte)
 #ifdef SIMULATION
         notecount = 0;
 #endif
-#ifdef LCD
-        if(channel <= 0x09)
-            LCD_Data(channel + '0');  //字元送到LCD顯示
-        else
-            LCD_Data(channel  -10 + 'A');
-        LCD_Data(',');
-#endif
         action = ON;
     }
     else if ( controlray == 8 )// Note off
@@ -230,28 +146,10 @@ void consumeToken(unsigned char incomingByte)
             note=incomingByte-twoCHANNEL;
             if( action > OFF && oneCHANNEL == channel )
             {
-#ifdef MUSIC
-                CCAP0L=Table[note];	   //設定比較暫存器低位元組
-                CCAP0H=Table[note]>>8; //設定比較暫存器高位元組
-#endif
 #ifdef LEDRay
 #ifndef CHANNEL16
                 LED=~note;  //將接收到的字元由LED輸出
 #endif
-#endif
-#ifdef LCD
-                char raynote = (note & 0xF0);
-                raynote >>= 4;
-                if(raynote <= 0x09)
-                    LCD_Data(raynote + '0');  //字元送到LCD顯示
-                else
-                    LCD_Data(raynote - 10 + 'A');
-                raynote = (note & 0x0F);
-                if(raynote <= 0x09)
-                    LCD_Data(raynote + '0');  //字元送到LCD顯示
-                else
-                    LCD_Data(raynote - 10 + 'A');
-                LCD_Data(';');
 #endif
             }
         }
@@ -262,9 +160,6 @@ void consumeToken(unsigned char incomingByte)
             {
                 if( velocity != 0 && oneCHANNEL == channel )
                 {
-#ifdef MUSIC
-                    CR = 1;
-#endif
                     switch( oneCHANNEL )
                     {
                     case 0:
@@ -567,20 +462,6 @@ void consumeToken(unsigned char incomingByte)
                         //CCAP5H=0xFF;  //設定(P17/CEX5)脈波時間，平均電壓為0.01V
                         //記得統一加上 inverse ~
 #endif
-#ifdef LCD
-                        char raynote = (velocity & 0xF0);
-                        raynote >>= 4;
-                        if(raynote <= 0x09)
-                            LCD_Data(raynote + '0');  //字元送到LCD顯示
-                        else
-                            LCD_Data(raynote - 10 + 'A');
-                        raynote = (velocity & 0x0F);
-                        if(raynote <= 0x09)
-                            LCD_Data(raynote + '0');  //字元送到LCD顯示
-                        else
-                            LCD_Data(raynote - 10 + 'A');
-                        LCD_Data(' ');
-#endif
                     }
                 }
                 else
@@ -652,12 +533,26 @@ void softPWM()
         P21 = 0;
     if(CL > P32VAR)
         P32 = 0;
-    if(CL > P36VAR)
-        P36 = 0;
+    if(CL > P33VAR)
+        P33 = 0;
     if(CL > P34VAR)
         P34 = 0;
     if(CL > P35VAR)
         P35 = 0;
+    if(CL > P36VAR)
+        P36 = 0;
+    if(CL > P37VAR)
+        P37 = 0;
+    if(CL > P40VAR)
+        P40 = 0;
+    if(CL > P41VAR)
+        P41 = 0;
+    if(CL > P42VAR)
+        P42 = 0;
+    if(CL > P43VAR)
+        P43 = 0;
+    if(CL > P46VAR)
+        P46 = 0;
 #endif
 }
 #ifdef TIMER2
@@ -709,12 +604,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P01VAR = 0x00;
             i01--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P01VAR = 0xA0;
-            	i01--;
-            	break;
-            */
         default:
             i01--;
             break;
@@ -728,11 +617,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P02VAR = 0x00;
             i02--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P02VAR = 0xA0;
-            	i02--;
-            */
         default:
             i02--;
             break;
@@ -746,11 +630,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P03VAR = 0x00;
             i03--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P03VAR = 0xA0;
-            	i03--;
-            */
         default:
             i03--;
             break;
@@ -764,11 +643,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P04VAR = 0x00;
             i04--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P04VAR = 0xA0;
-                i04--;
-            */
         default:
             i04--;
             break;
@@ -782,11 +656,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P05VAR = 0x00;
             i05--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P05VAR = 0xA0;
-                i05--;
-            */
         default:
             i05--;
             break;
@@ -800,11 +669,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P06VAR = 0x00;
             i06--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P06VAR = 0xA0;
-                i06--;
-            */
         default:
             i06--;
             break;
@@ -830,11 +694,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P11VAR = 0;
             i11--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P11VAR = 0xA0;
-                i11--;
-            */
         default:
             i11--;
             break;
@@ -848,11 +707,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P14VAR = 0;
             i14--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P14VAR = 0xA0;
-                i14--;
-            */
         default:
             i14--;
             break;
@@ -866,11 +720,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P15VAR = 0;
             i15--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P15VAR = 0xA0;
-                i15--;
-            */
         default:
             i15--;
             break;
@@ -884,11 +733,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P16VAR = 0;
             i16--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P16VAR = 0xA0;
-                i16--;
-            */
         default:
             i16--;
             break;
@@ -902,11 +746,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P17VAR = 0;
             i17--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P17VAR = 0xA0;
-                i17--;
-            */
         default:
             i17--;
             break;
@@ -920,11 +759,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P20VAR = 0x00;
             i20--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P20VAR = 0xA0;
-                i20--;
-            */
         default:
             i20--;
             break;
@@ -938,11 +772,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P21VAR = 0x00;
             i21--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P21VAR = 0xA0;
-                i21--;
-            */
         default:
             i21--;
             break;
@@ -955,7 +784,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             CCAP0H = ~0x00;
             P22VAR = 0;
             i22--;
-			break;
+            break;
         default:
             i22--;
             break;
@@ -971,11 +800,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             //P32 = 0;
             i23--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	CCAP1H = ~0xA0;
-                i23--;
-            */
         default:
             //if(0 == P11 && i23 < 160 )
             //i23 = 1;
@@ -993,11 +817,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P24VAR = 0;
             i24--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	CCAP2H = ~0xA0;
-                i24--;
-            */
         default:
             i24--;
             break;
@@ -1012,11 +831,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P25VAR = 0;
             i25--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	CCAP3H = ~0xA0;
-                i25--;
-            */
         default:
             i25--;
             break;
@@ -1031,11 +845,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P26VAR = 0;
             i26--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	CCAP4H = ~0xA0;
-                i26--;
-            */
         default:
             i26--;
             break;
@@ -1049,11 +858,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P32VAR = 0;
             i32--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P32VAR = 0xA0;
-                i32--;
-            */
         default:
             i32--;
             break;
@@ -1067,11 +871,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P36VAR = 0;
             i36--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P36VAR = 0xA0;
-                i36--;
-            */
         default:
             i36--;
             break;
@@ -1085,11 +884,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P34VAR = 0;
             i34--;
             break;
-            /*
-            case ((e05-e04)>>1):
-            	P34VAR = 0xA0;
-                i34--;
-            */
         case (e05-6):
             i25 = e04;
             CCAP3H = ~0xFF;
@@ -1144,49 +938,13 @@ void SCON_int(void)  interrupt 4  //串列中斷函數
         RI = 0;    //接收完畢，令RI=0
         if(SBUF < 0xF0)
         {
-#ifdef BUFFER
-            while ( abs(produceCount - consumeCount) == BUFFER_SIZE )
-                ; // buffer is full
-
-            buffer[produceCount++] = SBUF;
-            //SBUF = buffer[produceCount++];
-            if(produceCount >= BUFFER_SIZE)
-                produceCount = 0;
-#else
             consumeToken(SBUF);
-#endif
-#ifdef LCD
-            if(0 == line && jj > 15) {
-                line = 1;    //在LCD只能輸入4個字
-                LCD_Cmd(0xC0);
-            }
-            else if(jj>31) {
-                jj=0;    //在LCD只能輸入4個字
-                line = 0;
-                LCD_Cmd(0x80);
-            }
-#endif
         }
     }
     //else
     //TI=0;
 }
-/*
-//**********************************************************
-void S2CON_int (void)  interrupt 12  //串列中斷函數
-{
-    if(S2CON & S2RI)  //若為接收所產生的中斷
-    {
-        S2CON &= ~S2RI;   //清除接收旗標令S2RI=0
-#ifdef LEDRay
-        //LED = ~S2BUF;     //將接收到的字元由LED輸出
-#endif
-		//S2BUF = ~LED;     //將temp發射出去
-    }
-    else
-		S2CON &= ~S2TI; //若為發射所產生的中斷，清除發射旗標令S2TI=0
-}
-*/
+
 /***********************************************************
 *函數名稱: UART_init
 *功能描述: UART啟始程式
@@ -1197,7 +955,8 @@ void UART_init(unsigned int bps)  //UART啟始程式
     P0M0=0xFF;
     P1M0=0xFB; //設定P0為推挽式輸出(M0-1=01)
     P2M0=0x7F;
-    P3M1=0xF4;
+    P3M1=0xFC;
+    P4M0=0x4F;
     REN = 1;
     SM1=1;//SCON = 0x50;     //設定UART串列傳輸為MODE1及致能接收
     TMOD |= T1_M1;  //設定TIMER1為MODE2
@@ -1217,16 +976,12 @@ void UART_init(unsigned int bps)  //UART啟始程式
 ************************************************************/
 void PCA_Interrupt() interrupt 10
 {
-#ifdef MUSIC
-    CCF0 = 0;   //清除模組0的比較旗標
-#endif
     CL=CH=0;   //PCA計數器由0開始上數
 #ifdef PCATIMER
     if(CCF5)
     {
         CCF5=0; //清除模組0-5的比較旗標
     }//第T*6秒動作，PCA計數器由0上數
-#ifdef SIMULATION
     if(P01VAR != 0 && 0 == i01)
     {
         i01 = 3;
@@ -1254,6 +1009,26 @@ void PCA_Interrupt() interrupt 10
     if(P07VAR != 0 && 0 == i07)
     {
         i07 = 3;
+    }
+    if(P11VAR != 0 && 0 == i11)
+    {
+        i11 = 3;
+    }
+    if(P14VAR != 0 && 0 == i14)
+    {
+        i14 = 3;
+    }
+    if(P15VAR != 0 && 0 == i15)
+    {
+        i15 = 3;
+    }
+    if(P16VAR != 0 && 0 == i16)
+    {
+        i16 = 3;
+    }
+    if(P17VAR != 0 && 0 == i17)
+    {
+        i17 = 3;
     }
     if(P20VAR != 0 && 0 == i20)
     {
@@ -1288,11 +1063,55 @@ void PCA_Interrupt() interrupt 10
         CCAP4H = ~P26VAR;
         i26 = 3;
     }
-#endif
+    if(P32VAR != 0 && 0 == i32)
+    {
+        i32 = 3;
+    }
+    if(P33VAR != 0 && 0 == i33)
+    {
+        i33 = 3;
+    }
+    if(P34VAR != 0 && 0 == i34)
+    {
+        i34 = 3;
+    }
+    if(P35VAR != 0 && 0 == i35)
+    {
+        i35 = 3;
+    }
+    if(P36VAR != 0 && 0 == i36)
+    {
+        i36 = 3;
+    }
+    if(P37VAR != 0 && 0 == i37)
+    {
+        i37 = 3;
+    }
+    if(P40VAR != 0 && 0 == i40)
+    {
+        i40 = 3;
+    }
+    if(P41VAR != 0 && 0 == i41)
+    {
+        i41 = 3;
+    }
+    if(P42VAR != 0 && 0 == i42)
+    {
+        i42 = 3;
+    }
+    if(P43VAR != 0 && 0 == i43)
+    {
+        i43 = 3;
+    }
+    if(P46VAR != 0 && 0 == i46)
+    {
+        i46 = 3;
+    }
     P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
     P1 |= 0xF2;
     P20 = P21 = 1;
-    P32 = P34 = P35 = P36 = 1;
+    P3 |= 0xFC;
+    P4 |= 0x4F;
 #endif
 }
 
@@ -1324,6 +1143,7 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
         TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
     }
 #elif defined(SIMULATION)
+    /*
     switch(pressure++)
     {
     case 0:
@@ -1439,60 +1259,7 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
         P5 = 64;
         break;
     }
+    */
 #endif
-}
-#endif
-
-#ifdef LCD
-/***********************************************************
-*函數名稱: LCD_Data
-*功能描述: 傳送資料到文字型LCD
-*輸入參數：dat
-************************************************************/
-void LCD_Data(char dat)  //傳送資料到LCD
-{
-    Data=dat; //資料送到BUS
-    P07=0;    //過濾顯示字型資料
-    RS=1;
-    RW=0;
-    EN=1;//資料寫入到LCD內
-    Delay_ms(1);   //LCD等待寫入完成
-    EN=0;          //禁能LCD
-
-    jj++;
-}
-/***************************************************************
-*函數名稱: LCD_Cmd
-*功能描述: 傳送命令到文字型LCD
-*輸入參數：Cmd
-************************************************************/
-void LCD_Cmd(unsigned char Cmd) //傳送命令到LCD
-{
-    Data=Cmd;  //命令送到BUS
-    RS=0;
-    RW=0;
-    EN=1; //命令寫入到LCD內
-    Delay_ms(1);    //LCD等待寫入完成
-    EN=0;           //禁能LCD
-}
-/***************************************************************
-*函數名稱: LCD_init
-*功能描述: 啟始化文字型LCD
-*****************************************************************/
-void LCD_init(void)    //LCD的啟始程式
-{
-    LCD_Cmd(0x38);/*0011 1000,8bit傳輸,顯示2行,5*7字型
-                    bit4:DL=1,8bit傳輸,
-                    bit3:N=1,顯示2行
-                    bit2:F=0,5*7字型*/
-    LCD_Cmd(0x0c);/*0000 1100,顯示幕ON,不顯示游標,游標不閃爍
-                    bit2:D=1,顯示幕ON
-                    bit1:C=0,不顯示游標
-	                bit0:B=0,游標不閃爍*/
-    LCD_Cmd(0x06);/*0000 0110,//顯示完游標右移,游標移位禁能
-                    bit1:I/D=1,顯示完游標右移,
-                    bit0:S=0,游標移位禁能*/
-    LCD_Cmd(0x01); //清除顯示幕
-    LCD_Cmd(0x02); //游標回原位
 }
 #endif
