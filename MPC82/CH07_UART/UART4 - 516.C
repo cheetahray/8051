@@ -100,14 +100,14 @@ main()
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
     P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P22VAR=P23VAR=P24VAR=P25VAR=P26VAR=P32VAR=P33VAR=P34VAR=P35VAR=P36VAR=P40VAR=P41VAR=P42VAR=P43VAR=P46VAR=0;
-#ifndef LEDRay	
-	P50VAR=P51VAR=P52VAR=P53VAR=P54VAR=P55VAR=P56VAR=P57VAR=0;
+#ifndef LEDRay
+    P50VAR=P51VAR=P52VAR=P53VAR=P54VAR=P55VAR=P56VAR=P57VAR=0;
 #endif
 #endif
 #ifdef TIMER2
     i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i24=i25=i26=i32=i33=i34=i35=i36=i37=i40=i41=i42=i43=i46=i10000=0;
 #ifndef LEDRay
-	i50=i51=i52=i53=i54=i55=i56=i57=0;
+    i50=i51=i52=i53=i54=i55=i56=i57=0;
 #endif
 #endif
     ES=1;            //致能串列中斷
@@ -425,110 +425,110 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 36:
-							if(i01)
-							{
-								i01 = 1;
-							}
+                            if(i01)
+                            {
+                                i01 = 1;
+                            }
                             if(i02)
-							{
-								i02 = 1;
-							}
+                            {
+                                i02 = 1;
+                            }
                             if(i03)
-							{
-								i03 = 1;
-							}
+                            {
+                                i03 = 1;
+                            }
                             if(i04)
-							{
-								i04 = 1;
-							}
+                            {
+                                i04 = 1;
+                            }
                             P00VAR = 255;
                             break;
                         case 37:
-						    if(i02)
-							{
-								i02 = 1;
-							}
+                            if(i02)
+                            {
+                                i02 = 1;
+                            }
                             if(i03)
-							{
-								i03 = 1;
-							}
+                            {
+                                i03 = 1;
+                            }
                             if(i04)
-							{
-								i04 = 1;
-							}
+                            {
+                                i04 = 1;
+                            }
                             P01VAR = P00VAR = 255;
                             break;
                         case 38:
-						    if(i03)
-							{
-								i03 = 1;
-							}
+                            if(i03)
+                            {
+                                i03 = 1;
+                            }
                             if(i04)
-							{
-								i04 = 1;
-							}
+                            {
+                                i04 = 1;
+                            }
                             P02VAR = P00VAR = 255;
                             break;
                         case 39:
-						    if(i04)
-							{
-								i04 = 1;
-							}
+                            if(i04)
+                            {
+                                i04 = 1;
+                            }
                             P03VAR = P00VAR = 255;
                             break;
                         case 40:
                             P04VAR = P00VAR = 255;
                             break;
                         case 41:
-						    if(i06)
-							{
-								i06 = 1;
-							}
+                            if(i06)
+                            {
+                                i06 = 1;
+                            }
                             if(i07)
-							{
-								i07 = 1;
-							}
+                            {
+                                i07 = 1;
+                            }
                             if(i11)
-							{
-								i11 = 1;
-							}
+                            {
+                                i11 = 1;
+                            }
                             if(i14)
-							{
-								i14 = 1;
-							}
+                            {
+                                i14 = 1;
+                            }
                             P05VAR = 255;
                             break;
                         case 42:
                             if(i07)
-							{
-								i07 = 1;
-							}
+                            {
+                                i07 = 1;
+                            }
                             if(i11)
-							{
-								i11 = 1;
-							}
+                            {
+                                i11 = 1;
+                            }
                             if(i14)
-							{
-								i14 = 1;
-							}
+                            {
+                                i14 = 1;
+                            }
                             P06VAR = P05VAR = 255;
                             break;
                         case 43:
                             if(i11)
-							{
-								i11 = 1;
-							}
+                            {
+                                i11 = 1;
+                            }
                             if(i14)
-							{
-								i14 = 1;
-							}
+                            {
+                                i14 = 1;
+                            }
                             P07VAR = P05VAR = 255;
                             break;
                         case 44:
                             if(i14)
-							{
-								i14 = 1;
-							}
+                            {
+                                i14 = 1;
+                            }
                             P11VAR = P05VAR = 255;
                             break;
                         case 45:
@@ -536,54 +536,54 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 46:
                             if(i16)
-							{
-								i16 = 1;
-							}
+                            {
+                                i16 = 1;
+                            }
                             if(i17)
-							{
-								i17 = 1;
-							}
+                            {
+                                i17 = 1;
+                            }
                             if(i20)
-							{
-								i20 = 1;
-							}
+                            {
+                                i20 = 1;
+                            }
                             if(i21)
-							{
-								i21 = 1;
-							}
+                            {
+                                i21 = 1;
+                            }
                             P15VAR = 255;
                             break;
                         case 47:
                             if(i17)
-							{
-								i17 = 1;
-							}
+                            {
+                                i17 = 1;
+                            }
                             if(i20)
-							{
-								i20 = 1;
-							}
+                            {
+                                i20 = 1;
+                            }
                             if(i21)
-							{
-								i21 = 1;
-							}
+                            {
+                                i21 = 1;
+                            }
                             P16VAR = P15VAR = 255;
                             break;
                         case 48:
                             if(i20)
-							{
-								i20 = 1;
-							}
+                            {
+                                i20 = 1;
+                            }
                             if(i21)
-							{
-								i21 = 1;
-							}
+                            {
+                                i21 = 1;
+                            }
                             P17VAR = P15VAR = 255;
                             break;
                         case 49:
                             if(i21)
-							{
-								i21 = 1;
-							}
+                            {
+                                i21 = 1;
+                            }
                             P20VAR = P15VAR = 255;
                             break;
                         case 50:
@@ -591,35 +591,35 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 51:
                             if(i23)
-							{
-								i23 = 1;
-							}
+                            {
+                                i23 = 1;
+                            }
                             if(i24)
-							{
-								i24 = 1;
-							}
+                            {
+                                i24 = 1;
+                            }
                             if(i25)
-							{
-								i25 = 1;
-							}
+                            {
+                                i25 = 1;
+                            }
                             P22VAR = 255;
                             break;
                         case 52:
                             if(i24)
-							{
-								i24 = 1;
-							}
+                            {
+                                i24 = 1;
+                            }
                             if(i25)
-							{
-								i25 = 1;
-							}
+                            {
+                                i25 = 1;
+                            }
                             P23VAR = P22VAR = 255;
                             break;
                         case 53:
                             if(i25)
-							{
-								i25 = 1;
-							}
+                            {
+                                i25 = 1;
+                            }
                             P24VAR = P22VAR = 255;
                             break;
                         case 54:
@@ -627,54 +627,54 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 55:
                             if(i32)
-							{
-								i32 = 1;
-							}
+                            {
+                                i32 = 1;
+                            }
                             if(i33)
-							{
-								i33 = 1;
-							}
+                            {
+                                i33 = 1;
+                            }
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             P26VAR = 255;
                             break;
                         case 56:
                             if(i33)
-							{
-								i33 = 1;
-							}
+                            {
+                                i33 = 1;
+                            }
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             P32VAR = P26VAR = 255;
                             break;
                         case 57:
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             P33VAR = P26VAR = 255;
                             break;
                         case 58:
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             P34VAR = P26VAR = 255;
                             break;
                         case 59:
@@ -682,77 +682,77 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 60:
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             if(i42)
-							{
-								i42 = 1;
-							}
+                            {
+                                i42 = 1;
+                            }
                             if(i43)
-							{
-								i43 = 1;
-							}
+                            {
+                                i43 = 1;
+                            }
                             P36VAR = 255;
                             break;
                         case 61:
-						    if(i40)
-							{
-								i40 = 1;
-							}
+                            if(i40)
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             if(i42)
-							{
-								i42 = 1;
-							}
+                            {
+                                i42 = 1;
+                            }
                             if(i43)
-							{
-								i43 = 1;
-							}
+                            {
+                                i43 = 1;
+                            }
                             P37VAR = P36VAR = 255;
                             break;
                         case 62:
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             if(i42)
-							{
-								i42 = 1;
-							}
+                            {
+                                i42 = 1;
+                            }
                             if(i43)
-							{
-								i43 = 1;
-							}
+                            {
+                                i43 = 1;
+                            }
                             P40VAR = P36VAR = 255;
                             break;
                         case 63:
                             if(i42)
-							{
-								i42 = 1;
-							}
+                            {
+                                i42 = 1;
+                            }
                             if(i43)
-							{
-								i43 = 1;
-							}
+                            {
+                                i43 = 1;
+                            }
                             P41VAR = P36VAR = 255;
                             break;
                         case 64:
                             if(i43)
-							{
-								i43 = 1;
-							}
+                            {
+                                i43 = 1;
+                            }
                             P42VAR = P36VAR = 255;
                             break;
                         case 65:
@@ -765,110 +765,110 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 36:
-							if(i01)
-							{
-								i01 = 1;
-							}
+                            if(i01)
+                            {
+                                i01 = 1;
+                            }
                             if(i02)
-							{
-								i02 = 1;
-							}
+                            {
+                                i02 = 1;
+                            }
                             if(i03)
-							{
-								i03 = 1;
-							}
+                            {
+                                i03 = 1;
+                            }
                             if(i04)
-							{
-								i04 = 1;
-							}
+                            {
+                                i04 = 1;
+                            }
                             P00VAR = 255;
                             break;
                         case 37:
-						    if(i02)
-							{
-								i02 = 1;
-							}
+                            if(i02)
+                            {
+                                i02 = 1;
+                            }
                             if(i03)
-							{
-								i03 = 1;
-							}
+                            {
+                                i03 = 1;
+                            }
                             if(i04)
-							{
-								i04 = 1;
-							}
+                            {
+                                i04 = 1;
+                            }
                             P01VAR = P00VAR = 255;
                             break;
                         case 38:
-						    if(i03)
-							{
-								i03 = 1;
-							}
+                            if(i03)
+                            {
+                                i03 = 1;
+                            }
                             if(i04)
-							{
-								i04 = 1;
-							}
+                            {
+                                i04 = 1;
+                            }
                             P02VAR = P00VAR = 255;
                             break;
                         case 39:
-						    if(i04)
-							{
-								i04 = 1;
-							}
+                            if(i04)
+                            {
+                                i04 = 1;
+                            }
                             P03VAR = P00VAR = 255;
                             break;
                         case 40:
                             P04VAR = P00VAR = 255;
                             break;
                         case 41:
-						    if(i06)
-							{
-								i06 = 1;
-							}
+                            if(i06)
+                            {
+                                i06 = 1;
+                            }
                             if(i07)
-							{
-								i07 = 1;
-							}
+                            {
+                                i07 = 1;
+                            }
                             if(i11)
-							{
-								i11 = 1;
-							}
+                            {
+                                i11 = 1;
+                            }
                             if(i14)
-							{
-								i14 = 1;
-							}
+                            {
+                                i14 = 1;
+                            }
                             P05VAR = 255;
                             break;
                         case 42:
                             if(i07)
-							{
-								i07 = 1;
-							}
+                            {
+                                i07 = 1;
+                            }
                             if(i11)
-							{
-								i11 = 1;
-							}
+                            {
+                                i11 = 1;
+                            }
                             if(i14)
-							{
-								i14 = 1;
-							}
+                            {
+                                i14 = 1;
+                            }
                             P06VAR = P05VAR = 255;
                             break;
                         case 43:
                             if(i11)
-							{
-								i11 = 1;
-							}
+                            {
+                                i11 = 1;
+                            }
                             if(i14)
-							{
-								i14 = 1;
-							}
+                            {
+                                i14 = 1;
+                            }
                             P07VAR = P05VAR = 255;
                             break;
                         case 44:
                             if(i14)
-							{
-								i14 = 1;
-							}
+                            {
+                                i14 = 1;
+                            }
                             P11VAR = P05VAR = 255;
                             break;
                         case 45:
@@ -876,405 +876,405 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 46:
                             if(i16)
-							{
-								i16 = 1;
-							}
+                            {
+                                i16 = 1;
+                            }
                             if(i17)
-							{
-								i17 = 1;
-							}
+                            {
+                                i17 = 1;
+                            }
                             if(i20)
-							{
-								i20 = 1;
-							}
+                            {
+                                i20 = 1;
+                            }
                             if(i21)
-							{
-								i21 = 1;
-							}
+                            {
+                                i21 = 1;
+                            }
                             P15VAR = 255;
                             break;
                         case 47:
                             if(i17)
-							{
-								i17 = 1;
-							}
+                            {
+                                i17 = 1;
+                            }
                             if(i20)
-							{
-								i20 = 1;
-							}
+                            {
+                                i20 = 1;
+                            }
                             if(i21)
-							{
-								i21 = 1;
-							}
+                            {
+                                i21 = 1;
+                            }
                             P16VAR = P15VAR = 255;
                             break;
                         case 48:
                             if(i20)
-							{
-								i20 = 1;
-							}
+                            {
+                                i20 = 1;
+                            }
                             if(i21)
-							{
-								i21 = 1;
-							}
+                            {
+                                i21 = 1;
+                            }
                             P17VAR = P15VAR = 255;
                             break;
                         case 49:
                             if(i21)
-							{
-								i21 = 1;
-							}
+                            {
+                                i21 = 1;
+                            }
                             P20VAR = P15VAR = 255;
                             break;
                         case 50:
                             P21VAR = P15VAR = 255;
                             break;
                         case 51:
-						    if(i23)
-							{
-								i23 = 1;
-							}
+                            if(i23)
+                            {
+                                i23 = 1;
+                            }
                             if(i24)
-							{
-								i24 = 1;
-							}
-							if(i25)
-							{
-								i25 = 1;
-							}
+                            {
+                                i24 = 1;
+                            }
+                            if(i25)
+                            {
+                                i25 = 1;
+                            }
                             if(i26)
-							{
-								i26 = 1;
-							}
+                            {
+                                i26 = 1;
+                            }
                             if(i32)
-							{
-								i32 = 1;
-							}
+                            {
+                                i32 = 1;
+                            }
                             if(i33)
-							{
-								i33 = 1;
-							}
+                            {
+                                i33 = 1;
+                            }
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P22VAR = 255;
                             break;
                         case 52:
                             if(i24)
-							{
-								i24 = 1;
-							}
-							if(i25)
-							{
-								i25 = 1;
-							}
+                            {
+                                i24 = 1;
+                            }
+                            if(i25)
+                            {
+                                i25 = 1;
+                            }
                             if(i26)
-							{
-								i26 = 1;
-							}
+                            {
+                                i26 = 1;
+                            }
                             if(i32)
-							{
-								i32 = 1;
-							}
+                            {
+                                i32 = 1;
+                            }
                             if(i33)
-							{
-								i33 = 1;
-							}
+                            {
+                                i33 = 1;
+                            }
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P23VAR = P22VAR = 255;
                             break;
                         case 53:
                             if(i25)
-							{
-								i25 = 1;
-							}
+                            {
+                                i25 = 1;
+                            }
                             if(i26)
-							{
-								i26 = 1;
-							}
+                            {
+                                i26 = 1;
+                            }
                             if(i32)
-							{
-								i32 = 1;
-							}
+                            {
+                                i32 = 1;
+                            }
                             if(i33)
-							{
-								i33 = 1;
-							}
+                            {
+                                i33 = 1;
+                            }
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P24VAR = P22VAR = 255;
                             break;
                         case 54:
                             if(i26)
-							{
-								i26 = 1;
-							}
+                            {
+                                i26 = 1;
+                            }
                             if(i32)
-							{
-								i32 = 1;
-							}
+                            {
+                                i32 = 1;
+                            }
                             if(i33)
-							{
-								i33 = 1;
-							}
+                            {
+                                i33 = 1;
+                            }
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P25VAR = P22VAR = 255;
                             break;
                         case 55:
                             if(i32)
-							{
-								i32 = 1;
-							}
+                            {
+                                i32 = 1;
+                            }
                             if(i33)
-							{
-								i33 = 1;
-							}
+                            {
+                                i33 = 1;
+                            }
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P26VAR = P22VAR = 255;
                             break;
                         case 56:
                             if(i33)
-							{
-								i33 = 1;
-							}
+                            {
+                                i33 = 1;
+                            }
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P32VAR = P22VAR = 255;
                             break;
                         case 57:
                             if(i34)
-							{
-								i34 = 1;
-							}
+                            {
+                                i34 = 1;
+                            }
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P33VAR = P22VAR = 255;
                             break;
                         case 58:
                             if(i35)
-							{
-								i35 = 1;
-							}
+                            {
+                                i35 = 1;
+                            }
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P34VAR = P22VAR = 255;
                             break;
                         case 59:
                             if(i36)
-							{
-								i36 = 1;
-							}
+                            {
+                                i36 = 1;
+                            }
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P35VAR = P22VAR = 255;
                             break;
                         case 60:
                             if(i37)
-							{
-								i37 = 1;
-							}
+                            {
+                                i37 = 1;
+                            }
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P36VAR = P22VAR = 255;
                             break;
                         case 61:
                             if(i40)
-							{
-								i40 = 1;
-							}
+                            {
+                                i40 = 1;
+                            }
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P37VAR = P22VAR = 255;
                             break;
                         case 62:
                             if(i41)
-							{
-								i41 = 1;
-							}
+                            {
+                                i41 = 1;
+                            }
                             P40VAR = P22VAR = 255;
                             break;
                         case 63:
@@ -1292,16 +1292,16 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                             P00VAR = 255;
 #else
-                            P17VAR = 255;       
-							i37 = e07;
+                            P17VAR = 255;
+                            i37 = e07;
 #endif
                             break;
                         case 37:
 #ifndef ukulelechord
                             P01VAR = P00VAR = 255;
 #else
-							P25VAR = P01VAR = P23VAR = P20VAR = 255;
-							i37 = e07;
+                            P25VAR = P01VAR = P23VAR = P20VAR = 255;
+                            i37 = e07;
 #endif
                             break;
                         case 38:
@@ -1309,7 +1309,7 @@ void consumeToken(unsigned char incomingByte)
                             P02VAR = P00VAR = 255;
 #else
                             P26VAR = P02VAR = P06VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 39:
@@ -1317,7 +1317,7 @@ void consumeToken(unsigned char incomingByte)
                             P03VAR = P00VAR = 255;
 #else
                             P03VAR = P07VAR = P15VAR = 255;
-	                        i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 40:
@@ -1332,7 +1332,7 @@ void consumeToken(unsigned char incomingByte)
                             }
 #else
                             P25VAR = P04VAR = P16VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 41:
@@ -1347,7 +1347,7 @@ void consumeToken(unsigned char incomingByte)
                             }
 #else
                             P26VAR = P23VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 42:
@@ -1355,7 +1355,7 @@ void consumeToken(unsigned char incomingByte)
                             P06VAR = P22VAR = 255;
 #else
                             P32VAR = P01VAR = P06VAR = P20VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 43:
@@ -1370,7 +1370,7 @@ void consumeToken(unsigned char incomingByte)
                             }
 #else
                             P02VAR = P07VAR = P16VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 44:
@@ -1383,11 +1383,11 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 P11VAR = P22VAR = 255;
                             }
-                            break;
 #else
                             P25VAR = P03VAR = P11VAR = P17VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
+                            break;
                         case 45:
 #ifndef ukulelechord
                             if(!P22VAR)
@@ -1407,12 +1407,12 @@ void consumeToken(unsigned char incomingByte)
                             }
 #else
                             P01VAR = P26VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 46:
-                            if(!P24VAR)
 #ifndef ukulelechord
+                            if(!P24VAR)
                             {
                                 P15VAR = P35VAR = 255;
                             }
@@ -1421,8 +1421,8 @@ void consumeToken(unsigned char incomingByte)
                                 P32VAR = P24VAR = 255;
                             }
 #else
-                            P32VAR = P02VAR = P23VAR = P15VAR = 255;   
-							i37 = e07;
+                            P32VAR = P02VAR = P23VAR = P15VAR = 255;
+                            i37 = e07;
 #endif
                             break;
                         case 47:
@@ -1437,7 +1437,7 @@ void consumeToken(unsigned char incomingByte)
                             }
 #else
                             P33VAR = P03VAR = P06VAR = P16VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 48:
@@ -1451,8 +1451,8 @@ void consumeToken(unsigned char incomingByte)
                                 P34VAR = P24VAR = 255;
                             }
 #else
-                            P17VAR = 255; 
-							i37 = e07;
+                            P17VAR = 255;
+                            i37 = e07;
 #endif
                             break;
                         case 49:
@@ -1460,7 +1460,7 @@ void consumeToken(unsigned char incomingByte)
                             P20VAR = P35VAR = 255;
 #else
                             P25VAR = P01VAR = P23VAR = P20VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         case 50:
@@ -1468,7 +1468,7 @@ void consumeToken(unsigned char incomingByte)
                             P21VAR = P20VAR = 255;
 #else
                             P26VAR = P02VAR = P06VAR = 255;
-							i37 = e07;
+                            i37 = e07;
 #endif
                             break;
                         }
@@ -3706,10 +3706,10 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             break;
         }
 #ifdef ukulelechord
-		switch(i37)
-		{
-		case 0:
-	        break;
+        switch(i37)
+        {
+        case 0:
+            break;
         case (e07-6):
             P35VAR = 255;
             i37--;
@@ -3726,10 +3726,10 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             P24VAR = 255;
             i37--;
             break;
-		default:
-		    i37--;
-		    break;
-		}
+        default:
+            i37--;
+            break;
+        }
 #endif
         break;
     case 11:
