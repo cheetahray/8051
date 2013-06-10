@@ -45,7 +45,10 @@ unsigned char P00VAR, P01VAR, P02VAR, P03VAR, P04VAR, P05VAR, P06VAR, P07VAR, P2
 //#define LCD
 #define TT  32768  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i14,i15,i16,i00,i01,i02,i03,i04, i05, i06, i07, i20, i21, i22, i23;
+unsigned char i00,i01,i02,i03,i04, i05, i06, i07, i14,i15,i16,i20, i21, i22, i23;
+#if !defined MUSIC && !defined CHANNEL16
+unsigned char i12,i13;
+#endif
 #endif
 void softPWM();
 #ifdef PARSER
@@ -168,7 +171,7 @@ main()
     P23VAR=0;
 #endif
 #ifdef TIMER2
-    i14=i15=i16=i00=i01=i02=i03=i04=i05=i06=i07=i20=i21=i22=i23=0;
+    i00=i01=i02=i03=i04=i05=i06=i07=i14=i15=i16=i20=i21=i22=i23=0;
 #endif
     ES=1;            //致能串列中斷
 #ifdef TIMER2
@@ -499,6 +502,32 @@ void softPWM()
 void T2_int (void) interrupt 5   //Timer2中斷函數
 {
     TF2=0;    //清除TF2=0
+#if !defined MUSIC && !defined CHANNEL16
+    switch(i12)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP0H = ~0x00;
+        i12--;
+        break;
+    default:
+        i12--;
+        break;
+    }
+    switch(i13)
+    {
+    case 0:
+        break;
+    case 1:
+        CCAP1H = ~0x00;
+        i13--;
+        break;
+    default:
+        i13--;
+        break;
+    }
+#endif
     switch(i14)
     {
     case 0:
@@ -813,86 +842,142 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
     switch(pressure++)
     {
     	case 0:
-    		i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
     	break;
 		case 18:
-			i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
 		break;
     	case 36:
-    		i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
     	break;
     	case 54:
-			i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
 		break;
     	case 72:
-    		i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
     	break;
     	case 90:
-			i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
 		break;
     	case 108:
-    		i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
     	break;
 		case 126:
-			i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
 		break;
     	case 144:
-    		i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
     	break;
 		case 162:
-			i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
 		break;
     	case 180:
-    		i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
     	break;
 		case 196:
-			i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
 			break;
     	case 216:
-    		i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
     	break;
 		case 234:
-			i14 = 3;
-    		CCAP2H = ~DIF14;
+#if !defined MUSIC && !defined CHANNEL16
+    		i12 = 3;
+    		CCAP0H = 0;
+    		i13 = 3;
+    		CCAP1H = 0;
+#endif
 			i16 = 3;
     		CCAP4H = ~DIF16;
 		break;
