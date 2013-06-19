@@ -16,7 +16,7 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef	HARDRAYPWM
 #define PCATIMER
 #define TTT  256
-unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P22VAR,P23VAR,P24VAR,P25VAR,P26VAR,P32VAR,P33VAR,P34VAR,P35VAR,P36VAR,P37VAR,P40VAR,P41VAR,P42VAR,P43VAR,P46VAR;
+unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P22VAR,P23VAR,P24VAR,P25VAR,P26VAR,P32VAR,P34VAR,P35VAR,P36VAR,P37VAR,P40VAR,P41VAR,P42VAR,P43VAR,P46VAR;
 #ifndef LEDRay
 unsigned char P50VAR,P51VAR,P52VAR,P53VAR,P54VAR,P55VAR,P56VAR,P57VAR;
 #endif
@@ -27,9 +27,9 @@ unsigned char P50VAR,P51VAR,P52VAR,P53VAR,P54VAR,P55VAR,P56VAR,P57VAR;
 #define PARSER
 #define TT  34286  //Timer┑丁=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i24,i25,i26,i32,i33,i34,i35,i36,i37,i40,i41,i42,i43,i46,i10000;
+unsigned char i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i24,i25,i26,i32,i34,i35,i36,i37,i40,i41,i42,i43,i46,i10000;
 #ifndef LEDRay
-i50,i51,i52,i53,i54,i55,i56,i57;
+i50,i51,i52,i53,i54,i55,i56,i57,i64;
 #endif
 #endif
 void softPWM();
@@ -62,7 +62,7 @@ void consumeToken(unsigned char incomingByte);
 void go_crazy();
 main()
 {
-	    IFD = XTAL;
+    IFD = XTAL;
     IFADRH = 0;
     IFADRL = CKCON2;
     IFMT = PageP;
@@ -109,13 +109,13 @@ main()
     AUXIE = EPCA;      //璓PCAい耞
     CCF5=0;  //睲埃家舱0-5ゑ耕篨夹
     //CR = 1;
-    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P22VAR=P23VAR=P24VAR=P25VAR=P26VAR=P32VAR=P33VAR=P34VAR=P35VAR=P36VAR=P40VAR=P41VAR=P42VAR=P43VAR=P46VAR=0;
+    P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P22VAR=P23VAR=P24VAR=P25VAR=P26VAR=P32VAR=P34VAR=P35VAR=P36VAR=P40VAR=P41VAR=P42VAR=P43VAR=P46VAR=0;
 #ifndef LEDRay
     P50VAR=P51VAR=P52VAR=P53VAR=P54VAR=P55VAR=P56VAR=P57VAR=0;
 #endif
 #endif
 #ifdef TIMER2
-    i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i24=i25=i26=i32=i33=i34=i35=i36=i37=i40=i41=i42=i43=i46=i10000=0;
+    i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i24=i25=i26=i32=i34=i35=i36=i37=i40=i41=i42=i43=i46=i10000=0;
 #ifndef LEDRay
     i50=i51=i52=i53=i54=i55=i56=i57=0;
 #endif
@@ -266,9 +266,11 @@ void consumeToken(unsigned char incomingByte)
                         case 56:
                             P32VAR = 255;
                             break;
+#ifndef LEDRay
                         case 57:
-                            P33VAR = 255;
+                            P57VAR = 255;
                             break;
+#endif
                         case 58:
                             P34VAR = 255;
                             break;
@@ -323,8 +325,8 @@ void consumeToken(unsigned char incomingByte)
                         break;
                     case 2:
                     case 3:
-                    case 12:
-                    case 13:
+                        //case 12:
+                        //case 13:
                         switch(note)
                         {
                         case 36:
@@ -390,9 +392,11 @@ void consumeToken(unsigned char incomingByte)
                         case 56:
                             P32VAR = 255;
                             break;
+#ifndef LEDRay
                         case 57:
-                            P33VAR = 255;
+                            P55VAR = 255;
                             break;
+#endif
                         case 58:
                             P34VAR = 255;
                             break;
@@ -651,10 +655,12 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 i32 = 1;
                             }
-                            if(i33)
+#ifndef LEDRay
+                            if(i50)
                             {
-                                i33 = 1;
+                                i50 = 1;
                             }
+#endif
                             if(i34)
                             {
                                 i34 = 1;
@@ -666,10 +672,12 @@ void consumeToken(unsigned char incomingByte)
                             P26VAR = 255;
                             break;
                         case 56:
-                            if(i33)
+#ifndef LEDRay
+                            if(i50)
                             {
-                                i33 = 1;
+                                i50 = 1;
                             }
+#endif
                             if(i34)
                             {
                                 i34 = 1;
@@ -689,7 +697,10 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 i35 = 1;
                             }
-                            P33VAR = P26VAR = 255;
+#ifndef LEDRay
+                            P50VAR = 255;
+#endif
+                            P26VAR = 255;
                             break;
                         case 58:
                             if(i35)
@@ -971,9 +982,9 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 i32 = 1;
                             }
-                            if(i33)
+                            if(i43)
                             {
-                                i33 = 1;
+                                i43 = 1;
                             }
                             if(i34)
                             {
@@ -1018,9 +1029,9 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 i32 = 1;
                             }
-                            if(i33)
+                            if(i43)
                             {
-                                i33 = 1;
+                                i43 = 1;
                             }
                             if(i34)
                             {
@@ -1061,9 +1072,9 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 i32 = 1;
                             }
-                            if(i33)
+                            if(i43)
                             {
-                                i33 = 1;
+                                i43 = 1;
                             }
                             if(i34)
                             {
@@ -1100,9 +1111,9 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 i32 = 1;
                             }
-                            if(i33)
+                            if(i43)
                             {
-                                i33 = 1;
+                                i43 = 1;
                             }
                             if(i34)
                             {
@@ -1135,9 +1146,9 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 i32 = 1;
                             }
-                            if(i33)
+                            if(i43)
                             {
-                                i33 = 1;
+                                i43 = 1;
                             }
                             if(i34)
                             {
@@ -1166,9 +1177,9 @@ void consumeToken(unsigned char incomingByte)
                             P26VAR = P22VAR = 255;
                             break;
                         case 56:
-                            if(i33)
+                            if(i43)
                             {
-                                i33 = 1;
+                                i43 = 1;
                             }
                             if(i34)
                             {
@@ -1221,7 +1232,7 @@ void consumeToken(unsigned char incomingByte)
                             {
                                 i41 = 1;
                             }
-                            P33VAR = P22VAR = 255;
+                            P43VAR = P22VAR = 255;
                             break;
                         case 58:
                             if(i35)
@@ -1469,7 +1480,7 @@ void consumeToken(unsigned char incomingByte)
                             }
                             else
                             {
-                                P33VAR = 255;
+                                P37VAR = 255;
                                 i40 = 3;
                             }
 #else
@@ -1592,9 +1603,11 @@ void consumeToken(unsigned char incomingByte)
                         case 56:
                             P32VAR = 255;
                             break;
+#ifndef LEDRay
                         case 57:
-                            P33VAR = 255;
+                            P55VAR = 255;
                             break;
+#endif
                         case 58:
                             P34VAR = 255;
                             break;
@@ -1639,15 +1652,15 @@ void consumeToken(unsigned char incomingByte)
                             P54VAR = 255;
                             break;
                         case 72:
-                            P55VAR = 255;
                             SFRPI = 1;
                             P62 = 1;
+                            P64 = 1;
                             SFRPI = 0;
                             break;
                         case 73:
-                            P55VAR = 255;
                             SFRPI = 1;
                             P62 = 0;
+                            P64 = 1;
                             SFRPI = 0;
                             break;
 #endif
@@ -1733,8 +1746,6 @@ void softPWM()
         P21 = 0;
     if(CL > P32VAR)
         P32 = 0;
-    if(CL > P33VAR)
-        P33 = 0;
     if(CL > P34VAR)
         P34 = 0;
     if(CL > P35VAR)
@@ -2039,18 +2050,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             i32--;
             break;
         }
-        switch(i33)
-        {
-        case 0:
-            break;
-        case 1:
-            P33VAR = 0;
-            i33--;
-            break;
-        default:
-            i33--;
-            break;
-        }
         switch(i34)
         {
         case 0:
@@ -2260,8 +2259,8 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         break;
     case 2:
     case 3:
-    case 12:
-    case 13:
+        //case 12:
+        //case 13:
         switch(i00)
         {
         case 0:
@@ -2519,18 +2518,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             i32--;
             break;
         }
-        switch(i33)
-        {
-        case 0:
-            break;
-        case 1:
-            P33VAR = 0;
-            i33--;
-            break;
-        default:
-            i33--;
-            break;
-        }
         switch(i34)
         {
         case 0:
@@ -2698,6 +2685,18 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             i54--;
+            break;
+        }
+        switch(i55)
+        {
+        case 0:
+            break;
+        case 1:
+            P55VAR = 0;
+            i55--;
+            break;
+        default:
+            i55--;
             break;
         }
 #endif
@@ -2962,18 +2961,20 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             i32--;
             break;
         }
-        switch(i33)
+#ifndef LEDRay
+        switch(i50)
         {
         case 0:
             break;
         case 1:
-            P33VAR = 0;
-            i33--;
+            P50VAR = 0;
+            i50--;
             break;
         default:
-            i33--;
+            i50--;
             break;
         }
+#endif
         switch(i34)
         {
         case 0:
@@ -3341,16 +3342,16 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             i32--;
             break;
         }
-        switch(i33)
+        switch(i43)
         {
         case 0:
             break;
         case 1:
-            P33VAR = 0;
-            i33--;
+            P43VAR = 0;
+            i43--;
             break;
         default:
-            i33--;
+            i43--;
             break;
         }
         switch(i34)
@@ -3698,16 +3699,16 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             i32--;
             break;
         }
-        switch(i33)
+        switch(i37)
         {
         case 0:
             break;
         case 1:
-            P33VAR = 0;
-            i33--;
+            P37VAR = 0;
+            i37--;
             break;
         default:
-            i33--;
+            i37--;
             break;
         }
         switch(i34)
@@ -4080,18 +4081,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             i32--;
             break;
         }
-        switch(i33)
-        {
-        case 0:
-            break;
-        case 1:
-            P33VAR = 0;
-            i33--;
-            break;
-        default:
-            i33--;
-            break;
-        }
         switch(i34)
         {
         case 0:
@@ -4285,23 +4274,19 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             i56--;
             break;
         }
-        switch(i57)
+        switch(i64)
         {
         case 0:
             break;
-        case 1:
-            P57VAR = 0;
-            i57--;
-            break;
         default:
-            if(i57 < (e06-50) )
+            if(i64 < (e06-50) )
             {
                 SFRPI = 1;
                 if(!P63)
-                    i57 = 2;
+                    P64 = 0;
                 SFRPI = 0;
             }
-            i57--;
+            i64--;
             break;
         }
 #endif
@@ -4344,7 +4329,7 @@ void UART_init(unsigned int bps)  //UART币﹍祘Α
     P0M0=0xFF;
     P1M0=0xFB; //砞﹚P0崩Α块(M0-1=01)
     P2M0=0x7F;
-    P3M1=0xFC;
+    P3M1=0xF4;
     P4M0=0x4F;
     P5M0=0xFF;
     REN = 1;
@@ -4465,10 +4450,6 @@ void PCA_Interrupt() interrupt 10
         {
             i32 = 4;
         }
-        if(P33VAR && !i33)
-        {
-            i33 = 4;
-        }
         if(P34VAR && !i34)
         {
             i34 = 4;
@@ -4536,20 +4517,20 @@ void PCA_Interrupt() interrupt 10
         }
         if(P57VAR && !i57)
         {
-            i57 = e04;
+            i57 = 4;
         }
         P5 |= 0xFF;
 #endif
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0xFC;
+        P3 |= 0xF4;
         P4 |= 0x4F;
         break;
     case 2:
     case 3:
-    case 12:
-    case 13:
+        //case 12:
+        //case 13:
         if(P00VAR && !i00)
         {
             i00 = 4;
@@ -4639,10 +4620,12 @@ void PCA_Interrupt() interrupt 10
         {
             i32 = 4;
         }
-        if(P33VAR && !i33)
+#ifndef LEDRay
+        if(P55VAR && !i55)
         {
-            i33 = 4;
+            i55 = 4;
         }
+#endif
         if(P34VAR && !i34)
         {
             i34 = 4;
@@ -4705,7 +4688,7 @@ void PCA_Interrupt() interrupt 10
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0xFC;
+        P3 |= 0xF4;
         P4 |= 0x4F;
         break;
     case 4:
@@ -4800,10 +4783,12 @@ void PCA_Interrupt() interrupt 10
         {
             i32 = e05;
         }
-        if(P33VAR && !i33)
+#ifndef LEDRay
+        if(P50VAR && !i50)
         {
-            i33 = e05;
+            i50 = e05;
         }
+#endif
         if(P34VAR && !i34)
         {
             i34 = e05;
@@ -4843,7 +4828,7 @@ void PCA_Interrupt() interrupt 10
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0xFC;
+        P3 |= 0xF4;
         P4 |= 0x4F;
         break;
     case 7:
@@ -4936,9 +4921,9 @@ void PCA_Interrupt() interrupt 10
         {
             i32 = e05;
         }
-        if(P33VAR && !i33)
+        if(P43VAR && !i43)
         {
-            i33 = e05;
+            i43 = e05;
         }
         if(P34VAR && !i34)
         {
@@ -4971,7 +4956,7 @@ void PCA_Interrupt() interrupt 10
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0xFC;
+        P3 |= 0xF4;
         P4 |= 0x07;
         break;
     case 8:
@@ -5066,9 +5051,9 @@ void PCA_Interrupt() interrupt 10
         {
             i32 = e05;
         }
-        if(P33VAR && !i33)
+        if(P37VAR && !i37)
         {
-            i33 = e05;
+            i37 = e05;
         }
         if(P34VAR && !i34)
         {
@@ -5085,7 +5070,7 @@ void PCA_Interrupt() interrupt 10
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0xFC;
+        P3 |= 0xF4;
         break;
     case 11:
         if(P00VAR && !i00)
@@ -5177,10 +5162,6 @@ void PCA_Interrupt() interrupt 10
         {
             i32 = 3;
         }
-        if(P33VAR && !i33)
-        {
-            i33 = 3;
-        }
         if(P34VAR && !i34)
         {
             i34 = 3;
@@ -5248,14 +5229,18 @@ void PCA_Interrupt() interrupt 10
         }
         if(P57VAR && !i57)
         {
-            i57 = e06;
+            i57 = 3;
+        }
+        if(P64VAR && !i64)
+        {
+            i64 = e06;
         }
         P5 |= 0xFF;
 #endif
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0xFC;
+        P3 |= 0xF4;
         P4 |= 0x4F;
         break;
     }
@@ -5280,6 +5265,7 @@ void go_crazy()
 #ifdef LEDRay
     LED=~rayCHANNEL;     //盢钡ΜじパLED块
 #endif
+    //rayCHANNEL = ~rayCHANNEL;
     twoCHANNEL = (rayCHANNEL & 0x0F) << 1;
     oneCHANNEL = (rayCHANNEL >> 4);
 #elif defined(SIMULATION)
