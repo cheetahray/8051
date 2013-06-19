@@ -4,8 +4,9 @@
 ************************************************/
 #include "..\REG_MG84FG516.H"   //暫存器及組態定義
 #include "math.h"
+//#define BUFFER
 //#define DEBUG
-//#define CHANNEL16		  //P10 P12 P13
+#define CHANNEL16		  //P10 P12 P13
 #define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
@@ -20,7 +21,7 @@ unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14
 unsigned char P50VAR,P51VAR,P52VAR,P53VAR,P54VAR,P55VAR,P56VAR,P57VAR;
 #endif
 #endif
-#define TIMER0
+//#define TIMER0
 #define SIMULATION
 #define TIMER2
 #define PARSER
@@ -37,26 +38,31 @@ void softPWM();
 #define OFF 1
 #define ON 2
 #define WAIT 3
-unsigned char rayCHANNEL = 0, oneCHANNEL = 10,twoCHANNEL = 24;//#define rayCHANNEL 0x00
+unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL 0x00
 #define e04 3
 #define e05	55
 #define e06 250
 #define e07 10
-#define ukulelechord
+//#define ukulelechord
 unsigned char channel;
 unsigned char note;
 unsigned char velocity;
 unsigned int action; //1 =note off ; 2=note on ; 3= wait
+#endif
+#ifdef BUFFER
+#define BUFFER_SIZE 900
+volatile unsigned int produceCount, consumeCount;
+unsigned char buffer[BUFFER_SIZE];
 #endif
 #ifdef SIMULATION
 int notecount;
 unsigned int pressure = 0;
 #endif
 void consumeToken(unsigned char incomingByte);
-
+void go_crazy();
 main()
 {
-    IFD = XTAL;
+	    IFD = XTAL;
     IFADRH = 0;
     IFADRL = CKCON2;
     IFMT = PageP;
@@ -64,6 +70,10 @@ main()
     SCMD = 0x46;
     SCMD = 0xb9;
     Delay_ms(30);
+#ifdef BUFFER
+    produceCount = 0;
+    consumeCount = 0;
+#endif
 #ifdef PARSER
     note = velocity = 0;
     action = IGNORE;
@@ -125,9 +135,20 @@ main()
 #ifdef SIMULATION
     notecount = 0;
 #endif
+    go_crazy();
     while(1)
     {
+#ifdef BUFFER
+        while (abs(produceCount - consumeCount) == 0)
+        {
+            softPWM();
+        }
+        consumeToken( buffer[consumeCount++]);
+        if( consumeCount >= BUFFER_SIZE )
+            consumeCount = 0;
+#else
         softPWM();	//自我空轉，表示可做其它工作
+#endif
     }
 }
 
@@ -183,119 +204,119 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 36:
-                            P00VAR = 240;
+                            P00VAR = 255;
                             break;
                         case 37:
-                            P01VAR = 240;
+                            P01VAR = 255;
                             break;
                         case 38:
-                            P02VAR = 240;
+                            P02VAR = 255;
                             break;
                         case 39:
-                            P03VAR = 240;
+                            P03VAR = 255;
                             break;
                         case 40:
-                            P04VAR = 240;
+                            P04VAR = 255;
                             break;
                         case 41:
-                            P05VAR = 240;
+                            P05VAR = 255;
                             break;
                         case 42:
-                            P06VAR = 240;
+                            P06VAR = 255;
                             break;
                         case 43:
-                            P07VAR = 240;
+                            P07VAR = 255;
                             break;
                         case 44:
-                            P11VAR = 240;
+                            P11VAR = 255;
                             break;
                         case 45:
-                            P14VAR = 240;
+                            P14VAR = 255;
                             break;
                         case 46:
-                            P15VAR = 240;
+                            P15VAR = 255;
                             break;
                         case 47:
-                            P16VAR = 240;
+                            P16VAR = 255;
                             break;
                         case 48:
-                            P17VAR = 240;
+                            P17VAR = 255;
                             break;
                         case 49:
-                            P20VAR = 240;
+                            P20VAR = 255;
                             break;
                         case 50:
-                            P21VAR = 240;
+                            P21VAR = 255;
                             break;
                         case 51:
-                            P22VAR = 240;
+                            P22VAR = 255;
                             break;
                         case 52:
-                            P23VAR = 240;
+                            P23VAR = 255;
                             break;
                         case 53:
-                            P24VAR = 240;
+                            P24VAR = 255;
                             break;
                         case 54:
-                            P25VAR = 240;
+                            P25VAR = 255;
                             break;
                         case 55:
-                            P26VAR = 240;
+                            P26VAR = 255;
                             break;
                         case 56:
-                            P32VAR = 240;
+                            P32VAR = 255;
                             break;
                         case 57:
-                            P33VAR = 240;
+                            P33VAR = 255;
                             break;
                         case 58:
-                            P34VAR = 240;
+                            P34VAR = 255;
                             break;
                         case 59:
-                            P35VAR = 240;
+                            P35VAR = 255;
                             break;
                         case 60:
-                            P36VAR = 240;
+                            P36VAR = 255;
                             break;
                         case 61:
-                            P37VAR = 240;
+                            P37VAR = 255;
                             break;
                         case 62:
-                            P40VAR = 240;
+                            P40VAR = 255;
                             break;
                         case 63:
-                            P41VAR = 240;
+                            P41VAR = 255;
                             break;
                         case 64:
-                            P42VAR = 240;
+                            P42VAR = 255;
                             break;
                         case 65:
-                            P43VAR = 240;
+                            P43VAR = 255;
                             break;
                         case 66:
-                            P46VAR = 240;
+                            P46VAR = 255;
                             break;
 #ifndef LEDRay
                         case 67:
-                            P50VAR = 240;
+                            P50VAR = 255;
                             break;
                         case 68:
-                            P51VAR = 240;
+                            P51VAR = 255;
                             break;
                         case 69:
-                            P52VAR = 240;
+                            P52VAR = 255;
                             break;
                         case 70:
-                            P53VAR = 240;
+                            P53VAR = 255;
                             break;
                         case 71:
-                            P54VAR = 240;
+                            P54VAR = 255;
                             break;
                         case 72:
-                            P55VAR = 240;
+                            P55VAR = 255;
                             break;
                         case 73:
-                            P56VAR = 240;
+                            P56VAR = 255;
                             break;
 #endif
                         }
@@ -307,113 +328,113 @@ void consumeToken(unsigned char incomingByte)
                         switch(note)
                         {
                         case 36:
-                            P00VAR = 240;
+                            P00VAR = 255;
                             break;
                         case 37:
-                            P01VAR = 240;
+                            P01VAR = 255;
                             break;
                         case 38:
-                            P02VAR = 240;
+                            P02VAR = 255;
                             break;
                         case 39:
-                            P03VAR = 240;
+                            P03VAR = 255;
                             break;
                         case 40:
-                            P04VAR = 240;
+                            P04VAR = 255;
                             break;
                         case 41:
-                            P05VAR = 240;
+                            P05VAR = 255;
                             break;
                         case 42:
-                            P06VAR = 240;
+                            P06VAR = 255;
                             break;
                         case 43:
-                            P07VAR = 240;
+                            P07VAR = 255;
                             break;
                         case 44:
-                            P11VAR = 240;
+                            P11VAR = 255;
                             break;
                         case 45:
-                            P14VAR = 240;
+                            P14VAR = 255;
                             break;
                         case 46:
-                            P15VAR = 240;
+                            P15VAR = 255;
                             break;
                         case 47:
-                            P16VAR = 240;
+                            P16VAR = 255;
                             break;
                         case 48:
-                            P17VAR = 240;
+                            P17VAR = 255;
                             break;
                         case 49:
-                            P20VAR = 240;
+                            P20VAR = 255;
                             break;
                         case 50:
-                            P21VAR = 240;
+                            P21VAR = 255;
                             break;
                         case 51:
-                            P22VAR = 240;
+                            P22VAR = 255;
                             break;
                         case 52:
-                            P23VAR = 240;
+                            P23VAR = 255;
                             break;
                         case 53:
-                            P24VAR = 240;
+                            P24VAR = 255;
                             break;
                         case 54:
-                            P25VAR = 240;
+                            P25VAR = 255;
                             break;
                         case 55:
-                            P26VAR = 240;
+                            P26VAR = 255;
                             break;
                         case 56:
-                            P32VAR = 240;
+                            P32VAR = 255;
                             break;
                         case 57:
-                            P33VAR = 240;
+                            P33VAR = 255;
                             break;
                         case 58:
-                            P34VAR = 240;
+                            P34VAR = 255;
                             break;
                         case 59:
-                            P35VAR = 240;
+                            P35VAR = 255;
                             break;
                         case 60:
-                            P36VAR = 240;
+                            P36VAR = 255;
                             break;
                         case 61:
-                            P37VAR = 240;
+                            P37VAR = 255;
                             break;
                         case 62:
-                            P40VAR = 240;
+                            P40VAR = 255;
                             break;
                         case 63:
-                            P41VAR = 240;
+                            P41VAR = 255;
                             break;
                         case 64:
-                            P42VAR = 240;
+                            P42VAR = 255;
                             break;
                         case 65:
-                            P43VAR = 240;
+                            P43VAR = 255;
                             break;
                         case 66:
-                            P46VAR = 240;
+                            P46VAR = 255;
                             break;
 #ifndef LEDRay
                         case 67:
-                            P50VAR = 240;
+                            P50VAR = 255;
                             break;
                         case 68:
-                            P51VAR = 240;
+                            P51VAR = 255;
                             break;
                         case 69:
-                            P52VAR = 240;
+                            P52VAR = 255;
                             break;
                         case 70:
-                            P53VAR = 240;
+                            P53VAR = 255;
                             break;
                         case 71:
-                            P54VAR = 240;
+                            P54VAR = 255;
                             break;
 #endif
                         }
@@ -1298,7 +1319,8 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 37:
 #ifndef ukulelechord
-                            P01VAR = P00VAR = 255;
+                            P01VAR = 255;
+                            i41 = 3;
 #else
                             P25VAR = P01VAR = P23VAR = P20VAR = 255;
                             i37 = e07;
@@ -1306,7 +1328,8 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 38:
 #ifndef ukulelechord
-                            P02VAR = P00VAR = 255;
+                            P02VAR = 255;
+                            i41 = 3;
 #else
                             P26VAR = P02VAR = P06VAR = 255;
                             i37 = e07;
@@ -1314,7 +1337,8 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 39:
 #ifndef ukulelechord
-                            P03VAR = P00VAR = 255;
+                            P03VAR = 255;
+                            i41 = 3;
 #else
                             P03VAR = P07VAR = P15VAR = 255;
                             i37 = e07;
@@ -1328,7 +1352,8 @@ void consumeToken(unsigned char incomingByte)
                             }
                             else
                             {
-                                P04VAR = P00VAR = 255;
+                                P04VAR = 255;
+                                i41 = 3;
                             }
 #else
                             P25VAR = P04VAR = P16VAR = 255;
@@ -1339,11 +1364,13 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                             if(!P00VAR)
                             {
-                                P23VAR = P22VAR = 255;
+                                P23VAR = 255;
+                                i42 = 3;
                             }
                             else
                             {
-                                P05VAR = P00VAR = 255;
+                                P05VAR = 255;
+                                i41 = 3;
                             }
 #else
                             P26VAR = P23VAR = 255;
@@ -1352,7 +1379,8 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 42:
 #ifndef ukulelechord
-                            P06VAR = P22VAR = 255;
+                            P06VAR = 255;
+                            i42 = 3;
 #else
                             P32VAR = P01VAR = P06VAR = P20VAR = 255;
                             i37 = e07;
@@ -1366,7 +1394,8 @@ void consumeToken(unsigned char incomingByte)
                             }
                             else
                             {
-                                P07VAR = P22VAR = 255;
+                                P07VAR = 255;
+                                i42 = 3;
                             }
 #else
                             P02VAR = P07VAR = P16VAR = 255;
@@ -1377,11 +1406,13 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                             if(!P22VAR)
                             {
-                                P25VAR = P24VAR = 255;
+                                P25VAR = 255;
+                                i40 = 3;
                             }
                             else
                             {
-                                P11VAR = P22VAR = 255;
+                                P11VAR = 255;
+                                i42 = 3;
                             }
 #else
                             P25VAR = P03VAR = P11VAR = P17VAR = 255;
@@ -1398,12 +1429,14 @@ void consumeToken(unsigned char incomingByte)
                                 }
                                 else
                                 {
-                                    P26VAR = P24VAR = 255;
+                                    P26VAR = 255;
+                                    i40 = 3;
                                 }
                             }
                             else
                             {
-                                P14VAR = P22VAR = 255;
+                                P14VAR = 255;
+                                i42 = 3;
                             }
 #else
                             P01VAR = P26VAR = 255;
@@ -1414,11 +1447,13 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                             if(!P24VAR)
                             {
-                                P15VAR = P35VAR = 255;
+                                P15VAR = 255;
+                                i43 = 3;
                             }
                             else
                             {
-                                P32VAR = P24VAR = 255;
+                                P32VAR = 255;
+                                i40 = 3;
                             }
 #else
                             P32VAR = P02VAR = P23VAR = P15VAR = 255;
@@ -1429,11 +1464,13 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                             if(!P24VAR)
                             {
-                                P16VAR = P35VAR = 255;
+                                P16VAR = 255;
+                                i43 = 3;
                             }
                             else
                             {
-                                P33VAR = P24VAR = 255;
+                                P33VAR = 255;
+                                i40 = 3;
                             }
 #else
                             P33VAR = P03VAR = P06VAR = P16VAR = 255;
@@ -1444,11 +1481,13 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                             if(!P24VAR)
                             {
-                                P17VAR = P35VAR = 255;
+                                P17VAR = 255;
+                                i43 = 3;
                             }
                             else
                             {
-                                P34VAR = P24VAR = 255;
+                                P34VAR = 255;
+                                i40 = 3;
                             }
 #else
                             P17VAR = 255;
@@ -1457,7 +1496,8 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 49:
 #ifndef ukulelechord
-                            P20VAR = P35VAR = 255;
+                            P20VAR = 255;
+                            i43 = 3;
 #else
                             P25VAR = P01VAR = P23VAR = P20VAR = 255;
                             i37 = e07;
@@ -1465,7 +1505,8 @@ void consumeToken(unsigned char incomingByte)
                             break;
                         case 50:
 #ifndef ukulelechord
-                            P21VAR = P20VAR = 255;
+                            P21VAR = 255;
+                            i43 = 3;
 #else
                             P26VAR = P02VAR = P06VAR = 255;
                             i37 = e07;
@@ -1531,37 +1572,37 @@ void consumeToken(unsigned char incomingByte)
 #endif
                             break;
                         case 50:
-                            P21VAR = 240;
+                            P21VAR = 255;
                             break;
                         case 51:
-                            P22VAR = 240;
+                            P22VAR = 255;
                             break;
                         case 52:
-                            P23VAR = 240;
+                            P23VAR = 255;
                             break;
                         case 53:
-                            P24VAR = 240;
+                            P24VAR = 255;
                             break;
                         case 54:
-                            P25VAR = 240;
+                            P25VAR = 255;
                             break;
                         case 55:
-                            P26VAR = 240;
+                            P26VAR = 255;
                             break;
                         case 56:
-                            P32VAR = 240;
+                            P32VAR = 255;
                             break;
                         case 57:
-                            P33VAR = 240;
+                            P33VAR = 255;
                             break;
                         case 58:
-                            P34VAR = 240;
+                            P34VAR = 255;
                             break;
                         case 59:
-                            P35VAR = 240;
+                            P35VAR = 255;
                             break;
                         case 60:
-                            P36VAR = 240;
+                            P36VAR = 255;
                             break;
                         case 61:
                             P37VAR = 255;
@@ -1576,20 +1617,20 @@ void consumeToken(unsigned char incomingByte)
                             P42VAR = 255;
                             break;
                         case 65:
-                            P43VAR = 240;
+                            P43VAR = 255;
                             break;
                         case 66:
-                            P46VAR = 240;
+                            P46VAR = 255;
                             break;
 #ifndef LEDRay
                         case 67:
-                            P50VAR = 240;
+                            P50VAR = 255;
                             break;
                         case 68:
-                            P51VAR = 240;
+                            P51VAR = 255;
                             break;
                         case 69:
-                            P52VAR = 240;
+                            P52VAR = 255;
                             break;
                         case 70:
                             P53VAR = 255;
@@ -3730,6 +3771,55 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             i37--;
             break;
         }
+#else
+        switch(i40)
+        {
+        case 0:
+            break;
+        case (e07-2):
+            P24VAR = 255;
+            i40--;
+            break;
+        default:
+            i40--;
+            break;
+        }
+        switch(i41)
+        {
+        case 0:
+            break;
+        case (e07-2):
+            P00VAR = 255;
+            i41--;
+            break;
+        default:
+            i41--;
+            break;
+        }
+        switch(i42)
+        {
+        case 0:
+            break;
+        case (e07-2):
+            P22VAR = 255;
+            i42--;
+            break;
+        default:
+            i42--;
+            break;
+        }
+        switch(i43)
+        {
+        case 0:
+            break;
+        case (e07-2):
+            P35VAR = 255;
+            i43--;
+            break;
+        default:
+            i43--;
+            break;
+        }
 #endif
         break;
     case 11:
@@ -4227,7 +4317,17 @@ void SCON_int(void)  interrupt 4  //串列中斷函數
         RI = 0;    //接收完畢，令RI=0
         if(SBUF < 0xF0)
         {
+#ifdef BUFFER
+            while ( abs(produceCount - consumeCount) == BUFFER_SIZE )
+                ; // buffer is full
+
+            buffer[produceCount++] = SBUF;
+            //SBUF = buffer[produceCount++];
+            if(produceCount >= BUFFER_SIZE)
+                produceCount = 0;
+#else
             consumeToken(SBUF);
+#endif
         }
     }
     //else
@@ -4286,164 +4386,164 @@ void PCA_Interrupt() interrupt 10
         }
         if(P02VAR && !i02)
         {
-            i02 = 3;
+            i02 = 4;
         }
         if(P03VAR && !i03)
         {
-            i03 = 3;
+            i03 = 4;
         }
         if(P04VAR && !i04)
         {
-            i04 = 3;
+            i04 = 4;
         }
         if(P05VAR && !i05)
         {
-            i05 = 3;
+            i05 = 4;
         }
         if(P06VAR && !i06)
         {
-            i06 = 3;
+            i06 = 4;
         }
         if(P07VAR && !i07)
         {
-            i07 = 3;
+            i07 = 4;
         }
         if(P11VAR && !i11)
         {
-            i11 = 3;
+            i11 = 4;
         }
         if(P14VAR && !i14)
         {
-            i14 = 3;
+            i14 = 4;
         }
         if(P15VAR && !i15)
         {
-            i15 = 3;
+            i15 = 4;
         }
         if(P16VAR && !i16)
         {
-            i16 = 3;
+            i16 = 4;
         }
         if(P17VAR && !i17)
         {
-            i17 = 3;
+            i17 = 4;
         }
         if(P20VAR && !i20)
         {
-            i20 = 3;
+            i20 = 4;
         }
         if(P21VAR && !i21)
         {
-            i21 = 3;
+            i21 = 4;
         }
         if(P22VAR && !i22)
         {
             CCAP0H = ~P22VAR;
-            i22 = 3;
+            i22 = 4;
         }
         if(P23VAR && !i23)
         {
             CCAP1H = ~P23VAR;
-            i23 = 3;
+            i23 = 4;
         }
         if(P24VAR && !i24)
         {
             CCAP2H = ~P24VAR;
-            i24 = 3;
+            i24 = 4;
         }
         if(P25VAR && !i25)
         {
             CCAP3H = ~P25VAR;
-            i25 = 3;
+            i25 = 4;
         }
         if(P26VAR && !i26)
         {
             CCAP4H = ~P26VAR;
-            i26 = 3;
+            i26 = 4;
         }
         if(P32VAR && !i32)
         {
-            i32 = 3;
+            i32 = 4;
         }
         if(P33VAR && !i33)
         {
-            i33 = 3;
+            i33 = 4;
         }
         if(P34VAR && !i34)
         {
-            i34 = 3;
+            i34 = 4;
         }
         if(P35VAR && !i35)
         {
-            i35 = 3;
+            i35 = 4;
         }
         if(P36VAR && !i36)
         {
-            i36 = 3;
+            i36 = 4;
         }
         if(P37VAR && !i37)
         {
-            i37 = 3;
+            i37 = 4;
         }
         if(P40VAR && !i40)
         {
-            i40 = 3;
+            i40 = 4;
         }
         if(P41VAR && !i41)
         {
-            i41 = 3;
+            i41 = 4;
         }
         if(P42VAR && !i42)
         {
-            i42 = 3;
+            i42 = 4;
         }
         if(P43VAR && !i43)
         {
-            i43 = 3;
+            i43 = 4;
         }
         if(P46VAR && !i46)
         {
-            i46 = 3;
+            i46 = 4;
         }
 #ifndef LEDRay
         if(P50VAR && !i50)
         {
-            i50 = 3;
+            i50 = 4;
         }
         if(P51VAR && !i51)
         {
-            i51 = 3;
+            i51 = 4;
         }
         if(P52VAR && !i52)
         {
-            i52 = 3;
+            i52 = 4;
         }
         if(P53VAR && !i53)
         {
-            i53 = 3;
+            i53 = 4;
         }
         if(P54VAR && !i54)
         {
-            i54 = 3;
+            i54 = 4;
         }
         if(P55VAR && !i55)
         {
-            i55 = 3;
+            i55 = 4;
         }
         if(P56VAR && !i56)
         {
-            i56 = 3;
+            i56 = 4;
         }
         if(P57VAR && !i57)
         {
-            i57 = e05;
+            i57 = e04;
         }
         P5 |= 0xFF;
 #endif
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0x3C;
+        P3 |= 0xFC;
         P4 |= 0x4F;
         break;
     case 2:
@@ -4460,152 +4560,152 @@ void PCA_Interrupt() interrupt 10
         }
         if(P02VAR && !i02)
         {
-            i02 = 3;
+            i02 = 4;
         }
         if(P03VAR && !i03)
         {
-            i03 = 3;
+            i03 = 4;
         }
         if(P04VAR && !i04)
         {
-            i04 = 3;
+            i04 = 4;
         }
         if(P05VAR && !i05)
         {
-            i05 = 3;
+            i05 = 4;
         }
         if(P06VAR && !i06)
         {
-            i06 = 3;
+            i06 = 4;
         }
         if(P07VAR && !i07)
         {
-            i07 = 3;
+            i07 = 4;
         }
         if(P11VAR && !i11)
         {
-            i11 = 3;
+            i11 = 4;
         }
         if(P14VAR && !i14)
         {
-            i14 = 3;
+            i14 = 4;
         }
         if(P15VAR && !i15)
         {
-            i15 = 3;
+            i15 = 4;
         }
         if(P16VAR && !i16)
         {
-            i16 = 3;
+            i16 = 4;
         }
         if(P17VAR && !i17)
         {
-            i17 = 3;
+            i17 = 4;
         }
         if(P20VAR && !i20)
         {
-            i20 = 3;
+            i20 = 4;
         }
         if(P21VAR && !i21)
         {
-            i21 = 3;
+            i21 = 4;
         }
         if(P22VAR && !i22)
         {
             CCAP0H = ~P22VAR;
-            i22 = 3;
+            i22 = 4;
         }
         if(P23VAR && !i23)
         {
             CCAP1H = ~P23VAR;
-            i23 = 3;
+            i23 = 4;
         }
         if(P24VAR && !i24)
         {
             CCAP2H = ~P24VAR;
-            i24 = 3;
+            i24 = 4;
         }
         if(P25VAR && !i25)
         {
             CCAP3H = ~P25VAR;
-            i25 = 3;
+            i25 = 4;
         }
         if(P26VAR && !i26)
         {
             CCAP4H = ~P26VAR;
-            i26 = 3;
+            i26 = 4;
         }
         if(P32VAR && !i32)
         {
-            i32 = 3;
+            i32 = 4;
         }
         if(P33VAR && !i33)
         {
-            i33 = 3;
+            i33 = 4;
         }
         if(P34VAR && !i34)
         {
-            i34 = 3;
+            i34 = 4;
         }
         if(P35VAR && !i35)
         {
-            i35 = 3;
+            i35 = 4;
         }
         if(P36VAR && !i36)
         {
-            i36 = 3;
+            i36 = 4;
         }
         if(P37VAR && !i37)
         {
-            i37 = 3;
+            i37 = 4;
         }
         if(P40VAR && !i40)
         {
-            i40 = 3;
+            i40 = 4;
         }
         if(P41VAR && !i41)
         {
-            i41 = 3;
+            i41 = 4;
         }
         if(P42VAR && !i42)
         {
-            i42 = 3;
+            i42 = 4;
         }
         if(P43VAR && !i43)
         {
-            i43 = 3;
+            i43 = 4;
         }
         if(P46VAR && !i46)
         {
-            i46 = 3;
+            i46 = 4;
         }
 #ifndef LEDRay
         if(P50VAR && !i50)
         {
-            i50 = 3;
+            i50 = 4;
         }
         if(P51VAR && !i51)
         {
-            i51 = 3;
+            i51 = 4;
         }
         if(P52VAR && !i52)
         {
-            i52 = 3;
+            i52 = 4;
         }
         if(P53VAR && !i53)
         {
-            i53 = 3;
+            i53 = 4;
         }
         if(P54VAR && !i54)
         {
-            i54 = 3;
+            i54 = 4;
         }
         P5 |= 0x1F;
 #endif
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0x3C;
+        P3 |= 0xFC;
         P4 |= 0x4F;
         break;
     case 4:
@@ -4743,7 +4843,7 @@ void PCA_Interrupt() interrupt 10
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0x3C;
+        P3 |= 0xFC;
         P4 |= 0x4F;
         break;
     case 7:
@@ -4871,7 +4971,7 @@ void PCA_Interrupt() interrupt 10
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0x3C;
+        P3 |= 0xFC;
         P4 |= 0x07;
         break;
     case 8:
@@ -4985,7 +5085,7 @@ void PCA_Interrupt() interrupt 10
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0x7C;
+        P3 |= 0xFC;
         break;
     case 11:
         if(P00VAR && !i00)
@@ -5155,10 +5255,49 @@ void PCA_Interrupt() interrupt 10
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
         P20 = P21 = 1;
-        P3 |= 0x3C;
+        P3 |= 0xFC;
         P4 |= 0x4F;
         break;
     }
+#endif
+}
+
+void go_crazy()
+{
+#ifdef CHANNEL16
+    int ll;
+    P10=0;
+    rayCHANNEL = 0;
+    P10=1 ;   //開始串列傳輸
+    rayCHANNEL |= P12;
+    for(ll=0; ll<7; ll++)
+    {
+        P13 = 0;
+        rayCHANNEL <<= 1;
+        P13 = 1;
+        rayCHANNEL |= P12;
+    }
+#ifdef LEDRay
+    LED=~rayCHANNEL;     //將接收到的字元由LED輸出
+#endif
+    twoCHANNEL = (rayCHANNEL & 0x0F) << 1;
+    oneCHANNEL = (rayCHANNEL >> 4);
+#elif defined(SIMULATION)
+    /*
+    if(i10000 == 255)
+    {
+        //SFRPI = 1;
+        P11 = 1;
+        //SFRPI = 0;
+    }
+    else if(i10000 == 128)
+    {
+        //SFRPI = 1;
+        P11 = 0;
+        //SFRPI = 0;
+    }
+    i10000++;
+    */
 #endif
 }
 
@@ -5166,147 +5305,11 @@ void PCA_Interrupt() interrupt 10
 /***************************************/
 void T0_int(void) interrupt 1  //Timer0中斷函數
 {
-#ifdef CHANNEL16
     if(i10000++ == 255)
     {
-        int ll;
-        P10=0;
-        rayCHANNEL = 0;
-        P10=1 ;   //開始串列傳輸
-        rayCHANNEL |= P12;
-        for(ll=0; ll<7; ll++)
-        {
-            P13 = 0;
-            rayCHANNEL <<= 1;
-            P13 = 1;
-            rayCHANNEL |= P12;
-        }
-#ifdef LEDRay
-        LED=~rayCHANNEL;     //將接收到的字元由LED輸出
-#endif
-        twoCHANNEL = (rayCHANNEL & 0x0F) << 1;
-        oneCHANNEL = (rayCHANNEL >> 4);
-        TL0=0;	//TL0=65536 - TT;
-        TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
+        go_crazy();
     }
-#elif defined(SIMULATION)
-    /*
-    switch(pressure++)
-    {
-    case 0:
-        P21VAR = 210;
-        P5 = 1;
-        break;
-    case 2340:
-        P22VAR = 210;
-        P5 = 2;
-        break;
-    case 4681:
-        P23VAR = 210;
-        P5 = 4;
-        break;
-    case 7201:
-        P24VAR = 210;
-        P5 = 8;
-        break;
-    case 9362:
-        P25VAR = 210;
-        P5 = 16;
-        break;
-    case 11702:
-        P26VAR = 210;
-        P5 = 32;
-        break;
-    case 14043:
-        P20VAR = 210;
-        P5 = 64;
-        break;
-    case 16383:
-        P21VAR = 210;
-        P5 = 1;
-        break;
-    case 18724:
-        P22VAR = 210;
-        P5 = 2;
-        break;
-    case 21064:
-        P23VAR = 210;
-        P5 = 4;
-        break;
-    case 23405:
-        P24VAR = 210;
-        P5 = 8;
-        break;
-    case 25745:
-        P25VAR = 210;
-        P5 = 16;
-        break;
-    case 28086:
-        P26VAR = 210;
-        P5 = 32;
-        break;
-    case 30426:
-        P20VAR = 210;
-        P5 = 64;
-        break;
-    case 32767:
-        P21VAR = 210;
-        P5 = 1;
-        break;
-    case 35107:
-        P22VAR = 210;
-        P5 = 2;
-        break;
-    case 37448:
-        P23VAR = 210;
-        P5 = 4;
-        break;
-    case 39788:
-        P24VAR = 210;
-        P5 = 8;
-        break;
-    case 42129:
-        P25VAR = 210;
-        P5 = 16;
-        break;
-    case 44469:
-        P26VAR = 210;
-        P5 = 32;
-        break;
-    case 46810:
-        P20VAR = 210;
-        P5 = 64;
-        break;
-    case 49150:
-        P21VAR = 210;
-        P5 = 1;
-        break;
-    case 51491:
-        P22VAR = 210;
-        P5 = 2;
-        break;
-    case 53831:
-        P23VAR = 210;
-        P5 = 4;
-        break;
-    case 56172:
-        P24VAR = 210;
-        P5 = 8;
-        break;
-    case 58512:
-        P25VAR = 210;
-        P5 = 16;
-        break;
-    case 60853:
-        P26VAR = 210;
-        P5 = 32;
-        break;
-    case 63193:
-        P20VAR = 210;
-        P5 = 64;
-        break;
-    }
-    */
-#endif
+    TL0=0;	//TL0=65536 - TT;
+    TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
 }
 #endif
