@@ -7,7 +7,7 @@
 //#define BUFFER
 //#define DEBUG
 #define CHANNEL16		  //P10 P12 P13
-#define LEDRay
+//#define LEDRay
 #ifdef DEBUG
 #include <stdio.h>   //夹非块ㄧ计
 unsigned char oldCHANNEL=0xFF;
@@ -198,9 +198,6 @@ void consumeToken(unsigned char incomingByte)
                     {
                     case 0:
                     case 1:
-#ifndef LEDRay
-                        P57VAR = 255;
-#endif
                         switch(note)
                         {
                         case 36:
@@ -389,10 +386,10 @@ void consumeToken(unsigned char incomingByte)
                         case 55:
                             P26VAR = 255;
                             break;
-                        case 56:
-                            P32VAR = 255;
-                            break;
 #ifndef LEDRay
+                        case 56:
+                            P56VAR = 255;
+                            break;
                         case 57:
                             P55VAR = 255;
                             break;
@@ -2506,18 +2503,6 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             i26--;
             break;
         }
-        switch(i32)
-        {
-        case 0:
-            break;
-        case 1:
-            P32VAR = 0;
-            i32--;
-            break;
-        default:
-            i32--;
-            break;
-        }
         switch(i34)
         {
         case 0:
@@ -2697,6 +2682,18 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             i55--;
+            break;
+        }
+	switch(i56)
+        {
+        case 0:
+            break;
+        case 1:
+            P56VAR = 0;
+            i56--;
+            break;
+        default:
+            i56--;
             break;
         }
 #endif
@@ -4363,161 +4360,161 @@ void PCA_Interrupt() interrupt 10
     case 1:
         if(P00VAR && !i00)
         {
-            i00 = 4;
+            i00 = 5;
         }
         if(P01VAR && !i01)
         {
-            i01 = 4;
+            i01 = 5;
         }
         if(P02VAR && !i02)
         {
-            i02 = 4;
+            i02 = 5;
         }
         if(P03VAR && !i03)
         {
-            i03 = 4;
+            i03 = 5;
         }
         if(P04VAR && !i04)
         {
-            i04 = 4;
+            i04 = 5;
         }
         if(P05VAR && !i05)
         {
-            i05 = 4;
+            i05 = 5;
         }
         if(P06VAR && !i06)
         {
-            i06 = 4;
+            i06 = 5;
         }
         if(P07VAR && !i07)
         {
-            i07 = 4;
+            i07 = 5;
         }
         if(P11VAR && !i11)
         {
-            i11 = 4;
+            i11 = 5;
         }
         if(P14VAR && !i14)
         {
-            i14 = 4;
+            i14 = 5;
         }
         if(P15VAR && !i15)
         {
-            i15 = 4;
+            i15 = 5;
         }
         if(P16VAR && !i16)
         {
-            i16 = 4;
+            i16 = 5;
         }
         if(P17VAR && !i17)
         {
-            i17 = 4;
+            i17 = 5;
         }
         if(P20VAR && !i20)
         {
-            i20 = 4;
+            i20 = 5;
         }
         if(P21VAR && !i21)
         {
-            i21 = 4;
+            i21 = 5;
         }
         if(P22VAR && !i22)
         {
             CCAP0H = ~P22VAR;
-            i22 = 4;
+            i22 = 5;
         }
         if(P23VAR && !i23)
         {
             CCAP1H = ~P23VAR;
-            i23 = 4;
+            i23 = 5;
         }
         if(P24VAR && !i24)
         {
             CCAP2H = ~P24VAR;
-            i24 = 4;
+            i24 = 5;
         }
         if(P25VAR && !i25)
         {
             CCAP3H = ~P25VAR;
-            i25 = 4;
+            i25 = 5;
         }
         if(P26VAR && !i26)
         {
             CCAP4H = ~P26VAR;
-            i26 = 4;
+            i26 = 5;
         }
         if(P32VAR && !i32)
         {
-            i32 = 4;
+            i32 = 5;
         }
         if(P34VAR && !i34)
         {
-            i34 = 4;
+            i34 = 5;
         }
         if(P35VAR && !i35)
         {
-            i35 = 4;
+            i35 = 5;
         }
         if(P36VAR && !i36)
         {
-            i36 = 4;
+            i36 = 5;
         }
         if(P37VAR && !i37)
         {
-            i37 = 4;
+            i37 = 5;
         }
         if(P40VAR && !i40)
         {
-            i40 = 4;
+            i40 = 5;
         }
         if(P41VAR && !i41)
         {
-            i41 = 4;
+            i41 = 5;
         }
         if(P42VAR && !i42)
         {
-            i42 = 4;
+            i42 = 5;
         }
         if(P43VAR && !i43)
         {
-            i43 = 4;
+            i43 = 5;
         }
         if(P46VAR && !i46)
         {
-            i46 = 4;
+            i46 = 5;
         }
 #ifndef LEDRay
         if(P50VAR && !i50)
         {
-            i50 = 4;
+            i50 = 5;
         }
         if(P51VAR && !i51)
         {
-            i51 = 4;
+            i51 = 5;
         }
         if(P52VAR && !i52)
         {
-            i52 = 4;
+            i52 = 5;
         }
         if(P53VAR && !i53)
         {
-            i53 = 4;
+            i53 = 5;
         }
         if(P54VAR && !i54)
         {
-            i54 = 4;
+            i54 = 5;
         }
         if(P55VAR && !i55)
         {
-            i55 = 4;
+            i55 = 5;
         }
         if(P56VAR && !i56)
         {
-            i56 = 4;
+            i56 = 5;
         }
         if(P57VAR && !i57)
         {
-            i57 = 4;
+            i57 = 5;
         }
         P5 |= 0xFF;
 #endif
@@ -4533,157 +4530,157 @@ void PCA_Interrupt() interrupt 10
         //case 13:
         if(P00VAR && !i00)
         {
-            i00 = 4;
+            i00 = 5;
         }
         if(P01VAR && !i01)
         {
-            i01 = 4;
+            i01 = 5;
         }
         if(P02VAR && !i02)
         {
-            i02 = 4;
+            i02 = 5;
         }
         if(P03VAR && !i03)
         {
-            i03 = 4;
+            i03 = 5;
         }
         if(P04VAR && !i04)
         {
-            i04 = 4;
+            i04 = 5;
         }
         if(P05VAR && !i05)
         {
-            i05 = 4;
+            i05 = 5;
         }
         if(P06VAR && !i06)
         {
-            i06 = 4;
+            i06 = 5;
         }
         if(P07VAR && !i07)
         {
-            i07 = 4;
+            i07 = 5;
         }
         if(P11VAR && !i11)
         {
-            i11 = 4;
+            i11 = 5;
         }
         if(P14VAR && !i14)
         {
-            i14 = 4;
+            i14 = 5;
         }
         if(P15VAR && !i15)
         {
-            i15 = 4;
+            i15 = 5;
         }
         if(P16VAR && !i16)
         {
-            i16 = 4;
+            i16 = 5;
         }
         if(P17VAR && !i17)
         {
-            i17 = 4;
+            i17 = 5;
         }
         if(P20VAR && !i20)
         {
-            i20 = 4;
+            i20 = 5;
         }
         if(P21VAR && !i21)
         {
-            i21 = 4;
+            i21 = 5;
         }
         if(P22VAR && !i22)
         {
             CCAP0H = ~P22VAR;
-            i22 = 4;
+            i22 = 5;
         }
         if(P23VAR && !i23)
         {
             CCAP1H = ~P23VAR;
-            i23 = 4;
+            i23 = 5;
         }
         if(P24VAR && !i24)
         {
             CCAP2H = ~P24VAR;
-            i24 = 4;
+            i24 = 5;
         }
         if(P25VAR && !i25)
         {
             CCAP3H = ~P25VAR;
-            i25 = 4;
+            i25 = 5;
         }
         if(P26VAR && !i26)
         {
             CCAP4H = ~P26VAR;
-            i26 = 4;
-        }
-        if(P32VAR && !i32)
-        {
-            i32 = 4;
+            i26 = 5;
         }
 #ifndef LEDRay
+        if(P56VAR && !i56)
+        {
+            i56 = 5;
+        }
         if(P55VAR && !i55)
         {
-            i55 = 4;
+            i55 = 5;
         }
 #endif
         if(P34VAR && !i34)
         {
-            i34 = 4;
+            i34 = 5;
         }
         if(P35VAR && !i35)
         {
-            i35 = 4;
+            i35 = 5;
         }
         if(P36VAR && !i36)
         {
-            i36 = 4;
+            i36 = 5;
         }
         if(P37VAR && !i37)
         {
-            i37 = 4;
+            i37 = 5;
         }
         if(P40VAR && !i40)
         {
-            i40 = 4;
+            i40 = 5;
         }
         if(P41VAR && !i41)
         {
-            i41 = 4;
+            i41 = 5;
         }
         if(P42VAR && !i42)
         {
-            i42 = 4;
+            i42 = 5;
         }
         if(P43VAR && !i43)
         {
-            i43 = 4;
+            i43 = 5;
         }
         if(P46VAR && !i46)
         {
-            i46 = 4;
+            i46 = 5;
         }
 #ifndef LEDRay
         if(P50VAR && !i50)
         {
-            i50 = 4;
+            i50 = 5;
         }
         if(P51VAR && !i51)
         {
-            i51 = 4;
+            i51 = 5;
         }
         if(P52VAR && !i52)
         {
-            i52 = 4;
+            i52 = 5;
         }
         if(P53VAR && !i53)
         {
-            i53 = 4;
+            i53 = 5;
         }
         if(P54VAR && !i54)
         {
-            i54 = 4;
+            i54 = 5;
         }
-        P5 |= 0x1F;
+        P5 |= 0x7F;
 #endif
         P0 = 0xFF;//P00 = P01 = P02 = P03 = P04 = P05 = P06 = P07 = 1;
         P1 |= 0xF2;
@@ -4788,6 +4785,7 @@ void PCA_Interrupt() interrupt 10
         {
             i50 = e05;
         }
+        P50 = 1;
 #endif
         if(P34VAR && !i34)
         {
@@ -5230,10 +5228,6 @@ void PCA_Interrupt() interrupt 10
         if(P57VAR && !i57)
         {
             i57 = 3;
-        }
-        if(P64VAR && !i64)
-        {
-            i64 = e06;
         }
         P5 |= 0xFF;
 #endif
