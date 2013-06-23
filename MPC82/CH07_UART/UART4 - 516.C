@@ -4,7 +4,6 @@
 ************************************************/
 #include "..\REG_MG84FG516.H"   //暫存器及組態定義
 #include "math.h"
-//#define BUFFER
 //#define DEBUG
 #define CHANNEL16		  //P10 P12 P13
 //#define LEDRay
@@ -15,13 +14,17 @@ unsigned char oldCHANNEL=0xFF;
 #define HARDRAYPWM		  //P14 P15 P16		CR
 #ifdef	HARDRAYPWM
 //#define PCATIMER
+#ifndef PCATIMER
+#define TIMER0
+#endif
 #define TTT  256
 unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P22VAR,P23VAR,P24VAR,P25VAR,P26VAR,P27VAR,P32VAR,P34VAR,P35VAR,P36VAR,P37VAR,P40VAR,P41VAR,P42VAR,P43VAR,P46VAR;
 #ifndef LEDRay
 unsigned char P50VAR,P51VAR,P52VAR,P53VAR,P54VAR,P55VAR,P56VAR,P57VAR;
 #endif
+#else
+#define BUFFER
 #endif
-#define TIMER0
 #define SIMULATION
 #define TIMER2
 #define PARSER
@@ -39,11 +42,12 @@ void softPWM();
 #define ON 2
 #define WAIT 3
 unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL 0x00
-#define e04 4
-#define e05	55
-#define e06 250
-#define e07 10
-#define e08 6
+#define e04 4	 //撥弦	duration
+#define e05	55	 //壓弦1秒
+#define e06 250	 //風鈴計算時間
+#define e07 10	 //和弦duration
+#define e08 4    //撥弦壓弦時間差
+#define e09 5	 //木鐵琴全滿Velocity
 //#define ukulelechord
 unsigned char channel;
 unsigned char note;
@@ -93,12 +97,10 @@ main()
     EA=1;
     //AUXIE |= ES2;
 #ifdef HARDRAYPWM
-    CCAPM0=CCAPM1=CCAPM2=CCAPM3=CCAPM4=CCAPM5=ECOM+PWM; //致能CEX1比較器及PWM輸出
+    CCAPM0=CCAPM1=CCAPM2=CCAPM3=CCAPM4=ECOM+PWM; //致能CEX1比較器及PWM輸出
     CMOD=0x00; //CPS1-0=00,Fpwm=Fosc/12/256=22.1184MHz/12/256=7.2KHz
     //PCAPWM0=PCAPWM1=PCAPWM2=PCAPWM3=PCAPWM4=PCAPWM5=ECAPH;
-    CCAP0H=CCAP1H=CCAP2H=CCAP3H=CCAP4H=CCAP5H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
-    CR = 1;
-#endif
+    CCAP0H=CCAP1H=CCAP2H=CCAP3H=CCAP4H=~0x00;//0x00; //設定(P12/CEX0)，平均電壓為0V
 #ifdef PCATIMER
     //CMOD = 0; //PCA計數時脈來源CPS1-0:00=Fosc/12
     CCAPM5=ECOM+MAT+ECCF;
@@ -110,10 +112,15 @@ main()
     AUXIE = EPCA;      //致能PCA中斷
     CCF5=0;  //清除模組0-5的比較旗標
     //CR = 1;
+#else
+    CCAPM5=ECOM+PWM;
+    CCAP5H=~0x00;
 #endif
+    CR = 1;
     P00VAR=P01VAR=P02VAR=P03VAR=P04VAR=P05VAR=P06VAR=P07VAR=P11VAR=P14VAR=P15VAR=P16VAR=P17VAR=P20VAR=P21VAR=P22VAR=P23VAR=P24VAR=P25VAR=P26VAR=P27VAR=P32VAR=P34VAR=P35VAR=P36VAR=P40VAR=P41VAR=P42VAR=P43VAR=P46VAR=0;
 #ifndef LEDRay
     P50VAR=P51VAR=P52VAR=P53VAR=P54VAR=P55VAR=P56VAR=P57VAR=0;
+#endif
 #endif
 #ifdef TIMER2
     i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i24=i25=i26=i27=i32=i34=i35=i36=i37=i40=i41=i42=i43=i46=i10000=0;
@@ -193,1539 +200,1633 @@ void consumeToken(unsigned char incomingByte)
             velocity=incomingByte;
             if(action > OFF)
             {
-                if( velocity && oneCHANNEL == channel )
+                if( oneCHANNEL == channel )
                 {
-                    switch( oneCHANNEL )
+                    if( velocity )
                     {
-                    case 0:
-                    case 1:
-                        switch(note)
+                        switch( oneCHANNEL )
                         {
-                        case 36:
-                            P00VAR = 255;
-                            break;
-                        case 37:
-                            P01VAR = 255;
-                            break;
-                        case 38:
-                            P02VAR = 255;
-                            break;
-                        case 39:
-                            P03VAR = 255;
-                            break;
-                        case 40:
-                            P04VAR = 255;
-                            break;
-                        case 41:
-                            P05VAR = 255;
-                            break;
-                        case 42:
-                            P06VAR = 255;
-                            break;
-                        case 43:
-                            P07VAR = 255;
-                            break;
-                        case 44:
-                            P11VAR = 255;
-                            break;
-                        case 45:
-                            P14VAR = 255;
-                            break;
-                        case 46:
-                            P15VAR = 255;
-                            break;
-                        case 47:
-                            P16VAR = 255;
-                            break;
-                        case 48:
-                            P17VAR = 255;
-                            break;
-                        case 49:
-                            P20VAR = 255;
-                            break;
-                        case 50:
-                            P21VAR = 255;
-                            break;
-                        case 51:
-                            P22VAR = 255;
-                            break;
-                        case 52:
-                            P23VAR = 255;
-                            break;
-                        case 53:
-                            P24VAR = 255;
-                            break;
-                        case 54:
-                            P25VAR = 255;
-                            break;
-                        case 55:
-                            P26VAR = 255;
-                            break;
-                        case 56:
-                            P32VAR = 255;
-                            break;
-#ifndef LEDRay
-                        case 57:
-                            P57VAR = 255;
-                            break;
-#endif
-                        case 58:
-                            P34VAR = 255;
-                            break;
-                        case 59:
-                            P35VAR = 255;
-                            break;
-                        case 60:
-                            P36VAR = 255;
-                            break;
-                        case 61:
-                            P37VAR = 255;
-                            break;
-                        case 62:
-                            P40VAR = 255;
-                            break;
-                        case 63:
-                            P41VAR = 255;
-                            break;
-                        case 64:
-                            P27VAR = 255;
-                            break;
-                        case 65:
-                            P43VAR = 255;
-                            break;
-                        case 66:
-                            P46VAR = 255;
-                            break;
-#ifndef LEDRay
-                        case 67:
-                            P50VAR = 255;
-                            break;
-                        case 68:
-                            P51VAR = 255;
-                            break;
-                        case 69:
-                            P52VAR = 255;
-                            break;
-                        case 70:
-                            P53VAR = 255;
-                            break;
-                        case 71:
-                            P54VAR = 255;
-                            break;
-                        case 72:
-                            P55VAR = 255;
-                            break;
-                        case 73:
-                            P56VAR = 255;
-                            break;
-#endif
-                        }
-                        break;
-                    case 2:
-                    case 3:
-                        //case 12:
-                        //case 13:
-                        switch(note)
-                        {
-                        case 36:
-                            P00VAR = 255;
-                            break;
-                        case 37:
-                            P01VAR = 255;
-                            break;
-                        case 38:
-                            P02VAR = 255;
-                            break;
-                        case 39:
-                            P03VAR = 255;
-                            break;
-                        case 40:
-                            P04VAR = 255;
-                            break;
-                        case 41:
-                            P05VAR = 255;
-                            break;
-                        case 42:
-                            P06VAR = 255;
-                            break;
-                        case 43:
-                            P07VAR = 255;
-                            break;
-                        case 44:
-                            P11VAR = 255;
-                            break;
-                        case 45:
-                            P14VAR = 255;
-                            break;
-                        case 46:
-                            P15VAR = 255;
-                            break;
-                        case 47:
-                            P16VAR = 255;
-                            break;
-                        case 48:
-                            P17VAR = 255;
-                            break;
-                        case 49:
-                            P20VAR = 255;
-                            break;
-                        case 50:
-                            P21VAR = 255;
-                            break;
-                        case 51:
-                            P22VAR = 255;
-                            break;
-                        case 52:
-                            P23VAR = 255;
-                            break;
-                        case 53:
-                            P24VAR = 255;
-                            break;
-                        case 54:
-                            P25VAR = 255;
-                            break;
-                        case 55:
-                            P26VAR = 255;
-                            break;
-#ifndef LEDRay
-                        case 56:
-                            P56VAR = 255;
-                            break;
-                        case 57:
-                            P55VAR = 255;
-                            break;
-#endif
-                        case 58:
-                            P34VAR = 255;
-                            break;
-                        case 59:
-                            P35VAR = 255;
-                            break;
-                        case 60:
-                            P36VAR = 255;
-                            break;
-                        case 61:
-                            P37VAR = 255;
-                            break;
-                        case 62:
-                            P40VAR = 255;
-                            break;
-                        case 63:
-                            P41VAR = 255;
-                            break;
-                        case 64:
-                            P42VAR = 255;
-                            break;
-                        case 65:
-                            P43VAR = 255;
-                            break;
-                        case 66:
-                            P46VAR = 255;
-                            break;
-#ifndef LEDRay
-                        case 67:
-                            P50VAR = 255;
-                            break;
-                        case 68:
-                            P51VAR = 255;
-                            break;
-                        case 69:
-                            P52VAR = 255;
-                            break;
-                        case 70:
-                            P53VAR = 255;
-                            break;
-                        case 71:
-                            P54VAR = 255;
-                            break;
-#endif
-                        }
-                        break;
-                    case 4:
-                    case 5:
-                    case 6:
-                        P46VAR = 255;
-                        switch(note)
-                        {
-                        case 36:
-                            if(i01)
-                            {
-                                i01 = 1;
-                            }
-                            if(i02)
-                            {
-                                i02 = 1;
-                            }
-                            if(i03)
-                            {
-                                i03 = 1;
-                            }
-                            if(i04)
-                            {
-                                i04 = 1;
-                            }
-                            P00VAR = 255;
-                            break;
-                        case 37:
-                            if(i02)
-                            {
-                                i02 = 1;
-                            }
-                            if(i03)
-                            {
-                                i03 = 1;
-                            }
-                            if(i04)
-                            {
-                                i04 = 1;
-                            }
-                            P01VAR = 255;
-                            i50 = e08;
-                            break;
-                        case 38:
-                            if(i03)
-                            {
-                                i03 = 1;
-                            }
-                            if(i04)
-                            {
-                                i04 = 1;
-                            }
-                            P02VAR = 255;
-                            i50 = e08;
-                            break;
-                        case 39:
-                            if(i04)
-                            {
-                                i04 = 1;
-                            }
-                            P03VAR = 255;
-                            i50 = e08;
-                            break;
-                        case 40:
-                            P04VAR = 255;
-                            i50 = e08;
-                            break;
-                        case 41:
-                            if(i06)
-                            {
-                                i06 = 1;
-                            }
-                            if(i07)
-                            {
-                                i07 = 1;
-                            }
-                            if(i11)
-                            {
-                                i11 = 1;
-                            }
-                            if(i14)
-                            {
-                                i14 = 1;
-                            }
-                            P05VAR = 255;
-                            break;
-                        case 42:
-                            if(i07)
-                            {
-                                i07 = 1;
-                            }
-                            if(i11)
-                            {
-                                i11 = 1;
-                            }
-                            if(i14)
-                            {
-                                i14 = 1;
-                            }
-                            P06VAR = 255;
-                            i51 = e08;
-                            break;
-                        case 43:
-                            if(i11)
-                            {
-                                i11 = 1;
-                            }
-                            if(i14)
-                            {
-                                i14 = 1;
-                            }
-                            P07VAR = 255;
-                            i51 = e08;
-                            break;
-                        case 44:
-                            if(i14)
-                            {
-                                i14 = 1;
-                            }
-                            P11VAR = 255;
-                            i51 = e08;
-                            break;
-                        case 45:
-                            P14VAR = 255;
-                            i51 = e08;
-                            break;
-                        case 46:
-                            if(i16)
-                            {
-                                i16 = 1;
-                            }
-                            if(i17)
-                            {
-                                i17 = 1;
-                            }
-                            if(i20)
-                            {
-                                i20 = 1;
-                            }
-                            if(i21)
-                            {
-                                i21 = 1;
-                            }
-                            P15VAR = 255;
-                            break;
-                        case 47:
-                            if(i17)
-                            {
-                                i17 = 1;
-                            }
-                            if(i20)
-                            {
-                                i20 = 1;
-                            }
-                            if(i21)
-                            {
-                                i21 = 1;
-                            }
-                            P16VAR = 255;
-                            i52 = e08;
-                            break;
-                        case 48:
-                            if(i20)
-                            {
-                                i20 = 1;
-                            }
-                            if(i21)
-                            {
-                                i21 = 1;
-                            }
-                            P17VAR = 255;
-                            i52 = e08;
-                            break;
-                        case 49:
-                            if(i21)
-                            {
-                                i21 = 1;
-                            }
-                            P20VAR = 255;
-                            i52 = e08;
-                            break;
-                        case 50:
-                            P21VAR = 255;
-                            i52 = e08;
-                            break;
-                        case 51:
-                            if(i23)
-                            {
-                                i23 = 1;
-                            }
-                            if(i24)
-                            {
-                                i24 = 1;
-                            }
-                            if(i25)
-                            {
-                                i25 = 1;
-                            }
-                            P22VAR = 255;
-                            break;
-                        case 52:
-                            if(i24)
-                            {
-                                i24 = 1;
-                            }
-                            if(i25)
-                            {
-                                i25 = 1;
-                            }
-                            P23VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 53:
-                            if(i25)
-                            {
-                                i25 = 1;
-                            }
-                            P24VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 54:
-                            P25VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 55:
-                            if(i32)
-                            {
-                                i32 = 1;
-                            }
-#ifndef LEDRay
-                            if(i50)
-                            {
-                                i50 = 1;
-                            }
-#endif
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            P26VAR = 255;
-                            break;
-                        case 56:
-#ifndef LEDRay
-                            if(i50)
-                            {
-                                i50 = 1;
-                            }
-#endif
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            P32VAR = 255;
-                            i54 = e08;
-                            break;
-                        case 57:
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-#ifndef LEDRay
-                            P50VAR = 255;
-#endif
-                            i54 = e08;
-                            break;
-                        case 58:
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            P34VAR = 255;
-                            i54 = e08;
-                            break;
-                        case 59:
-                            P35VAR = 255;
-                            i54 = e08;
-                            break;
-                        case 60:
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            if(i42)
-                            {
-                                i42 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            P36VAR = 255;
-                            break;
-                        case 61:
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            if(i42)
-                            {
-                                i42 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            P37VAR = 255;
-                            i55 = e08;
-                            break;
-                        case 62:
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            if(i42)
-                            {
-                                i42 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            P40VAR = 255;
-                            i55 = e08;
-                            break;
-                        case 63:
-                            if(i42)
-                            {
-                                i42 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            P41VAR = 255;
-                            i55 = e08;
-                            break;
-                        case 64:
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            P42VAR = 255;
-                            i55 = e08;
-                            break;
-                        case 65:
-                            P43VAR = 255;
-                            i55 = e08;
-                            break;
-                        }
-                        break;
-                    case 7:
-                        P42VAR = 255;
-                        switch(note)
-                        {
-                        case 36:
-                            if(i01)
-                            {
-                                i01 = 1;
-                            }
-                            if(i02)
-                            {
-                                i02 = 1;
-                            }
-                            if(i03)
-                            {
-                                i03 = 1;
-                            }
-                            if(i04)
-                            {
-                                i04 = 1;
-                            }
-                            P00VAR = 255;
-                            break;
-                        case 37:
-                            if(i02)
-                            {
-                                i02 = 1;
-                            }
-                            if(i03)
-                            {
-                                i03 = 1;
-                            }
-                            if(i04)
-                            {
-                                i04 = 1;
-                            }
-                            P01VAR = 255;
-                            i50 = e08;
-                            break;
-                        case 38:
-                            if(i03)
-                            {
-                                i03 = 1;
-                            }
-                            if(i04)
-                            {
-                                i04 = 1;
-                            }
-                            P02VAR = 255;
-                            i50 = e08;
-                            break;
-                        case 39:
-                            if(i04)
-                            {
-                                i04 = 1;
-                            }
-                            P03VAR = 255;
-                            i50 = e08;
-                            break;
-                        case 40:
-                            P04VAR = 255;
-                            i50 = e08;
-                            break;
-                        case 41:
-                            if(i06)
-                            {
-                                i06 = 1;
-                            }
-                            if(i07)
-                            {
-                                i07 = 1;
-                            }
-                            if(i11)
-                            {
-                                i11 = 1;
-                            }
-                            if(i14)
-                            {
-                                i14 = 1;
-                            }
-                            P05VAR = 255;
-                            break;
-                        case 42:
-                            if(i07)
-                            {
-                                i07 = 1;
-                            }
-                            if(i11)
-                            {
-                                i11 = 1;
-                            }
-                            if(i14)
-                            {
-                                i14 = 1;
-                            }
-                            P06VAR = 255;
-                            i51 = e08;
-                            break;
-                        case 43:
-                            if(i11)
-                            {
-                                i11 = 1;
-                            }
-                            if(i14)
-                            {
-                                i14 = 1;
-                            }
-                            P07VAR = 255;
-                            i51 = e08;
-                            break;
-                        case 44:
-                            if(i14)
-                            {
-                                i14 = 1;
-                            }
-                            P11VAR = 255;
-                            i51 = e08;
-                            break;
-                        case 45:
-                            P14VAR = 255;
-                            i51 = e08;
-                            break;
-                        case 46:
-                            if(i16)
-                            {
-                                i16 = 1;
-                            }
-                            if(i17)
-                            {
-                                i17 = 1;
-                            }
-                            if(i20)
-                            {
-                                i20 = 1;
-                            }
-                            if(i21)
-                            {
-                                i21 = 1;
-                            }
-                            P15VAR = 255;
-                            break;
-                        case 47:
-                            if(i17)
-                            {
-                                i17 = 1;
-                            }
-                            if(i20)
-                            {
-                                i20 = 1;
-                            }
-                            if(i21)
-                            {
-                                i21 = 1;
-                            }
-                            P16VAR = 255;
-                            i52 = e08;
-                            break;
-                        case 48:
-                            if(i20)
-                            {
-                                i20 = 1;
-                            }
-                            if(i21)
-                            {
-                                i21 = 1;
-                            }
-                            P17VAR = 255;
-                            i52 = e08;
-                            break;
-                        case 49:
-                            if(i21)
-                            {
-                                i21 = 1;
-                            }
-                            P20VAR = 255;
-                            i52 = e08;
-                            break;
-                        case 50:
-                            P21VAR = 255;
-                            i52 = e08;
-                            break;
-                        case 51:
-                            if(i23)
-                            {
-                                i23 = 1;
-                            }
-                            if(i24)
-                            {
-                                i24 = 1;
-                            }
-                            if(i25)
-                            {
-                                i25 = 1;
-                            }
-                            if(i26)
-                            {
-                                i26 = 1;
-                            }
-                            if(i32)
-                            {
-                                i32 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P22VAR = 255;
-                            break;
-                        case 52:
-                            if(i24)
-                            {
-                                i24 = 1;
-                            }
-                            if(i25)
-                            {
-                                i25 = 1;
-                            }
-                            if(i26)
-                            {
-                                i26 = 1;
-                            }
-                            if(i32)
-                            {
-                                i32 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P23VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 53:
-                            if(i25)
-                            {
-                                i25 = 1;
-                            }
-                            if(i26)
-                            {
-                                i26 = 1;
-                            }
-                            if(i32)
-                            {
-                                i32 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P24VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 54:
-                            if(i26)
-                            {
-                                i26 = 1;
-                            }
-                            if(i32)
-                            {
-                                i32 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P25VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 55:
-                            if(i32)
-                            {
-                                i32 = 1;
-                            }
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P26VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 56:
-                            if(i43)
-                            {
-                                i43 = 1;
-                            }
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P32VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 57:
-                            if(i34)
-                            {
-                                i34 = 1;
-                            }
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P43VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 58:
-                            if(i35)
-                            {
-                                i35 = 1;
-                            }
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P34VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 59:
-                            if(i36)
-                            {
-                                i36 = 1;
-                            }
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P35VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 60:
-                            if(i37)
-                            {
-                                i37 = 1;
-                            }
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P36VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 61:
-                            if(i40)
-                            {
-                                i40 = 1;
-                            }
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P37VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 62:
-                            if(i41)
-                            {
-                                i41 = 1;
-                            }
-                            P40VAR = 255;
-                            i53 = e08;
-                            break;
-                        case 63:
-                            P41VAR = 255;
-                            i53 = e08;
-                            break;
-                        }
-                        break;
-                    case 8:
-                        //case 9:
-                        //case 10:
-                        P36VAR = 255;
-                        switch(note)
-                        {
-                        case 36:
-#ifndef ukulelechord
-                            P00VAR = 255;
-#else
-                            P17VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 37:
-#ifndef ukulelechord
-                            P01VAR = 255;
-                            i51 = e08;
-#else
-                            P25VAR = P01VAR = P23VAR = P20VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 38:
-#ifndef ukulelechord
-                            P02VAR = 255;
-                            i51 = e08;
-#else
-                            P26VAR = P02VAR = P06VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 39:
-#ifndef ukulelechord
-                            P03VAR = 255;
-                            i51 = e08;
-#else
-                            P03VAR = P07VAR = P15VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 40:
-#ifndef ukulelechord
-                            if(!P00VAR)
-                            {
-                                P22VAR = 255;
-                            }
-                            else
-                            {
+                        case 0:
+                        case 1:
+                            switch(note)
+                            {
+                            case 36:
+                                P00VAR = 255;
+                                break;
+                            case 37:
+                                P01VAR = 255;
+                                break;
+                            case 38:
+                                P02VAR = 255;
+                                break;
+                            case 39:
+                                P03VAR = 255;
+                                break;
+                            case 40:
                                 P04VAR = 255;
-                                i51 = e08;
-                            }
-#else
-                            P25VAR = P04VAR = P16VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 41:
-#ifndef ukulelechord
-                            if(!P00VAR)
-                            {
-                                P23VAR = 255;
-                                i52 = e08;
-                            }
-                            else
-                            {
+                                break;
+                            case 41:
                                 P05VAR = 255;
-                                i51 = e08;
-                            }
-#else
-                            P26VAR = P23VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 42:
-#ifndef ukulelechord
-                            P06VAR = 255;
-                            i52 = e08;
-#else
-                            P32VAR = P01VAR = P06VAR = P20VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 43:
-#ifndef ukulelechord
-                            if(!P22VAR)
-                            {
-                                P24VAR = 255;
-                            }
-                            else
-                            {
+                                break;
+                            case 42:
+                                P06VAR = 255;
+                                break;
+                            case 43:
                                 P07VAR = 255;
-                                i52 = e08;
-                            }
-#else
-                            P02VAR = P07VAR = P16VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 44:
-#ifndef ukulelechord
-                            if(!P22VAR)
-                            {
-                                P25VAR = 255;
-                                i50 = e08;
-                            }
-                            else
-                            {
+                                break;
+                            case 44:
                                 P11VAR = 255;
-                                i52 = e08;
-                            }
-#else
-                            P25VAR = P03VAR = P11VAR = P17VAR = 255;
-                            i37 = e07;
+                                break;
+                            case 45:
+                                P14VAR = 255;
+                                break;
+                            case 46:
+                                P15VAR = 255;
+                                break;
+                            case 47:
+                                P16VAR = 255;
+                                break;
+                            case 48:
+                                P17VAR = 255;
+                                break;
+                            case 49:
+                                P20VAR = 255;
+                                break;
+                            case 50:
+                                P21VAR = 255;
+                                break;
+                            case 51:
+                                P22VAR = 255;
+                                break;
+                            case 52:
+                                P23VAR = 255;
+                                break;
+                            case 53:
+                                P24VAR = 255;
+                                break;
+                            case 54:
+                                P25VAR = 255;
+                                break;
+                            case 55:
+                                P26VAR = 255;
+                                break;
+                            case 56:
+                                P32VAR = 255;
+                                break;
+#ifndef LEDRay
+                            case 57:
+                                P57VAR = 255;
+                                break;
 #endif
+                            case 58:
+                                P34VAR = 255;
+                                break;
+                            case 59:
+                                P35VAR = 255;
+                                break;
+                            case 60:
+                                P36VAR = 255;
+                                break;
+                            case 61:
+                                P37VAR = 255;
+                                break;
+                            case 62:
+                                P40VAR = 255;
+                                break;
+                            case 63:
+                                P41VAR = 255;
+                                break;
+                            case 64:
+                                P27VAR = 255;
+                                break;
+                            case 65:
+                                P43VAR = 255;
+                                break;
+                            case 66:
+                                P46VAR = 255;
+                                break;
+#ifndef LEDRay
+                            case 67:
+                                P50VAR = 255;
+                                break;
+                            case 68:
+                                P51VAR = 255;
+                                break;
+                            case 69:
+                                P52VAR = 255;
+                                break;
+                            case 70:
+                                P53VAR = 255;
+                                break;
+                            case 71:
+                                P54VAR = 255;
+                                break;
+                            case 72:
+                                P55VAR = 255;
+                                break;
+                            case 73:
+                                P56VAR = 255;
+                                break;
+#endif
+                            }
                             break;
-                        case 45:
-#ifndef ukulelechord
-                            if(!P22VAR)
+                        case 2:
+                        case 3:
+                            //case 12:
+                            //case 13:
+                            switch(note)
                             {
-                                if(!P24VAR)
+                            case 36:
+                                P00VAR = 255;
+                                break;
+                            case 37:
+                                P01VAR = 255;
+                                break;
+                            case 38:
+                                P02VAR = 255;
+                                break;
+                            case 39:
+                                P03VAR = 255;
+                                break;
+                            case 40:
+                                P04VAR = 255;
+                                break;
+                            case 41:
+                                P05VAR = 255;
+                                break;
+                            case 42:
+                                P06VAR = 255;
+                                break;
+                            case 43:
+                                P07VAR = 255;
+                                break;
+                            case 44:
+                                P11VAR = 255;
+                                break;
+                            case 45:
+                                P14VAR = 255;
+                                break;
+                            case 46:
+                                P15VAR = 255;
+                                break;
+                            case 47:
+                                P16VAR = 255;
+                                break;
+                            case 48:
+                                P17VAR = 255;
+                                break;
+                            case 49:
+                                P20VAR = 255;
+                                break;
+                            case 50:
+                                P21VAR = 255;
+                                break;
+                            case 51:
+                                P22VAR = 255;
+                                break;
+                            case 52:
+                                P23VAR = 255;
+                                break;
+                            case 53:
+                                P24VAR = 255;
+                                break;
+                            case 54:
+                                P25VAR = 255;
+                                break;
+                            case 55:
+                                P26VAR = 255;
+                                break;
+#ifndef LEDRay
+                            case 56:
+                                P56VAR = 255;
+                                break;
+                            case 57:
+                                P55VAR = 255;
+                                break;
+#endif
+                            case 58:
+                                P34VAR = 255;
+                                break;
+                            case 59:
+                                P35VAR = 255;
+                                break;
+                            case 60:
+                                P36VAR = 255;
+                                break;
+                            case 61:
+                                P37VAR = 255;
+                                break;
+                            case 62:
+                                P40VAR = 255;
+                                break;
+                            case 63:
+                                P41VAR = 255;
+                                break;
+                            case 64:
+                                P42VAR = 255;
+                                break;
+                            case 65:
+                                P43VAR = 255;
+                                break;
+                            case 66:
+                                P46VAR = 255;
+                                break;
+#ifndef LEDRay
+                            case 67:
+                                P50VAR = 255;
+                                break;
+                            case 68:
+                                P51VAR = 255;
+                                break;
+                            case 69:
+                                P52VAR = 255;
+                                break;
+                            case 70:
+                                P53VAR = 255;
+                                break;
+                            case 71:
+                                P54VAR = 255;
+                                break;
+#endif
+                            }
+                            break;
+                        case 4:
+                        case 5:
+                        case 6:
+                            P46VAR = 255;
+                            switch(note)
+                            {
+                            case 36:
+                                if(i01)
                                 {
-                                    P35VAR = 255;
+                                    i01 = 1;
+                                }
+                                if(i02)
+                                {
+                                    i02 = 1;
+                                }
+                                if(i03)
+                                {
+                                    i03 = 1;
+                                }
+                                if(i04)
+                                {
+                                    i04 = 1;
+                                }
+                                P00VAR = 255;
+                                break;
+                            case 37:
+                                if(i02)
+                                {
+                                    i02 = 1;
+                                }
+                                if(i03)
+                                {
+                                    i03 = 1;
+                                }
+                                if(i04)
+                                {
+                                    i04 = 1;
+                                }
+                                P01VAR = 255;
+                                i50 = e08;
+                                break;
+                            case 38:
+                                if(i03)
+                                {
+                                    i03 = 1;
+                                }
+                                if(i04)
+                                {
+                                    i04 = 1;
+                                }
+                                P02VAR = 255;
+                                i50 = e08;
+                                break;
+                            case 39:
+                                if(i04)
+                                {
+                                    i04 = 1;
+                                }
+                                P03VAR = 255;
+                                i50 = e08;
+                                break;
+                            case 40:
+                                P04VAR = 255;
+                                i50 = e08;
+                                break;
+                            case 41:
+                                if(i06)
+                                {
+                                    i06 = 1;
+                                }
+                                if(i07)
+                                {
+                                    i07 = 1;
+                                }
+                                if(i11)
+                                {
+                                    i11 = 1;
+                                }
+                                if(i14)
+                                {
+                                    i14 = 1;
+                                }
+                                P05VAR = 255;
+                                break;
+                            case 42:
+                                if(i07)
+                                {
+                                    i07 = 1;
+                                }
+                                if(i11)
+                                {
+                                    i11 = 1;
+                                }
+                                if(i14)
+                                {
+                                    i14 = 1;
+                                }
+                                P06VAR = 255;
+                                i51 = e08;
+                                break;
+                            case 43:
+                                if(i11)
+                                {
+                                    i11 = 1;
+                                }
+                                if(i14)
+                                {
+                                    i14 = 1;
+                                }
+                                P07VAR = 255;
+                                i51 = e08;
+                                break;
+                            case 44:
+                                if(i14)
+                                {
+                                    i14 = 1;
+                                }
+                                P11VAR = 255;
+                                i51 = e08;
+                                break;
+                            case 45:
+                                P14VAR = 255;
+                                i51 = e08;
+                                break;
+                            case 46:
+                                if(i16)
+                                {
+                                    i16 = 1;
+                                }
+                                if(i17)
+                                {
+                                    i17 = 1;
+                                }
+                                if(i20)
+                                {
+                                    i20 = 1;
+                                }
+                                if(i21)
+                                {
+                                    i21 = 1;
+                                }
+                                P15VAR = 255;
+                                break;
+                            case 47:
+                                if(i17)
+                                {
+                                    i17 = 1;
+                                }
+                                if(i20)
+                                {
+                                    i20 = 1;
+                                }
+                                if(i21)
+                                {
+                                    i21 = 1;
+                                }
+                                P16VAR = 255;
+                                i52 = e08;
+                                break;
+                            case 48:
+                                if(i20)
+                                {
+                                    i20 = 1;
+                                }
+                                if(i21)
+                                {
+                                    i21 = 1;
+                                }
+                                P17VAR = 255;
+                                i52 = e08;
+                                break;
+                            case 49:
+                                if(i21)
+                                {
+                                    i21 = 1;
+                                }
+                                P20VAR = 255;
+                                i52 = e08;
+                                break;
+                            case 50:
+                                P21VAR = 255;
+                                i52 = e08;
+                                break;
+                            case 51:
+                                if(i23)
+                                {
+                                    i23 = 1;
+                                }
+                                if(i24)
+                                {
+                                    i24 = 1;
+                                }
+                                if(i25)
+                                {
+                                    i25 = 1;
+                                }
+                                P22VAR = 255;
+                                break;
+                            case 52:
+                                if(i24)
+                                {
+                                    i24 = 1;
+                                }
+                                if(i25)
+                                {
+                                    i25 = 1;
+                                }
+                                P23VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 53:
+                                if(i25)
+                                {
+                                    i25 = 1;
+                                }
+                                P24VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 54:
+                                P25VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 55:
+                                if(i32)
+                                {
+                                    i32 = 1;
+                                }
+#ifndef LEDRay
+                                if(i50)
+                                {
+                                    i50 = 1;
+                                }
+#endif
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                P26VAR = 255;
+                                break;
+                            case 56:
+#ifndef LEDRay
+                                if(i50)
+                                {
+                                    i50 = 1;
+                                }
+#endif
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                P32VAR = 255;
+                                i54 = e08;
+                                break;
+                            case 57:
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+#ifndef LEDRay
+                                P50VAR = 255;
+#endif
+                                i54 = e08;
+                                break;
+                            case 58:
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                P34VAR = 255;
+                                i54 = e08;
+                                break;
+                            case 59:
+                                P35VAR = 255;
+                                i54 = e08;
+                                break;
+                            case 60:
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                if(i42)
+                                {
+                                    i42 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                P36VAR = 255;
+                                break;
+                            case 61:
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                if(i42)
+                                {
+                                    i42 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                P37VAR = 255;
+                                i55 = e08;
+                                break;
+                            case 62:
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                if(i42)
+                                {
+                                    i42 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                P40VAR = 255;
+                                i55 = e08;
+                                break;
+                            case 63:
+                                if(i42)
+                                {
+                                    i42 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                P41VAR = 255;
+                                i55 = e08;
+                                break;
+                            case 64:
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                P42VAR = 255;
+                                i55 = e08;
+                                break;
+                            case 65:
+                                P43VAR = 255;
+                                i55 = e08;
+                                break;
+                            }
+                            break;
+                        case 7:
+                            P42VAR = 255;
+                            switch(note)
+                            {
+                            case 36:
+                                if(i01)
+                                {
+                                    i01 = 1;
+                                }
+                                if(i02)
+                                {
+                                    i02 = 1;
+                                }
+                                if(i03)
+                                {
+                                    i03 = 1;
+                                }
+                                if(i04)
+                                {
+                                    i04 = 1;
+                                }
+                                P00VAR = 255;
+                                break;
+                            case 37:
+                                if(i02)
+                                {
+                                    i02 = 1;
+                                }
+                                if(i03)
+                                {
+                                    i03 = 1;
+                                }
+                                if(i04)
+                                {
+                                    i04 = 1;
+                                }
+                                P01VAR = 255;
+                                i50 = e08;
+                                break;
+                            case 38:
+                                if(i03)
+                                {
+                                    i03 = 1;
+                                }
+                                if(i04)
+                                {
+                                    i04 = 1;
+                                }
+                                P02VAR = 255;
+                                i50 = e08;
+                                break;
+                            case 39:
+                                if(i04)
+                                {
+                                    i04 = 1;
+                                }
+                                P03VAR = 255;
+                                i50 = e08;
+                                break;
+                            case 40:
+                                P04VAR = 255;
+                                i50 = e08;
+                                break;
+                            case 41:
+                                if(i06)
+                                {
+                                    i06 = 1;
+                                }
+                                if(i07)
+                                {
+                                    i07 = 1;
+                                }
+                                if(i11)
+                                {
+                                    i11 = 1;
+                                }
+                                if(i14)
+                                {
+                                    i14 = 1;
+                                }
+                                P05VAR = 255;
+                                break;
+                            case 42:
+                                if(i07)
+                                {
+                                    i07 = 1;
+                                }
+                                if(i11)
+                                {
+                                    i11 = 1;
+                                }
+                                if(i14)
+                                {
+                                    i14 = 1;
+                                }
+                                P06VAR = 255;
+                                i51 = e08;
+                                break;
+                            case 43:
+                                if(i11)
+                                {
+                                    i11 = 1;
+                                }
+                                if(i14)
+                                {
+                                    i14 = 1;
+                                }
+                                P07VAR = 255;
+                                i51 = e08;
+                                break;
+                            case 44:
+                                if(i14)
+                                {
+                                    i14 = 1;
+                                }
+                                P11VAR = 255;
+                                i51 = e08;
+                                break;
+                            case 45:
+                                P14VAR = 255;
+                                i51 = e08;
+                                break;
+                            case 46:
+                                if(i16)
+                                {
+                                    i16 = 1;
+                                }
+                                if(i17)
+                                {
+                                    i17 = 1;
+                                }
+                                if(i20)
+                                {
+                                    i20 = 1;
+                                }
+                                if(i21)
+                                {
+                                    i21 = 1;
+                                }
+                                P15VAR = 255;
+                                break;
+                            case 47:
+                                if(i17)
+                                {
+                                    i17 = 1;
+                                }
+                                if(i20)
+                                {
+                                    i20 = 1;
+                                }
+                                if(i21)
+                                {
+                                    i21 = 1;
+                                }
+                                P16VAR = 255;
+                                i52 = e08;
+                                break;
+                            case 48:
+                                if(i20)
+                                {
+                                    i20 = 1;
+                                }
+                                if(i21)
+                                {
+                                    i21 = 1;
+                                }
+                                P17VAR = 255;
+                                i52 = e08;
+                                break;
+                            case 49:
+                                if(i21)
+                                {
+                                    i21 = 1;
+                                }
+                                P20VAR = 255;
+                                i52 = e08;
+                                break;
+                            case 50:
+                                P21VAR = 255;
+                                i52 = e08;
+                                break;
+                            case 51:
+                                if(i23)
+                                {
+                                    i23 = 1;
+                                }
+                                if(i24)
+                                {
+                                    i24 = 1;
+                                }
+                                if(i25)
+                                {
+                                    i25 = 1;
+                                }
+                                if(i26)
+                                {
+                                    i26 = 1;
+                                }
+                                if(i32)
+                                {
+                                    i32 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P22VAR = 255;
+                                break;
+                            case 52:
+                                if(i24)
+                                {
+                                    i24 = 1;
+                                }
+                                if(i25)
+                                {
+                                    i25 = 1;
+                                }
+                                if(i26)
+                                {
+                                    i26 = 1;
+                                }
+                                if(i32)
+                                {
+                                    i32 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P23VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 53:
+                                if(i25)
+                                {
+                                    i25 = 1;
+                                }
+                                if(i26)
+                                {
+                                    i26 = 1;
+                                }
+                                if(i32)
+                                {
+                                    i32 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P24VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 54:
+                                if(i26)
+                                {
+                                    i26 = 1;
+                                }
+                                if(i32)
+                                {
+                                    i32 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P25VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 55:
+                                if(i32)
+                                {
+                                    i32 = 1;
+                                }
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P26VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 56:
+                                if(i43)
+                                {
+                                    i43 = 1;
+                                }
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P32VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 57:
+                                if(i34)
+                                {
+                                    i34 = 1;
+                                }
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P43VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 58:
+                                if(i35)
+                                {
+                                    i35 = 1;
+                                }
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P34VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 59:
+                                if(i36)
+                                {
+                                    i36 = 1;
+                                }
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P35VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 60:
+                                if(i37)
+                                {
+                                    i37 = 1;
+                                }
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P36VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 61:
+                                if(i40)
+                                {
+                                    i40 = 1;
+                                }
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P37VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 62:
+                                if(i41)
+                                {
+                                    i41 = 1;
+                                }
+                                P40VAR = 255;
+                                i53 = e08;
+                                break;
+                            case 63:
+                                P41VAR = 255;
+                                i53 = e08;
+                                break;
+                            }
+                            break;
+                        case 8:
+                            //case 9:
+                            //case 10:
+                            P36VAR = 255;
+                            switch(note)
+                            {
+                            case 36:
+#ifndef ukulelechord
+                                P00VAR = 255;
+#else
+                                P17VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 37:
+#ifndef ukulelechord
+                                P01VAR = 255;
+                                i51 = e08;
+#else
+                                P25VAR = P01VAR = P23VAR = P20VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 38:
+#ifndef ukulelechord
+                                P02VAR = 255;
+                                i51 = e08;
+#else
+                                P26VAR = P02VAR = P06VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 39:
+#ifndef ukulelechord
+                                P03VAR = 255;
+                                i51 = e08;
+#else
+                                P03VAR = P07VAR = P15VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 40:
+#ifndef ukulelechord
+                                if(!P00VAR)
+                                {
+                                    P22VAR = 255;
                                 }
                                 else
                                 {
-                                    P26VAR = 255;
+                                    P04VAR = 255;
+                                    i51 = e08;
+                                }
+#else
+                                P25VAR = P04VAR = P16VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 41:
+#ifndef ukulelechord
+                                if(!P00VAR)
+                                {
+                                    P23VAR = 255;
+                                    i52 = e08;
+                                }
+                                else
+                                {
+                                    P05VAR = 255;
+                                    i51 = e08;
+                                }
+#else
+                                P26VAR = P23VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 42:
+#ifndef ukulelechord
+                                P06VAR = 255;
+                                i52 = e08;
+#else
+                                P32VAR = P01VAR = P06VAR = P20VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 43:
+#ifndef ukulelechord
+                                if(!P22VAR)
+                                {
+                                    P24VAR = 255;
+                                }
+                                else
+                                {
+                                    P07VAR = 255;
+                                    i52 = e08;
+                                }
+#else
+                                P02VAR = P07VAR = P16VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 44:
+#ifndef ukulelechord
+                                if(!P22VAR)
+                                {
+                                    P25VAR = 255;
                                     i50 = e08;
                                 }
-                            }
-                            else
-                            {
-                                P14VAR = 255;
-                                i52 = e08;
-                            }
+                                else
+                                {
+                                    P11VAR = 255;
+                                    i52 = e08;
+                                }
 #else
-                            P01VAR = P26VAR = 255;
-                            i37 = e07;
+                                P25VAR = P03VAR = P11VAR = P17VAR = 255;
+                                i37 = e07;
 #endif
-                            break;
-                        case 46:
+                                break;
+                            case 45:
 #ifndef ukulelechord
-                            if(!P24VAR)
-                            {
-                                P15VAR = 255;
-                                i53 = e08;
-                            }
-                            else
-                            {
-                                P32VAR = 255;
-                                i50 = e08;
-                            }
+                                if(!P22VAR)
+                                {
+                                    if(!P24VAR)
+                                    {
+                                        P35VAR = 255;
+                                    }
+                                    else
+                                    {
+                                        P26VAR = 255;
+                                        i50 = e08;
+                                    }
+                                }
+                                else
+                                {
+                                    P14VAR = 255;
+                                    i52 = e08;
+                                }
 #else
-                            P32VAR = P02VAR = P23VAR = P15VAR = 255;
-                            i37 = e07;
+                                P01VAR = P26VAR = 255;
+                                i37 = e07;
 #endif
-                            break;
-                        case 47:
+                                break;
+                            case 46:
 #ifndef ukulelechord
-                            if(!P24VAR)
-                            {
-                                P16VAR = 255;
-                                i53 = e08;
-                            }
-                            else
-                            {
-                                P37VAR = 255;
-                                i50 = e08;
-                            }
+                                if(!P24VAR)
+                                {
+                                    P15VAR = 255;
+                                    i53 = e08;
+                                }
+                                else
+                                {
+                                    P32VAR = 255;
+                                    i50 = e08;
+                                }
 #else
-                            P33VAR = P03VAR = P06VAR = P16VAR = 255;
-                            i37 = e07;
+                                P32VAR = P02VAR = P23VAR = P15VAR = 255;
+                                i37 = e07;
 #endif
-                            break;
-                        case 48:
+                                break;
+                            case 47:
 #ifndef ukulelechord
-                            if(!P24VAR)
-                            {
+                                if(!P24VAR)
+                                {
+                                    P16VAR = 255;
+                                    i53 = e08;
+                                }
+                                else
+                                {
+                                    P37VAR = 255;
+                                    i50 = e08;
+                                }
+#else
+                                P33VAR = P03VAR = P06VAR = P16VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 48:
+#ifndef ukulelechord
+                                if(!P24VAR)
+                                {
+                                    P17VAR = 255;
+                                    i53 = e08;
+                                }
+                                else
+                                {
+                                    P34VAR = 255;
+                                    i50 = e08;
+                                }
+#else
                                 P17VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 49:
+#ifndef ukulelechord
+                                P20VAR = 255;
                                 i53 = e08;
+#else
+                                P25VAR = P01VAR = P23VAR = P20VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
+                            case 50:
+#ifndef ukulelechord
+                                P21VAR = 255;
+                                i53 = e08;
+#else
+                                P26VAR = P02VAR = P06VAR = 255;
+                                i37 = e07;
+#endif
+                                break;
                             }
-                            else
+                            break;
+                        case 9:
+                            //case 11:
+                            switch(note)
                             {
+                            case 36:
+                                P00VAR = 255;
+                                break;
+                            case 37:
+                                P01VAR = 255;
+                                break;
+                            case 38:
+                                P02VAR = 208;
+                                break;
+                            case 39:
+                                P03VAR = 208;
+                                break;
+                            case 40:
+                                P04VAR = 208;
+                                break;
+                            case 41:
+                                P05VAR = 208;
+                                break;
+                            case 42:
+                                P06VAR = 208;
+                                break;
+                            case 43:
+                                P07VAR = 208;
+                                break;
+                            case 44:
+                                P11VAR = 208;
+                                break;
+                            case 45:
+                                P14VAR = 208;
+                                break;
+                            case 46:
+                                P15VAR = 208;
+#ifndef LEDRay
+                                P56VAR = 255;
+#endif
+                                break;
+                            case 47:
+                                P16VAR = 208;
+#ifndef LEDRay
+                                P56VAR = 255;
+#endif
+                                break;
+                            case 48:
+                                P17VAR = 208;
+#ifndef LEDRay
+                                P57VAR = 255;
+#endif
+                                break;
+                            case 49:
+                                P20VAR = 208;
+#ifndef LEDRay
+                                P57VAR = 255;
+#endif
+                                break;
+                            case 50:
+                                P21VAR = 255;
+                                break;
+                            case 51:
+                                P22VAR = 255;
+                                break;
+                            case 52:
+                                P23VAR = 255;
+                                break;
+                            case 53:
+                                P24VAR = 255;
+                                break;
+                            case 54:
+                                P25VAR = 255;
+                                break;
+                            case 55:
+                                P26VAR = 255;
+                                break;
+                            case 56:
+                                P27VAR = 255;
+                                break;
+                            case 57:
+                                P32VAR = 255;
+                                break;
+                            case 58:
                                 P34VAR = 255;
-                                i50 = e08;
+                                break;
+                            case 59:
+                                P35VAR = 255;
+                                break;
+                            case 60:
+                                P36VAR = 255;
+                                break;
+                            case 61:
+                                P37VAR = 255;
+                                break;
+                            case 62:
+                                P40VAR = 255;
+                                break;
+                            case 63:
+                                P41VAR = 255;
+                                break;
+                            case 64:
+                                P42VAR = 255;
+                                break;
+                            case 65:
+                                P43VAR = 255;
+                                break;
+                            case 66:
+                                P46VAR = 255;
+                                break;
+#ifndef LEDRay
+                            case 67:
+                                P50VAR = 255;
+                                break;
+                            case 68:
+                                P51VAR = 255;
+                                break;
+                            case 69:
+                                P52VAR = 255;
+                                break;
+                            case 70:
+                                P53VAR = 255;
+                                break;
+                            case 71:
+                                P54VAR = 255;
+                                break;
+                            case 72:
+                                P55VAR = 255;
+                                SFRPI = 1;
+                                P62 = 1;
+                                SFRPI = 0;
+                                break;
+                            case 73:
+                                P55VAR = 255;
+                                SFRPI = 1;
+                                P62 = 0;
+                                SFRPI = 0;
+                                break;
+#endif
                             }
-#else
-                            P17VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 49:
-#ifndef ukulelechord
-                            P20VAR = 255;
-                            i53 = e08;
-#else
-                            P25VAR = P01VAR = P23VAR = P20VAR = 255;
-                            i37 = e07;
-#endif
-                            break;
-                        case 50:
-#ifndef ukulelechord
-                            P21VAR = 255;
-                            i53 = e08;
-#else
-                            P26VAR = P02VAR = P06VAR = 255;
-                            i37 = e07;
-#endif
                             break;
                         }
-                        break;
-                    case 9:
-                        //case 11:
-                        switch(note)
-                        {
-                        case 36:
-                            P00VAR = 255;
-                            break;
-                        case 37:
-                            P01VAR = 255;
-                            break;
-                        case 38:
-                            P02VAR = 208;
-                            break;
-                        case 39:
-                            P03VAR = 208;
-                            break;
-                        case 40:
-                            P04VAR = 208;
-                            break;
-                        case 41:
-                            P05VAR = 208;
-                            break;
-                        case 42:
-                            P06VAR = 208;
-                            break;
-                        case 43:
-                            P07VAR = 208;
-                            break;
-                        case 44:
-                            P11VAR = 208;
-                            break;
-                        case 45:
-                            P14VAR = 208;
-                            break;
-                        case 46:
-                            P15VAR = 208;
-#ifndef LEDRay
-                            P56VAR = 255;
-#endif
-                            break;
-                        case 47:
-                            P16VAR = 208;
-#ifndef LEDRay
-                            P56VAR = 255;
-#endif
-                            break;
-                        case 48:
-                            P17VAR = 208;
-#ifndef LEDRay
-                            P57VAR = 255;
-#endif
-                            break;
-                        case 49:
-                            P20VAR = 208;
-#ifndef LEDRay
-                            P57VAR = 255;
-#endif
-                            break;
-                        case 50:
-                            P21VAR = 255;
-                            break;
-                        case 51:
-                            P22VAR = 255;
-                            break;
-                        case 52:
-                            P23VAR = 255;
-                            break;
-                        case 53:
-                            P24VAR = 255;
-                            break;
-                        case 54:
-                            P25VAR = 255;
-                            break;
-                        case 55:
-                            P26VAR = 255;
-                            break;
-                        case 56:
-                            P27VAR = 255;
-                            break;
-                        case 57:
-                            P32VAR = 255;
-                            break;
-                        case 58:
-                            P34VAR = 255;
-                            break;
-                        case 59:
-                            P35VAR = 255;
-                            break;
-                        case 60:
-                            P36VAR = 255;
-                            break;
-                        case 61:
-                            P37VAR = 255;
-                            break;
-                        case 62:
-                            P40VAR = 255;
-                            break;
-                        case 63:
-                            P41VAR = 255;
-                            break;
-                        case 64:
-                            P42VAR = 255;
-                            break;
-                        case 65:
-                            P43VAR = 255;
-                            break;
-                        case 66:
-                            P46VAR = 255;
-                            break;
-#ifndef LEDRay
-                        case 67:
-                            P50VAR = 255;
-                            break;
-                        case 68:
-                            P51VAR = 255;
-                            break;
-                        case 69:
-                            P52VAR = 255;
-                            break;
-                        case 70:
-                            P53VAR = 255;
-                            break;
-                        case 71:
-                            P54VAR = 255;
-                            break;
-                        case 72:
-                            P55VAR = 255;
-                            SFRPI = 1;
-                            P62 = 1;
-                            SFRPI = 0;
-                            break;
-                        case 73:
-                            P55VAR = 255;
-                            SFRPI = 1;
-                            P62 = 0;
-                            SFRPI = 0;
-                            break;
-#endif
-                        }
-                        break;
-#ifdef HARDRAYPWM
-                        //CCAP0H=0x10;  //設定(P12/CEX0)脈波時間，平均電壓為4.6V
-                        //CCAP1H=0x20;  //設定(P13/CEX1)脈波時間，平均電壓為4.4V
-                        //CCAP2H=0x40;  //設定(P14/CEX2)脈波時間，平均電壓為3.8V
-                        //CCAP3H=0x80;  //設定(P15/CEX3)脈波時間，平均電壓為2.6V
-                        //CCAP4H=0xA0;  //設定(P16/CEX4)脈波時間，平均電壓為1.8V
-                        //CCAP5H=0xFF;  //設定(P17/CEX5)脈波時間，平均電壓為0.01V
-                        //記得統一加上 inverse ~
-#endif
                     }
+                    else
+                    {
+                        switch( oneCHANNEL )
+                        {
+                        case 4:
+                        case 5:
+                        case 6:
+                            i46 = 1;
+                            switch(note)
+                            {
+                            case 36:
+                                i00 = 1;
+                                break;
+                            case 37:
+                                i01 = 1;
+                                break;
+                            case 38:
+                                i02 = 1;
+                                break;
+                            case 39:
+                                i03 = 1;
+                                break;
+                            case 40:
+                                i04 = 1;
+                                break;
+                            case 41:
+                                i05 = 1;
+                                break;
+                            case 42:
+                                i06 = 1;
+                                break;
+                            case 43:
+                                i07 = 1;
+                                break;
+                            case 44:
+                                i11 = 1;
+                                break;
+                            case 45:
+                                i14 = 1;
+                                break;
+                            case 46:
+                                i15 = 1;
+                                break;
+                            case 47:
+                                i16 = 1;
+                                break;
+                            case 48:
+                                i17 = 1;
+                                break;
+                            case 49:
+                                i20 = 1;
+                                break;
+                            case 50:
+                                i21 = 1;
+                                break;
+                            case 51:
+                                i22 = 1;
+                                break;
+                            case 52:
+                                i23 = 1;
+                                break;
+                            case 53:
+                                i24 = 1;
+                                break;
+                            case 54:
+                                i25 = 1;
+                                break;
+                            case 55:
+                                i26 = 1;
+                                break;
+                            case 56:
+                                i32 = 1;
+                                break;
+                            case 57:
+                                i50 = 1;
+                                break;
+                            case 58:
+                                i34 = 1;
+                                break;
+                            case 59:
+                                i35 = 1;
+                                break;
+                            case 60:
+                                i36 = 1;
+                                break;
+                            case 61:
+                                i37 = 1;
+                                break;
+                            case 62:
+                                i40 = 1;
+                                break;
+                            case 63:
+                                i41 = 1;
+                                break;
+                            case 64:
+                                i42 = 1;
+                                break;
+                            case 65:
+                                i43 = 1;
+                                break;
+                            }
+                            break;
+                        }//produceCount = produceCount;
+                    }
+                    //Midi_Send(0x90,note,velocity);
                 }
-                else
-                {
-                    //produceCount = produceCount;
-                }
-                //Midi_Send(0x90,note,velocity);
             }
             else
             {
@@ -1757,6 +1858,7 @@ void softPWM()
         TI=0;
     }
 #endif
+#ifdef HARDRAYPWM
     if(TL0 > P00VAR)
         P00 = 0;
     if(TL0 > P01VAR)
@@ -1824,6 +1926,7 @@ void softPWM()
         P56 = 0;
     if(TL0 > P57VAR)
         P57 = 0;
+#endif
 #endif
 }
 #ifdef TIMER2
@@ -4466,6 +4569,18 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             i56--;
             break;
         }
+        switch(i57)
+        {
+        case 0:
+            break;
+        case 1:
+            P57VAR = 0;
+            i57--;
+            break;
+        default:
+            i57--;
+            break;
+        }
 #endif
         break;
     }
@@ -5275,146 +5390,146 @@ void go_mad()
         }
         if(P02VAR && !i02)
         {
-            i02 = 3;
+            i02 = 4;
         }
         if(P03VAR && !i03)
         {
-            i03 = 3;
+            i03 = 4;
         }
         if(P04VAR && !i04)
         {
-            i04 = 3;
+            i04 = 4;
         }
         if(P05VAR && !i05)
         {
-            i05 = 3;
+            i05 = 4;
         }
         if(P06VAR && !i06)
         {
-            i06 = 3;
+            i06 = 4;
         }
         if(P07VAR && !i07)
         {
-            i07 = 3;
+            i07 = 4;
         }
         if(P11VAR && !i11)
         {
-            i11 = 3;
+            i11 = 4;
         }
         if(P14VAR && !i14)
         {
-            i14 = 3;
+            i14 = 4;
         }
         if(P15VAR && !i15)
         {
-            i15 = 3;
+            i15 = 4;
         }
         if(P16VAR && !i16)
         {
-            i16 = 3;
+            i16 = 4;
         }
         if(P17VAR && !i17)
         {
-            i17 = 3;
+            i17 = 4;
         }
         if(P20VAR && !i20)
         {
-            i20 = 3;
+            i20 = 4;
         }
         if(P21VAR && !i21)
         {
-            i21 = 3;
+            i21 = 4;
         }
         if(P22VAR && !i22)
         {
             CCAP0H = ~P22VAR;
-            i22 = 3;
+            i22 = 4;
         }
         if(P23VAR && !i23)
         {
             CCAP1H = ~P23VAR;
-            i23 = 3;
+            i23 = 4;
         }
         if(P24VAR && !i24)
         {
             CCAP2H = ~P24VAR;
-            i24 = 3;
+            i24 = 4;
         }
         if(P25VAR && !i25)
         {
             CCAP3H = ~P25VAR;
-            i25 = 3;
+            i25 = 4;
         }
         if(P26VAR && !i26)
         {
             CCAP4H = ~P26VAR;
-            i26 = 3;
+            i26 = 4;
         }
         if(P27VAR && !i27)
         {
             CCAP5H = ~P27VAR;
-            i27 = 3;
+            i27 = 4;
         }
         if(P32VAR && !i32)
         {
-            i32 = 3;
+            i32 = 4;
         }
         if(P34VAR && !i34)
         {
-            i34 = 3;
+            i34 = 4;
         }
         if(P35VAR && !i35)
         {
-            i35 = 3;
+            i35 = 4;
         }
         if(P36VAR && !i36)
         {
-            i36 = 3;
+            i36 = 4;
         }
         if(P37VAR && !i37)
         {
-            i37 = 3;
+            i37 = 4;
         }
         if(P40VAR && !i40)
         {
-            i40 = 3;
+            i40 = 4;
         }
         if(P41VAR && !i41)
         {
-            i41 = 3;
+            i41 = 4;
         }
         if(P42VAR && !i42)
         {
-            i42 = 3;
+            i42 = 4;
         }
         if(P43VAR && !i43)
         {
-            i43 = 3;
+            i43 = 4;
         }
         if(P46VAR && !i46)
         {
-            i46 = 3;
+            i46 = 4;
         }
 #ifndef LEDRay
         if(P50VAR && !i50)
         {
-            i50 = 3;
+            i50 = 4;
         }
         if(P51VAR && !i51)
         {
-            i51 = 3;
+            i51 = 4;
         }
         if(P52VAR && !i52)
         {
-            i52 = 3;
+            i52 = 4;
         }
         if(P53VAR && !i53)
         {
-            i53 = 3;
+            i53 = 4;
         }
         if(P54VAR && !i54)
         {
-            i54 = 3;
+            i54 = 4;
         }
         if(P55VAR && !i55)
         {
@@ -5422,11 +5537,11 @@ void go_mad()
         }
         if(P56VAR && !i56)
         {
-            i56 = 3;
+            i56 = 4;
         }
         if(P57VAR && !i57)
         {
-            i57 = 3;
+            i57 = 4;
         }
         P5 |= 0xFF;
 #endif
