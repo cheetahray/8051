@@ -11,7 +11,7 @@
 #include <stdio.h>   //夹非块ㄧ计
 unsigned char oldCHANNEL=0xFF;
 #endif
-#define HARDRAYPWM		  //P14 P15 P16		CR
+//#define HARDRAYPWM		  //P14 P15 P16		CR
 #ifdef	HARDRAYPWM
 //#define PCATIMER
 #ifndef PCATIMER
@@ -48,7 +48,12 @@ unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL
 #define e07 10	 //㎝┒duration
 #define e08 4    //挤┒溃┒丁畉
 #define e09 5	 //れ臟礮骸Velocity
+unsigned char e13;//れ臟礮簂丁
+unsigned char e23;//躬次丁
 //#define ukulelechord
+#ifndef ukulelechord
+unsigned char ukubool;
+#endif
 unsigned char channel;
 unsigned char note;
 unsigned char velocity;
@@ -65,6 +70,7 @@ unsigned int pressure = 0;
 #endif
 void consumeToken(unsigned char incomingByte);
 void go_crazy();
+void rayoff();
 main()
 {
     IFD = XTAL;
@@ -121,6 +127,8 @@ main()
 #ifndef LEDRay
     P50VAR=P51VAR=P52VAR=P53VAR=P54VAR=P55VAR=P56VAR=P57VAR=0;
 #endif
+#else
+    P00=P01=P02=P03=P04=P05=P06=P07=P11=P14=P15=P16=P17=P20=P21=P22=P23=P24=P25=P26=P27=P32=P34=P35=P36=P37=P40=P41=P42=P43=P46=P50=P51=P52=P53=P54=P55=P56=P57=0;
 #endif
 #ifdef TIMER2
     i00=i01=i02=i03=i04=i05=i06=i07=i11=i14=i15=i16=i17=i20=i21=i22=i23=i24=i25=i26=i27=i32=i34=i35=i36=i37=i40=i41=i42=i43=i46=i10000=0;
@@ -186,7 +194,7 @@ void consumeToken(unsigned char incomingByte)
         if (!note) // note on, wait for note value
         {
             note=incomingByte-twoCHANNEL;
-            if( action > OFF && oneCHANNEL == channel )
+            if( action >= OFF && oneCHANNEL == channel )
             {
 #ifdef LEDRay
 #ifndef CHANNEL16
@@ -208,244 +216,244 @@ void consumeToken(unsigned char incomingByte)
                         {
                         case 0:
                         case 1:
+                            e13 = velocity/42 + 4;
                             switch(note)
                             {
                             case 36:
-                                P00VAR = 255;
+                                i00 = e13;
                                 break;
                             case 37:
-                                P01VAR = 255;
+                                i01 = e13;
                                 break;
                             case 38:
-                                P02VAR = 255;
+                                i02 = e13;
                                 break;
                             case 39:
-                                P03VAR = 255;
+                                i03 = e13;
                                 break;
                             case 40:
-                                P04VAR = 255;
+                                i04 = e13;
                                 break;
                             case 41:
-                                P05VAR = 255;
+                                i05 = e13;
                                 break;
                             case 42:
-                                P06VAR = 255;
+                                i06 = e13;
                                 break;
                             case 43:
-                                P07VAR = 255;
+                                i07 = e13;
                                 break;
                             case 44:
-                                P11VAR = 255;
+                                i11 = e13;
                                 break;
                             case 45:
-                                P14VAR = 255;
+                                i14 = e13;
                                 break;
                             case 46:
-                                P15VAR = 255;
+                                i15 = e13;
                                 break;
                             case 47:
-                                P16VAR = 255;
+                                i16 = e13;
                                 break;
                             case 48:
-                                P17VAR = 255;
+                                i17 = e13;
                                 break;
                             case 49:
-                                P20VAR = 255;
+                                i20 = e13;
                                 break;
                             case 50:
-                                P21VAR = 255;
+                                i21 = e13;
                                 break;
                             case 51:
-                                P22VAR = 255;
+                                i22 = e13;
                                 break;
                             case 52:
-                                P23VAR = 255;
+                                i23 = e13;
                                 break;
                             case 53:
-                                P24VAR = 255;
+                                i24 = e13;
                                 break;
                             case 54:
-                                P25VAR = 255;
+                                i25 = e13;
                                 break;
                             case 55:
-                                P26VAR = 255;
+                                i26 = e13;
                                 break;
                             case 56:
-                                P32VAR = 255;
+                                i32 = e13;
                                 break;
 #ifndef LEDRay
                             case 57:
-                                P57VAR = 255;
+                                i57 = e13;
                                 break;
 #endif
                             case 58:
-                                P34VAR = 255;
+                                i34 = e13;
                                 break;
                             case 59:
-                                P35VAR = 255;
+                                i35 = e13;
                                 break;
                             case 60:
-                                P36VAR = 255;
+                                i36 = e13;
                                 break;
                             case 61:
-                                P37VAR = 255;
+                                i37 = e13;
                                 break;
                             case 62:
-                                P40VAR = 255;
+                                i40 = e13;
                                 break;
                             case 63:
-                                P41VAR = 255;
+                                i41 = e13;
                                 break;
                             case 64:
-                                P27VAR = 255;
+                                i27 = e13;
                                 break;
                             case 65:
-                                P43VAR = 255;
+                                i43 = e13;
                                 break;
                             case 66:
-                                P46VAR = 255;
+                                i46 = e13;
                                 break;
 #ifndef LEDRay
                             case 67:
-                                P50VAR = 255;
+                                i50 = e13;
                                 break;
                             case 68:
-                                P51VAR = 255;
+                                i51 = e13;
                                 break;
                             case 69:
-                                P52VAR = 255;
+                                i52 = e13;
                                 break;
                             case 70:
-                                P53VAR = 255;
+                                i53 = e13;
                                 break;
                             case 71:
-                                P54VAR = 255;
+                                i54 = e13;
                                 break;
                             case 72:
-                                P55VAR = 255;
+                                i55 = e13;
                                 break;
                             case 73:
-                                P56VAR = 255;
+                                i56 = e13;
                                 break;
 #endif
                             }
                             break;
                         case 2:
                         case 3:
-                            //case 12:
-                            //case 13:
+                            e13 = velocity/42 + 4;
                             switch(note)
                             {
                             case 36:
-                                P00VAR = 255;
+                                i00 = e13;
                                 break;
                             case 37:
-                                P01VAR = 255;
+                                i01 = e13;
                                 break;
                             case 38:
-                                P02VAR = 255;
+                                i02 = e13;
                                 break;
                             case 39:
-                                P03VAR = 255;
+                                i03 = e13;
                                 break;
                             case 40:
-                                P04VAR = 255;
+                                i04 = e13;
                                 break;
                             case 41:
-                                P05VAR = 255;
+                                i05 = e13;
                                 break;
                             case 42:
-                                P06VAR = 255;
+                                i06 = e13;
                                 break;
                             case 43:
-                                P07VAR = 255;
+                                i07 = e13;
                                 break;
                             case 44:
-                                P11VAR = 255;
+                                i11 = e13;
                                 break;
                             case 45:
-                                P14VAR = 255;
+                                i14 = e13;
                                 break;
                             case 46:
-                                P15VAR = 255;
+                                i15 = e13;
                                 break;
                             case 47:
-                                P16VAR = 255;
+                                i16 = e13;
                                 break;
                             case 48:
-                                P17VAR = 255;
+                                i17 = e13;
                                 break;
                             case 49:
-                                P20VAR = 255;
+                                i20 = e13;
                                 break;
                             case 50:
-                                P21VAR = 255;
+                                i21 = e13;
                                 break;
                             case 51:
-                                P22VAR = 255;
+                                i22 = e13;
                                 break;
                             case 52:
-                                P23VAR = 255;
+                                i23 = e13;
                                 break;
                             case 53:
-                                P24VAR = 255;
+                                i24 = e13;
                                 break;
                             case 54:
-                                P25VAR = 255;
+                                i25 = e13;
                                 break;
                             case 55:
-                                P26VAR = 255;
+                                i26 = e13;
                                 break;
 #ifndef LEDRay
                             case 56:
-                                P56VAR = 255;
+                                i56 = e13;
                                 break;
                             case 57:
-                                P55VAR = 255;
+                                i55 = e13;
                                 break;
 #endif
                             case 58:
-                                P34VAR = 255;
+                                i34 = e13;
                                 break;
                             case 59:
-                                P35VAR = 255;
+                                i35 = e13;
                                 break;
                             case 60:
-                                P36VAR = 255;
+                                i36 = e13;
                                 break;
                             case 61:
-                                P37VAR = 255;
+                                i37 = e13;
                                 break;
                             case 62:
-                                P40VAR = 255;
+                                i40 = e13;
                                 break;
                             case 63:
-                                P41VAR = 255;
+                                i41 = e13;
                                 break;
                             case 64:
-                                P42VAR = 255;
+                                i42 = e13;
                                 break;
                             case 65:
-                                P43VAR = 255;
+                                i43 = e13;
                                 break;
                             case 66:
-                                P46VAR = 255;
+                                i46 = e13;
                                 break;
 #ifndef LEDRay
                             case 67:
-                                P50VAR = 255;
+                                i50 = e13;
                                 break;
                             case 68:
-                                P51VAR = 255;
+                                i51 = e13;
                                 break;
                             case 69:
-                                P52VAR = 255;
+                                i52 = e13;
                                 break;
                             case 70:
-                                P53VAR = 255;
+                                i53 = e13;
                                 break;
                             case 71:
-                                P54VAR = 255;
+                                i54 = e13;
                                 break;
 #endif
                             }
@@ -453,7 +461,7 @@ void consumeToken(unsigned char incomingByte)
                         case 4:
                         case 5:
                         case 6:
-                            P46VAR = 255;
+                            i46 = e05;
                             switch(note)
                             {
                             case 36:
@@ -473,7 +481,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i04 = 1;
                                 }
-                                P00VAR = 255;
+                                i00 = e04;
                                 break;
                             case 37:
                                 if(i02)
@@ -488,8 +496,8 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i04 = 1;
                                 }
-                                P01VAR = 255;
-                                i50 = e08;
+                                i01 = e05;
+                                i56 = e08;
                                 break;
                             case 38:
                                 if(i03)
@@ -500,20 +508,20 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i04 = 1;
                                 }
-                                P02VAR = 255;
-                                i50 = e08;
+                                i02 = e05;
+                                i56 = e08;
                                 break;
                             case 39:
                                 if(i04)
                                 {
                                     i04 = 1;
                                 }
-                                P03VAR = 255;
-                                i50 = e08;
+                                i03 = e05;
+                                i56 = e08;
                                 break;
                             case 40:
-                                P04VAR = 255;
-                                i50 = e08;
+                                i04 = e05;
+                                i56 = e08;
                                 break;
                             case 41:
                                 if(i06)
@@ -532,7 +540,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i14 = 1;
                                 }
-                                P05VAR = 255;
+                                i05 = e04;
                                 break;
                             case 42:
                                 if(i07)
@@ -547,7 +555,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i14 = 1;
                                 }
-                                P06VAR = 255;
+                                i06 = e05;
                                 i51 = e08;
                                 break;
                             case 43:
@@ -559,7 +567,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i14 = 1;
                                 }
-                                P07VAR = 255;
+                                i07 = e05;
                                 i51 = e08;
                                 break;
                             case 44:
@@ -567,11 +575,11 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i14 = 1;
                                 }
-                                P11VAR = 255;
+                                i11 = e05;
                                 i51 = e08;
                                 break;
                             case 45:
-                                P14VAR = 255;
+                                i14 = e05;
                                 i51 = e08;
                                 break;
                             case 46:
@@ -591,7 +599,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i21 = 1;
                                 }
-                                P15VAR = 255;
+                                i15 = e04;
                                 break;
                             case 47:
                                 if(i17)
@@ -606,7 +614,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i21 = 1;
                                 }
-                                P16VAR = 255;
+                                i16 = e05;
                                 i52 = e08;
                                 break;
                             case 48:
@@ -618,7 +626,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i21 = 1;
                                 }
-                                P17VAR = 255;
+                                i17 = e05;
                                 i52 = e08;
                                 break;
                             case 49:
@@ -626,11 +634,11 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i21 = 1;
                                 }
-                                P20VAR = 255;
+                                i20 = e05;
                                 i52 = e08;
                                 break;
                             case 50:
-                                P21VAR = 255;
+                                i21 = e05;
                                 i52 = e08;
                                 break;
                             case 51:
@@ -646,7 +654,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i25 = 1;
                                 }
-                                P22VAR = 255;
+                                i22 = e04;
                                 break;
                             case 52:
                                 if(i24)
@@ -657,7 +665,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i25 = 1;
                                 }
-                                P23VAR = 255;
+                                i23 = e05;
                                 i53 = e08;
                                 break;
                             case 53:
@@ -665,11 +673,11 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i25 = 1;
                                 }
-                                P24VAR = 255;
+                                i24 = e05;
                                 i53 = e08;
                                 break;
                             case 54:
-                                P25VAR = 255;
+                                i25 = e05;
                                 i53 = e08;
                                 break;
                             case 55:
@@ -691,7 +699,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i35 = 1;
                                 }
-                                P26VAR = 255;
+                                i26 = e04;
                                 break;
                             case 56:
 #ifndef LEDRay
@@ -708,7 +716,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i35 = 1;
                                 }
-                                P32VAR = 255;
+                                i32 = e05;
                                 i54 = e08;
                                 break;
                             case 57:
@@ -721,7 +729,7 @@ void consumeToken(unsigned char incomingByte)
                                     i35 = 1;
                                 }
 #ifndef LEDRay
-                                P50VAR = 255;
+                                i50 = e05;
 #endif
                                 i54 = e08;
                                 break;
@@ -730,11 +738,11 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i35 = 1;
                                 }
-                                P34VAR = 255;
+                                i34 = e05;
                                 i54 = e08;
                                 break;
                             case 59:
-                                P35VAR = 255;
+                                i35 = e05;
                                 i54 = e08;
                                 break;
                             case 60:
@@ -758,7 +766,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i43 = 1;
                                 }
-                                P36VAR = 255;
+                                i36 = e04;
                                 break;
                             case 61:
                                 if(i40)
@@ -777,7 +785,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i43 = 1;
                                 }
-                                P37VAR = 255;
+                                i37 = e05;
                                 i55 = e08;
                                 break;
                             case 62:
@@ -793,7 +801,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i43 = 1;
                                 }
-                                P40VAR = 255;
+                                i40 = e05;
                                 i55 = e08;
                                 break;
                             case 63:
@@ -805,7 +813,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i43 = 1;
                                 }
-                                P41VAR = 255;
+                                i41 = e05;
                                 i55 = e08;
                                 break;
                             case 64:
@@ -813,17 +821,17 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i43 = 1;
                                 }
-                                P42VAR = 255;
+                                i42 = e05;
                                 i55 = e08;
                                 break;
                             case 65:
-                                P43VAR = 255;
+                                i43 = e05;
                                 i55 = e08;
                                 break;
                             }
                             break;
                         case 7:
-                            P42VAR = 255;
+                            i42 = e05;
                             switch(note)
                             {
                             case 36:
@@ -843,7 +851,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i04 = 1;
                                 }
-                                P00VAR = 255;
+                                i00 = e04;
                                 break;
                             case 37:
                                 if(i02)
@@ -858,8 +866,8 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i04 = 1;
                                 }
-                                P01VAR = 255;
-                                i50 = e08;
+                                i01 = e05;
+                                i56 = e08;
                                 break;
                             case 38:
                                 if(i03)
@@ -870,20 +878,20 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i04 = 1;
                                 }
-                                P02VAR = 255;
-                                i50 = e08;
+                                i02 = e05;
+                                i56 = e08;
                                 break;
                             case 39:
                                 if(i04)
                                 {
                                     i04 = 1;
                                 }
-                                P03VAR = 255;
-                                i50 = e08;
+                                i03 = e05;
+                                i56 = e08;
                                 break;
                             case 40:
-                                P04VAR = 255;
-                                i50 = e08;
+                                i04 = e05;
+                                i56 = e08;
                                 break;
                             case 41:
                                 if(i06)
@@ -902,7 +910,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i14 = 1;
                                 }
-                                P05VAR = 255;
+                                i05 = e04;
                                 break;
                             case 42:
                                 if(i07)
@@ -917,7 +925,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i14 = 1;
                                 }
-                                P06VAR = 255;
+                                i06 = e05;
                                 i51 = e08;
                                 break;
                             case 43:
@@ -929,7 +937,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i14 = 1;
                                 }
-                                P07VAR = 255;
+                                i07 = e05;
                                 i51 = e08;
                                 break;
                             case 44:
@@ -937,11 +945,11 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i14 = 1;
                                 }
-                                P11VAR = 255;
+                                i11 = e05;
                                 i51 = e08;
                                 break;
                             case 45:
-                                P14VAR = 255;
+                                i14 = e05;
                                 i51 = e08;
                                 break;
                             case 46:
@@ -961,7 +969,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i21 = 1;
                                 }
-                                P15VAR = 255;
+                                i15 = e04;
                                 break;
                             case 47:
                                 if(i17)
@@ -976,7 +984,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i21 = 1;
                                 }
-                                P16VAR = 255;
+                                i16 = e05;
                                 i52 = e08;
                                 break;
                             case 48:
@@ -988,7 +996,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i21 = 1;
                                 }
-                                P17VAR = 255;
+                                i17 = e05;
                                 i52 = e08;
                                 break;
                             case 49:
@@ -996,11 +1004,11 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i21 = 1;
                                 }
-                                P20VAR = 255;
+                                i20 = e05;
                                 i52 = e08;
                                 break;
                             case 50:
-                                P21VAR = 255;
+                                i21 = e05;
                                 i52 = e08;
                                 break;
                             case 51:
@@ -1052,7 +1060,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P22VAR = 255;
+                                i22 = e04;
                                 break;
                             case 52:
                                 if(i24)
@@ -1099,7 +1107,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P23VAR = 255;
+                                i23 = e05;
                                 i53 = e08;
                                 break;
                             case 53:
@@ -1143,7 +1151,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P24VAR = 255;
+                                i24 = e05;
                                 i53 = e08;
                                 break;
                             case 54:
@@ -1183,7 +1191,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P25VAR = 255;
+                                i25 = e05;
                                 i53 = e08;
                                 break;
                             case 55:
@@ -1219,7 +1227,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P26VAR = 255;
+                                i26 = e05;
                                 i53 = e08;
                                 break;
                             case 56:
@@ -1251,7 +1259,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P32VAR = 255;
+                                i32 = e05;
                                 i53 = e08;
                                 break;
                             case 57:
@@ -1279,7 +1287,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P43VAR = 255;
+                                i43 = e05;
                                 i53 = e08;
                                 break;
                             case 58:
@@ -1303,7 +1311,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P34VAR = 255;
+                                i34 = e05;
                                 i53 = e08;
                                 break;
                             case 59:
@@ -1323,7 +1331,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P35VAR = 255;
+                                i35 = e05;
                                 i53 = e08;
                                 break;
                             case 60:
@@ -1339,7 +1347,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P36VAR = 255;
+                                i36 = e05;
                                 i53 = e08;
                                 break;
                             case 61:
@@ -1351,7 +1359,7 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P37VAR = 255;
+                                i37 = e05;
                                 i53 = e08;
                                 break;
                             case 62:
@@ -1359,24 +1367,21 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     i41 = 1;
                                 }
-                                P40VAR = 255;
+                                i40 = e05;
                                 i53 = e08;
                                 break;
                             case 63:
-                                P41VAR = 255;
+                                i41 = e05;
                                 i53 = e08;
                                 break;
                             }
                             break;
                         case 8:
-                            //case 9:
-                            //case 10:
-                            P36VAR = 255;
                             switch(note)
                             {
                             case 36:
 #ifndef ukulelechord
-                                P00VAR = 255;
+                                i00 = e04;
 #else
                                 P17VAR = 255;
                                 i37 = e07;
@@ -1384,7 +1389,7 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 37:
 #ifndef ukulelechord
-                                P01VAR = 255;
+                                i01 = e05;
                                 i51 = e08;
 #else
                                 P25VAR = P01VAR = P23VAR = P20VAR = 255;
@@ -1393,7 +1398,7 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 38:
 #ifndef ukulelechord
-                                P02VAR = 255;
+                                i02 = e05;
                                 i51 = e08;
 #else
                                 P26VAR = P02VAR = P06VAR = 255;
@@ -1402,7 +1407,7 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 39:
 #ifndef ukulelechord
-                                P03VAR = 255;
+                                i03 = e05;
                                 i51 = e08;
 #else
                                 P03VAR = P07VAR = P15VAR = 255;
@@ -1411,13 +1416,13 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 40:
 #ifndef ukulelechord
-                                if(!P00VAR)
+                                if(ukubool++%2==0)
                                 {
-                                    P22VAR = 255;
+                                    i22 = e04;
                                 }
                                 else
                                 {
-                                    P04VAR = 255;
+                                    i04 = e05;
                                     i51 = e08;
                                 }
 #else
@@ -1427,14 +1432,14 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 41:
 #ifndef ukulelechord
-                                if(!P00VAR)
+                                if(ukubool++%2==0)
                                 {
-                                    P23VAR = 255;
+                                    i23 = e05;
                                     i52 = e08;
                                 }
                                 else
                                 {
-                                    P05VAR = 255;
+                                    i05 = e05;
                                     i51 = e08;
                                 }
 #else
@@ -1444,7 +1449,7 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 42:
 #ifndef ukulelechord
-                                P06VAR = 255;
+                                i06 = e05;
                                 i52 = e08;
 #else
                                 P32VAR = P01VAR = P06VAR = P20VAR = 255;
@@ -1453,13 +1458,13 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 43:
 #ifndef ukulelechord
-                                if(!P22VAR)
+                                if(ukubool++%2==0)
                                 {
-                                    P24VAR = 255;
+                                    i24 = e04;
                                 }
                                 else
                                 {
-                                    P07VAR = 255;
+                                    i07 = e05;
                                     i52 = e08;
                                 }
 #else
@@ -1469,14 +1474,14 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 44:
 #ifndef ukulelechord
-                                if(!P22VAR)
+                                if(ukubool++%2==0)
                                 {
-                                    P25VAR = 255;
-                                    i50 = e08;
+                                    i25 = e05;
+                                    i56 = e08;
                                 }
                                 else
                                 {
-                                    P11VAR = 255;
+                                    i11 = e05;
                                     i52 = e08;
                                 }
 #else
@@ -1486,23 +1491,24 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 45:
 #ifndef ukulelechord
-                                if(!P22VAR)
+                                if(ukubool%3!=0)
                                 {
-                                    if(!P24VAR)
+                                    if(ukubool%3==1)
                                     {
-                                        P35VAR = 255;
+                                        i35 = e04;
                                     }
                                     else
                                     {
-                                        P26VAR = 255;
-                                        i50 = e08;
+                                        i26 = e05;
+                                        i56 = e08;
                                     }
                                 }
                                 else
                                 {
-                                    P14VAR = 255;
+                                    i14 = e05;
                                     i52 = e08;
                                 }
+                                ukubool++;
 #else
                                 P01VAR = P26VAR = 255;
                                 i37 = e07;
@@ -1510,15 +1516,15 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 46:
 #ifndef ukulelechord
-                                if(!P24VAR)
+                                if(ukubool++%2==0)
                                 {
-                                    P15VAR = 255;
+                                    i15 = e05;
                                     i53 = e08;
                                 }
                                 else
                                 {
-                                    P32VAR = 255;
-                                    i50 = e08;
+                                    i32 = e05;
+                                    i56 = e08;
                                 }
 #else
                                 P32VAR = P02VAR = P23VAR = P15VAR = 255;
@@ -1527,15 +1533,15 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 47:
 #ifndef ukulelechord
-                                if(!P24VAR)
+                                if(ukubool++%2==0)
                                 {
-                                    P16VAR = 255;
+                                    i16 = e05;
                                     i53 = e08;
                                 }
                                 else
                                 {
-                                    P37VAR = 255;
-                                    i50 = e08;
+                                    i37 = e05;
+                                    i56 = e08;
                                 }
 #else
                                 P33VAR = P03VAR = P06VAR = P16VAR = 255;
@@ -1544,15 +1550,15 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 48:
 #ifndef ukulelechord
-                                if(!P24VAR)
+                                if(ukubool++%2==0)
                                 {
-                                    P17VAR = 255;
+                                    i17 = e05;
                                     i53 = e08;
                                 }
                                 else
                                 {
-                                    P34VAR = 255;
-                                    i50 = e08;
+                                    i34 = e05;
+                                    i56 = e08;
                                 }
 #else
                                 P17VAR = 255;
@@ -1561,7 +1567,7 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 49:
 #ifndef ukulelechord
-                                P20VAR = 255;
+                                i20 = e05;
                                 i53 = e08;
 #else
                                 P25VAR = P01VAR = P23VAR = P20VAR = 255;
@@ -1570,7 +1576,7 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 50:
 #ifndef ukulelechord
-                                P21VAR = 255;
+                                i21 = e05;
                                 i53 = e08;
 #else
                                 P26VAR = P02VAR = P06VAR = 255;
@@ -1580,138 +1586,138 @@ void consumeToken(unsigned char incomingByte)
                             }
                             break;
                         case 9:
-                            //case 11:
+                            e23 = velocity/42 + 3;
                             switch(note)
                             {
                             case 36:
-                                P00VAR = 255;
+                                i00 = e23+1;
                                 break;
                             case 37:
-                                P01VAR = 255;
+                                i01 = e23+2;
                                 break;
                             case 38:
-                                P02VAR = 208;
+                                i02 = e23;
                                 break;
                             case 39:
-                                P03VAR = 208;
+                                i03 = e23-1;
                                 break;
                             case 40:
-                                P04VAR = 208;
+                                i04 = e23-1;
                                 break;
                             case 41:
-                                P05VAR = 208;
+                                i05 = e23-1;
                                 break;
                             case 42:
-                                P06VAR = 208;
+                                i06 = e23-1;
                                 break;
                             case 43:
-                                P07VAR = 208;
+                                i07 = e23+1;
                                 break;
                             case 44:
-                                P11VAR = 208;
+                                i11 = e23+1;
                                 break;
                             case 45:
-                                P14VAR = 208;
+                                i14 = e23+1;
                                 break;
                             case 46:
-                                P15VAR = 208;
+                                i15 = e23+1;
 #ifndef LEDRay
-                                P56VAR = 255;
+                                i56 = e23;
 #endif
                                 break;
                             case 47:
-                                P16VAR = 208;
+                                i16 = e23+1;
 #ifndef LEDRay
-                                P56VAR = 255;
+                                i56 = e23;
 #endif
                                 break;
                             case 48:
-                                P17VAR = 208;
+                                i17 = e23+1;
 #ifndef LEDRay
-                                P57VAR = 255;
+                                i57 = e23;
 #endif
                                 break;
                             case 49:
-                                P20VAR = 208;
+                                i20 = e23+1;
 #ifndef LEDRay
-                                P57VAR = 255;
+                                i57 = e23;
 #endif
                                 break;
                             case 50:
-                                P21VAR = 255;
+                                i21 = e23;
                                 break;
                             case 51:
-                                P22VAR = 255;
+                                i22 = e23;
                                 break;
                             case 52:
-                                P23VAR = 255;
+                                i23 = e23;
                                 break;
                             case 53:
-                                P24VAR = 255;
+                                i24 = e23-1;
                                 break;
                             case 54:
-                                P25VAR = 255;
+                                i25 = e23-1;
                                 break;
                             case 55:
-                                P26VAR = 255;
+                                i26 = e23;
                                 break;
                             case 56:
-                                P27VAR = 255;
+                                i27 = e23;
                                 break;
                             case 57:
-                                P32VAR = 255;
+                                i32 = e23;
                                 break;
                             case 58:
-                                P34VAR = 255;
+                                i34 = e23;
                                 break;
                             case 59:
-                                P35VAR = 255;
+                                i35 = e23;
                                 break;
                             case 60:
-                                P36VAR = 255;
+                                i36 = e23;
                                 break;
                             case 61:
-                                P37VAR = 255;
+                                i37 = e23;
                                 break;
                             case 62:
-                                P40VAR = 255;
+                                i40 = e23;
                                 break;
                             case 63:
-                                P41VAR = 255;
+                                i41 = e23;
                                 break;
                             case 64:
-                                P42VAR = 255;
+                                i42 = e23;
                                 break;
                             case 65:
-                                P43VAR = 255;
+                                i43 = e23;
                                 break;
                             case 66:
-                                P46VAR = 255;
+                                i46 = e23;
                                 break;
 #ifndef LEDRay
                             case 67:
-                                P50VAR = 255;
+                                i50 = e23;
                                 break;
                             case 68:
-                                P51VAR = 255;
+                                i51 = e23;
                                 break;
                             case 69:
-                                P52VAR = 255;
+                                i52 = e23;
                                 break;
                             case 70:
-                                P53VAR = 255;
+                                i53 = e23;
                                 break;
                             case 71:
-                                P54VAR = 255;
+                                i54 = e23;
                                 break;
                             case 72:
-                                P55VAR = 255;
+                                i55 = e06;
                                 SFRPI = 1;
                                 P62 = 1;
                                 SFRPI = 0;
                                 break;
                             case 73:
-                                P55VAR = 255;
+                                i55 = e06;
                                 SFRPI = 1;
                                 P62 = 0;
                                 SFRPI = 0;
@@ -1723,113 +1729,14 @@ void consumeToken(unsigned char incomingByte)
                     }
                     else
                     {
-                        switch( oneCHANNEL )
-                        {
-                        case 4:
-                        case 5:
-                        case 6:
-                            i46 = 1;
-                            switch(note)
-                            {
-                            case 36:
-                                i00 = 1;
-                                break;
-                            case 37:
-                                i01 = 1;
-                                break;
-                            case 38:
-                                i02 = 1;
-                                break;
-                            case 39:
-                                i03 = 1;
-                                break;
-                            case 40:
-                                i04 = 1;
-                                break;
-                            case 41:
-                                i05 = 1;
-                                break;
-                            case 42:
-                                i06 = 1;
-                                break;
-                            case 43:
-                                i07 = 1;
-                                break;
-                            case 44:
-                                i11 = 1;
-                                break;
-                            case 45:
-                                i14 = 1;
-                                break;
-                            case 46:
-                                i15 = 1;
-                                break;
-                            case 47:
-                                i16 = 1;
-                                break;
-                            case 48:
-                                i17 = 1;
-                                break;
-                            case 49:
-                                i20 = 1;
-                                break;
-                            case 50:
-                                i21 = 1;
-                                break;
-                            case 51:
-                                i22 = 1;
-                                break;
-                            case 52:
-                                i23 = 1;
-                                break;
-                            case 53:
-                                i24 = 1;
-                                break;
-                            case 54:
-                                i25 = 1;
-                                break;
-                            case 55:
-                                i26 = 1;
-                                break;
-                            case 56:
-                                i32 = 1;
-                                break;
-                            case 57:
-                                i50 = 1;
-                                break;
-                            case 58:
-                                i34 = 1;
-                                break;
-                            case 59:
-                                i35 = 1;
-                                break;
-                            case 60:
-                                i36 = 1;
-                                break;
-                            case 61:
-                                i37 = 1;
-                                break;
-                            case 62:
-                                i40 = 1;
-                                break;
-                            case 63:
-                                i41 = 1;
-                                break;
-                            case 64:
-                                i42 = 1;
-                                break;
-                            case 65:
-                                i43 = 1;
-                                break;
-                            }
-                            break;
-                        }//produceCount = produceCount;
+                        rayoff();//produceCount = produceCount;
                     }
                     //Midi_Send(0x90,note,velocity);
                 }
             }
-            else
+            else if(action == OFF)
             {
+                rayoff();
                 //i11 = 0xFF;
                 //Midi_Send(0x80,note,velocity);
             }
@@ -1943,10 +1850,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P00VAR = 0x00;
+            P00 = 0;
             i00--;
             break;
         default:
+            if(e13 == i00)
+                P00 = 1;
             i00--;
             break;
         }
@@ -1955,10 +1864,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P01VAR = 0x00;
+            P01 = 0;
             i01--;
             break;
         default:
+            if(e13 == i01)
+                P01 = 1;
             i01--;
             break;
         }
@@ -1967,10 +1878,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P02VAR = 0x00;
+            P02 = 0;
             i02--;
             break;
         default:
+            if(e13 == i02)
+                P02 = 1;
             i02--;
             break;
         }
@@ -1979,10 +1892,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P03VAR = 0x00;
+            P03 = 0;
             i03--;
             break;
         default:
+            if(e13 == i03)
+                P03 = 1;
             i03--;
             break;
         }
@@ -1991,10 +1906,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P04VAR = 0x00;
+            P04 = 0;
             i04--;
             break;
         default:
+            if(e13 == i04)
+                P04 = 1;
             i04--;
             break;
         }
@@ -2003,10 +1920,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P05VAR = 0x00;
+            P05 = 0;
             i05--;
             break;
         default:
+            if(e13 == i05)
+                P05 = 1;
             i05--;
             break;
         }
@@ -2015,10 +1934,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P06VAR = 0x00;
+            P06 = 0;
             i06--;
             break;
         default:
+            if(e13 == i06)
+                P06 = 1;
             i06--;
             break;
         }
@@ -2027,10 +1948,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P07VAR = 0x00;
+            P07 = 0;
             i07--;
             break;
         default:
+            if(e13 == i07)
+                P07 = 1;
             i07--;
             break;
         }
@@ -2039,10 +1962,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P11VAR = 0;
+            P11 = 0;
             i11--;
             break;
         default:
+            if(e13 == i11)
+                P11 = 1;
             i11--;
             break;
         }
@@ -2051,10 +1976,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P14VAR = 0;
+            P14 = 0;
             i14--;
             break;
         default:
+            if(e13 == i14)
+                P14 = 1;
             i14--;
             break;
         }
@@ -2063,10 +1990,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P15VAR = 0;
+            P15 = 0;
             i15--;
             break;
         default:
+            if(e13 == i15)
+                P15 = 1;
             i15--;
             break;
         }
@@ -2075,10 +2004,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P16VAR = 0;
+            P16 = 0;
             i16--;
             break;
         default:
+            if(e13 == i16)
+                P16 = 1;
             i16--;
             break;
         }
@@ -2087,10 +2018,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P17VAR = 0;
+            P17 = 0;
             i17--;
             break;
         default:
+            if(e13 == i17)
+                P17 = 1;
             i17--;
             break;
         }
@@ -2099,10 +2032,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P20VAR = 0x00;
+            P20 = 0;
             i20--;
             break;
         default:
+            if(e13 == i20)
+                P20 = 1;
             i20--;
             break;
         }
@@ -2111,10 +2046,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P21VAR = 0x00;
+            P21 = 0;
             i21--;
             break;
         default:
+            if(e13 == i21)
+                P21 = 1;
             i21--;
             break;
         }
@@ -2123,11 +2060,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP0H = 255;
-            P22VAR = 0;
+            //CCAP0H = 255;
+            P22 = 0;
             i22--;
             break;
         default:
+            if(e13 == i22)
+                P22 = 1;
             i22--;
             break;
         }
@@ -2136,11 +2075,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP1H = 255;
-            P23VAR = 0;
+            //CCAP1H = 255;
+            P23 = 0;
             i23--;
             break;
         default:
+            if(e13 == i23)
+                P23 = 1;
             i23--;
             break;
         }
@@ -2149,11 +2090,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP2H = 255;
-            P24VAR = 0;
+            //CCAP2H = 255;
+            P24 = 0;
             i24--;
             break;
         default:
+            if(e13 == i24)
+                P24 = 1;
             i24--;
             break;
         }
@@ -2162,11 +2105,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP3H = 255;
-            P25VAR = 0;
+            //CCAP3H = 255;
+            P25 = 0;
             i25--;
             break;
         default:
+            if(e13 == i25)
+                P25 = 1;
             i25--;
             break;
         }
@@ -2175,11 +2120,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP4H = 255;
-            P26VAR = 0;
+            //CCAP4H = 255;
+            P26 = 0;
             i26--;
             break;
         default:
+            if(e13 == i26)
+                P26 = 1;
             i26--;
             break;
         }
@@ -2188,11 +2135,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP5H = 255;
-            P27VAR = 0;
+            P27 = 0;
             i27--;
             break;
         default:
+            if(e13 == i27)
+                P27 = 1;
             i27--;
             break;
         }
@@ -2201,10 +2149,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P32VAR = 0;
+            P32 = 0;
             i32--;
             break;
         default:
+            if(e13 == i32)
+                P32 = 1;
             i32--;
             break;
         }
@@ -2213,10 +2163,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P34VAR = 0;
+            P34 = 0;
             i34--;
             break;
         default:
+            if(e13 == i34)
+                P34 = 1;
             i34--;
             break;
         }
@@ -2225,10 +2177,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P35VAR = 0;
+            P35 = 0;
             i35--;
             break;
         default:
+            if(e13 == i35)
+                P35 = 1;
             i35--;
             break;
         }
@@ -2237,10 +2191,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P36VAR = 0;
+            P36 = 0;
             i36--;
             break;
         default:
+            if(e13 == i36)
+                P36 = 1;
             i36--;
             break;
         }
@@ -2249,10 +2205,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P37VAR = 0;
+            P37 = 0;
             i37--;
             break;
         default:
+            if(e13 == i37)
+                P37 = 1;
             i37--;
             break;
         }
@@ -2261,10 +2219,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P40VAR = 0;
+            P40 = 0;
             i40--;
             break;
         default:
+            if(e13 == i40)
+                P40 = 1;
             i40--;
             break;
         }
@@ -2273,10 +2233,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P41VAR = 0;
+            P41 = 0;
             i41--;
             break;
         default:
+            if(e13 == i41)
+                P41 = 1;
             i41--;
             break;
         }
@@ -2285,10 +2247,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P42VAR = 0;
+            P42 = 0;
             i42--;
             break;
         default:
+            if(e13 == i42)
+                P42 = 1;
             i42--;
             break;
         }
@@ -2297,10 +2261,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P43VAR = 0;
+            P43 = 0;
             i43--;
             break;
         default:
+            if(e13 == i43)
+                P43 = 1;
             i43--;
             break;
         }
@@ -2309,10 +2275,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P46VAR = 0;
+            P46 = 0;
             i46--;
             break;
         default:
+            if(e13 == i46)
+                P46 = 1;
             i46--;
             break;
         }
@@ -2322,10 +2290,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P50VAR = 0;
+            P50 = 0;
             i50--;
             break;
         default:
+            if(e13 == i50)
+                P50 = 1;
             i50--;
             break;
         }
@@ -2334,10 +2304,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P51VAR = 0;
+            P51 = 0;
             i51--;
             break;
         default:
+            if(e13 == i51)
+                P51 = 1;
             i51--;
             break;
         }
@@ -2346,10 +2318,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P52VAR = 0;
+            P52 = 0;
             i52--;
             break;
         default:
+            if(e13 == i52)
+                P52 = 1;
             i52--;
             break;
         }
@@ -2358,10 +2332,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P53VAR = 0;
+            P53 = 0;
             i53--;
             break;
         default:
+            if(e13 == i53)
+                P53 = 1;
             i53--;
             break;
         }
@@ -2370,10 +2346,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P54VAR = 0;
+            P54 = 0;
             i54--;
             break;
         default:
+            if(e13 == i54)
+                P54 = 1;
             i54--;
             break;
         }
@@ -2382,10 +2360,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P55VAR = 0;
+            P55 = 0;
             i55--;
             break;
         default:
+            if(e13 == i55)
+                P55 = 1;
             i55--;
             break;
         }
@@ -2394,10 +2374,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P56VAR = 0;
+            P56 = 0;
             i56--;
             break;
         default:
+            if(e13 == i56)
+                P56 = 1;
             i56--;
             break;
         }
@@ -2406,10 +2388,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P57VAR = 0;
+            P57 = 0;
             i57--;
             break;
         default:
+            if(e13 == i57)
+                P57 = 1;
             i57--;
             break;
         }
@@ -2417,17 +2401,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         break;
     case 2:
     case 3:
-        //case 12:
-        //case 13:
         switch(i00)
         {
         case 0:
             break;
         case 1:
-            P00VAR = 0x00;
+            P00 = 0;
             i00--;
             break;
         default:
+            if(e13 == i00)
+                P00 = 1;
             i00--;
             break;
         }
@@ -2436,10 +2420,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P01VAR = 0x00;
+            P01 = 0;
             i01--;
             break;
         default:
+            if(e13 == i01)
+                P01 = 1;
             i01--;
             break;
         }
@@ -2448,10 +2434,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P02VAR = 0x00;
+            P02 = 0;
             i02--;
             break;
         default:
+            if(e13 == i02)
+                P02 = 1;
             i02--;
             break;
         }
@@ -2460,10 +2448,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P03VAR = 0x00;
+            P03 = 0;
             i03--;
             break;
         default:
+            if(e13 == i03)
+                P03 = 1;
             i03--;
             break;
         }
@@ -2472,10 +2462,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P04VAR = 0x00;
+            P04 = 0;
             i04--;
             break;
         default:
+            if(e13 == i04)
+                P04 = 1;
             i04--;
             break;
         }
@@ -2484,10 +2476,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P05VAR = 0x00;
+            P05 = 0;
             i05--;
             break;
         default:
+            if(e13 == i05)
+                P05 = 1;
             i05--;
             break;
         }
@@ -2496,10 +2490,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P06VAR = 0x00;
+            P06 = 0;
             i06--;
             break;
         default:
+            if(e13 == i06)
+                P06 = 1;
             i06--;
             break;
         }
@@ -2508,10 +2504,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P07VAR = 0x00;
+            P07 = 0;
             i07--;
             break;
         default:
+            if(e13 == i07)
+                P07 = 1;
             i07--;
             break;
         }
@@ -2520,10 +2518,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P11VAR = 0;
+            P11 = 0;
             i11--;
             break;
         default:
+            if(e13 == i11)
+                P11 = 1;
             i11--;
             break;
         }
@@ -2532,10 +2532,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P14VAR = 0;
+            P14 = 0;
             i14--;
             break;
         default:
+            if(e13 == i14)
+                P14 = 1;
             i14--;
             break;
         }
@@ -2544,10 +2546,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P15VAR = 0;
+            P15 = 0;
             i15--;
             break;
         default:
+            if(e13 == i15)
+                P15 = 1;
             i15--;
             break;
         }
@@ -2556,10 +2560,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P16VAR = 0;
+            P16 = 0;
             i16--;
             break;
         default:
+            if(e13 == i16)
+                P16 = 1;
             i16--;
             break;
         }
@@ -2568,10 +2574,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P17VAR = 0;
+            P17 = 0;
             i17--;
             break;
         default:
+            if(e13 == i17)
+                P17 = 1;
             i17--;
             break;
         }
@@ -2580,10 +2588,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P20VAR = 0x00;
+            P20 = 0;
             i20--;
             break;
         default:
+            if(e13 == i20)
+                P20 = 1;
             i20--;
             break;
         }
@@ -2592,10 +2602,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P21VAR = 0x00;
+            P21 = 0;
             i21--;
             break;
         default:
+            if(e13 == i21)
+                P21 = 1;
             i21--;
             break;
         }
@@ -2604,11 +2616,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP0H = 255;
-            P22VAR = 0;
+            //CCAP0H = 255;
+            P22 = 0;
             i22--;
             break;
         default:
+            if(e13 == i22)
+                P22 = 1;
             i22--;
             break;
         }
@@ -2617,11 +2631,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP1H = 255;
-            P23VAR = 0;
+            //CCAP1H = 255;
+            P23 = 0;
             i23--;
             break;
         default:
+            if(e13 == i23)
+                P23 = 1;
             i23--;
             break;
         }
@@ -2630,11 +2646,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP2H = 255;
-            P24VAR = 0;
+            //CCAP2H = 255;
+            P24 = 0;
             i24--;
             break;
         default:
+            if(e13 == i24)
+                P24 = 1;
             i24--;
             break;
         }
@@ -2643,11 +2661,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP3H = 255;
-            P25VAR = 0;
+            //CCAP3H = 255;
+            P25 = 0;
             i25--;
             break;
         default:
+            if(e13 == i25)
+                P25 = 1;
             i25--;
             break;
         }
@@ -2656,11 +2676,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP4H = 255;
-            P26VAR = 0;
+            //CCAP4H = 255;
+            P26 = 0;
             i26--;
             break;
         default:
+            if(e13 == i26)
+                P26 = 1;
             i26--;
             break;
         }
@@ -2669,10 +2691,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P34VAR = 0;
+            P34 = 0;
             i34--;
             break;
         default:
+            if(e13 == i34)
+                P34 = 1;
             i34--;
             break;
         }
@@ -2681,10 +2705,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P35VAR = 0;
+            P35 = 0;
             i35--;
             break;
         default:
+            if(e13 == i35)
+                P35 = 1;
             i35--;
             break;
         }
@@ -2693,10 +2719,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P36VAR = 0;
+            P36 = 0;
             i36--;
             break;
         default:
+            if(e13 == i36)
+                P36 = 1;
             i36--;
             break;
         }
@@ -2705,10 +2733,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P37VAR = 0;
+            P37 = 0;
             i37--;
             break;
         default:
+            if(e13 == i37)
+                P37 = 1;
             i37--;
             break;
         }
@@ -2717,10 +2747,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P40VAR = 0;
+            P40 = 0;
             i40--;
             break;
         default:
+            if(e13 == i40)
+                P40 = 1;
             i40--;
             break;
         }
@@ -2729,10 +2761,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P41VAR = 0;
+            P41 = 0;
             i41--;
             break;
         default:
+            if(e13 == i41)
+                P41 = 1;
             i41--;
             break;
         }
@@ -2741,10 +2775,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P42VAR = 0;
+            P42 = 0;
             i42--;
             break;
         default:
+            if(e13 == i42)
+                P42 = 1;
             i42--;
             break;
         }
@@ -2753,10 +2789,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P43VAR = 0;
+            P43 = 0;
             i43--;
             break;
         default:
+            if(e13 == i43)
+                P43 = 1;
             i43--;
             break;
         }
@@ -2765,10 +2803,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P46VAR = 0;
+            P46 = 0;
             i46--;
             break;
         default:
+            if(e13 == i46)
+                P46 = 1;
             i46--;
             break;
         }
@@ -2778,10 +2818,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P50VAR = 0;
+            P50 = 0;
             i50--;
             break;
         default:
+            if(e13 == i50)
+                P50 = 1;
             i50--;
             break;
         }
@@ -2790,10 +2832,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P51VAR = 0;
+            P51 = 0;
             i51--;
             break;
         default:
+            if(e13 == i51)
+                P51 = 1;
             i51--;
             break;
         }
@@ -2802,10 +2846,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P52VAR = 0;
+            P52 = 0;
             i52--;
             break;
         default:
+            if(e13 == i52)
+                P52 = 1;
             i52--;
             break;
         }
@@ -2814,10 +2860,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P53VAR = 0;
+            P53 = 0;
             i53--;
             break;
         default:
+            if(e13 == i53)
+                P53 = 1;
             i53--;
             break;
         }
@@ -2826,10 +2874,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P54VAR = 0;
+            P54 = 0;
             i54--;
             break;
         default:
+            if(e13 == i54)
+                P54 = 1;
             i54--;
             break;
         }
@@ -2838,10 +2888,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P55VAR = 0;
+            P55 = 0;
             i55--;
             break;
         default:
+            if(e13 == i55)
+                P55 = 1;
             i55--;
             break;
         }
@@ -2850,10 +2902,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P56VAR = 0;
+            P56 = 0;
             i56--;
             break;
         default:
+            if(e13 == i56)
+                P56 = 1;
             i56--;
             break;
         }
@@ -2867,10 +2921,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P00VAR = 0x00;
+            P00 = 0;
             i00--;
             break;
         default:
+            if(e04 == i00)
+                P00 = 1;
             i00--;
             break;
         }
@@ -2879,10 +2935,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P01VAR = 0x00;
+            P01 = 0;
             i01--;
             break;
         default:
+            if(e05 == i01)
+                P01 = 1;
             i01--;
             break;
         }
@@ -2891,10 +2949,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P02VAR = 0x00;
+            P02 = 0;
             i02--;
             break;
         default:
+            if(e05 == i02)
+                P02 = 1;
             i02--;
             break;
         }
@@ -2903,10 +2963,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P03VAR = 0x00;
+            P03 = 0;
             i03--;
             break;
         default:
+            if(e05 == i03)
+                P03 = 1;
             i03--;
             break;
         }
@@ -2915,10 +2977,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P04VAR = 0x00;
+            P04 = 0;
             i04--;
             break;
         default:
+            if(e05 == i04)
+                P04 = 1;
             i04--;
             break;
         }
@@ -2927,10 +2991,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P05VAR = 0x00;
+            P05 = 0;
             i05--;
             break;
         default:
+            if(e04 == i05)
+                P05 = 1;
             i05--;
             break;
         }
@@ -2939,10 +3005,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P06VAR = 0x00;
+            P06 = 0;
             i06--;
             break;
         default:
+            if(e05 == i06)
+                P06 = 1;
             i06--;
             break;
         }
@@ -2951,10 +3019,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P07VAR = 0x00;
+            P07 = 0;
             i07--;
             break;
         default:
+            if(e05 == i07)
+                P07 = 1;
             i07--;
             break;
         }
@@ -2963,10 +3033,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P11VAR = 0;
+            P11 = 0;
             i11--;
             break;
         default:
+            if(e05 == i11)
+                P11 = 1;
             i11--;
             break;
         }
@@ -2975,10 +3047,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P14VAR = 0;
+            P14 = 0;
             i14--;
             break;
         default:
+            if(e05 == i14)
+                P14 = 1;
             i14--;
             break;
         }
@@ -2987,10 +3061,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P15VAR = 0;
+            P15 = 0;
             i15--;
             break;
         default:
+            if(e04 == i15)
+                P15 = 1;
             i15--;
             break;
         }
@@ -2999,10 +3075,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P16VAR = 0;
+            P16 = 0;
             i16--;
             break;
         default:
+            if(e05 == i16)
+                P16 = 1;
             i16--;
             break;
         }
@@ -3011,10 +3089,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P17VAR = 0;
+            P17 = 0;
             i17--;
             break;
         default:
+            if(e05 == i17)
+                P17 = 1;
             i17--;
             break;
         }
@@ -3023,10 +3103,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P20VAR = 0x00;
+            P20 = 0;
             i20--;
             break;
         default:
+            if(e05 == i20)
+                P20 = 1;
             i20--;
             break;
         }
@@ -3035,10 +3117,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P21VAR = 0x00;
+            P21 = 0;
             i21--;
             break;
         default:
+            if(e05 == i21)
+                P21 = 1;
             i21--;
             break;
         }
@@ -3047,11 +3131,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP0H = 255;
-            P22VAR = 0;
+            //CCAP0H = 255;
+            P22 = 0;
             i22--;
             break;
         default:
+            if(e04 == i22)
+                P22 = 1;
             i22--;
             break;
         }
@@ -3060,11 +3146,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP1H = 255;
-            P23VAR = 0;
+            //CCAP1H = 255;
+            P23 = 0;
             i23--;
             break;
         default:
+            if(e05 == i23)
+                P23 = 1;
             i23--;
             break;
         }
@@ -3073,11 +3161,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP2H = 255;
-            P24VAR = 0;
+            //CCAP2H = 255;
+            P24 = 0;
             i24--;
             break;
         default:
+            if(e05 == i24)
+                P24 = 1;
             i24--;
             break;
         }
@@ -3086,11 +3176,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP3H = 255;
-            P25VAR = 0;
+            //CCAP3H = 255;
+            P25 = 0;
             i25--;
             break;
         default:
+            if(e05 == i25)
+                P25 = 1;
             i25--;
             break;
         }
@@ -3099,11 +3191,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP4H = 255;
-            P26VAR = 0;
+            //CCAP4H = 255;
+            P26 = 0;
             i26--;
             break;
         default:
+            if(e04 == i26)
+                P26 = 1;
             i26--;
             break;
         }
@@ -3112,10 +3206,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P32VAR = 0;
+            P32 = 0;
             i32--;
             break;
         default:
+            if(e05 == i32)
+                P32 = 1;
             i32--;
             break;
         }
@@ -3125,10 +3221,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P50VAR = 0;
+            P50 = 0;
             i50--;
             break;
         default:
+            if(e05 == i50)
+                P50 = 1;
             i50--;
             break;
         }
@@ -3138,10 +3236,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P34VAR = 0;
+            P34 = 0;
             i34--;
             break;
         default:
+            if(e05 == i34)
+                P34 = 1;
             i34--;
             break;
         }
@@ -3150,10 +3250,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P35VAR = 0;
+            P35 = 0;
             i35--;
             break;
         default:
+            if(e05 == i35)
+                P35 = 1;
             i35--;
             break;
         }
@@ -3162,10 +3264,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P36VAR = 0;
+            P36 = 0;
             i36--;
             break;
         default:
+            if(e04 == i36)
+                P36 = 1;
             i36--;
             break;
         }
@@ -3174,10 +3278,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P37VAR = 0;
+            P37 = 0;
             i37--;
             break;
         default:
+            if(e05 == i37)
+                P37 = 1;
             i37--;
             break;
         }
@@ -3186,10 +3292,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P40VAR = 0;
+            P40 = 0;
             i40--;
             break;
         default:
+            if(e05 == i40)
+                P40 = 1;
             i40--;
             break;
         }
@@ -3198,10 +3306,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P41VAR = 0;
+            P41 = 0;
             i41--;
             break;
         default:
+            if(e05 == i41)
+                P41 = 1;
             i41--;
             break;
         }
@@ -3210,10 +3320,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P42VAR = 0;
+            P42 = 0;
             i42--;
             break;
         default:
+            if(e05 == i42)
+                P42 = 1;
             i42--;
             break;
         }
@@ -3222,10 +3334,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P43VAR = 0;
+            P43 = 0;
             i43--;
             break;
         default:
+            if(e05 == i43)
+                P43 = 1;
             i43--;
             break;
         }
@@ -3234,23 +3348,25 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P46VAR = 0;
+            P46 = 0;
             i46--;
             break;
         default:
+            if(e05 == i46)
+                P46 = 1;
             i46--;
             break;
         }
-        switch(i50)
+        switch(i56)
         {
         case 0:
             break;
         case 1:
-            P00VAR = 255;
-            i50--;
+            i00 = e04;
+            i56--;
             break;
         default:
-            i50--;
+            i56--;
             break;
         }
         switch(i51)
@@ -3258,7 +3374,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P05VAR = 255;
+            i05 = e04;
             i51--;
             break;
         default:
@@ -3270,7 +3386,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P15VAR = 255;
+            i15 = e04;
             i52--;
             break;
         default:
@@ -3282,7 +3398,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P22VAR = 255;
+            i22 = e04;
             i53--;
             break;
         default:
@@ -3294,7 +3410,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P26VAR = 255;
+            i26 = e04;
             i54--;
             break;
         default:
@@ -3306,7 +3422,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P36VAR = 255;
+            i36 = e04;
             i55--;
             break;
         default:
@@ -3320,10 +3436,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P00VAR = 0x00;
+            P00 = 0;
             i00--;
             break;
         default:
+            if(e04 == i00)
+                P00 = 1;
             i00--;
             break;
         }
@@ -3332,10 +3450,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P01VAR = 0x00;
+            P01 = 0;
             i01--;
             break;
         default:
+            if(e05 == i01)
+                P01 = 1;
             i01--;
             break;
         }
@@ -3344,10 +3464,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P02VAR = 0x00;
+            P02 = 0;
             i02--;
             break;
         default:
+            if(e05 == i02)
+                P02 = 1;
             i02--;
             break;
         }
@@ -3356,10 +3478,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P03VAR = 0x00;
+            P03 = 0;
             i03--;
             break;
         default:
+            if(e05 == i03)
+                P03 = 1;
             i03--;
             break;
         }
@@ -3368,10 +3492,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P04VAR = 0x00;
+            P04 = 0;
             i04--;
             break;
         default:
+            if(e05 == i04)
+                P04 = 1;
             i04--;
             break;
         }
@@ -3380,10 +3506,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P05VAR = 0x00;
+            P05 = 0;
             i05--;
             break;
         default:
+            if(e04 == i05)
+                P05 = 1;
             i05--;
             break;
         }
@@ -3392,10 +3520,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P06VAR = 0x00;
+            P06 = 0;
             i06--;
             break;
         default:
+            if(e05 == i06)
+                P06 = 1;
             i06--;
             break;
         }
@@ -3404,10 +3534,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P07VAR = 0x00;
+            P07 = 0;
             i07--;
             break;
         default:
+            if(e05 == i07)
+                P07 = 1;
             i07--;
             break;
         }
@@ -3416,10 +3548,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P11VAR = 0;
+            P11 = 0;
             i11--;
             break;
         default:
+            if(e05 == i11)
+                P11 = 1;
             i11--;
             break;
         }
@@ -3428,10 +3562,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P14VAR = 0;
+            P14 = 0;
             i14--;
             break;
         default:
+            if(e05 == i14)
+                P14 = 1;
             i14--;
             break;
         }
@@ -3440,10 +3576,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P15VAR = 0;
+            P15 = 0;
             i15--;
             break;
         default:
+            if(e04 == i15)
+                P15 = 1;
             i15--;
             break;
         }
@@ -3452,10 +3590,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P16VAR = 0;
+            P16 = 0;
             i16--;
             break;
         default:
+            if(e05 == i16)
+                P16 = 1;
             i16--;
             break;
         }
@@ -3464,10 +3604,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P17VAR = 0;
+            P17 = 0;
             i17--;
             break;
         default:
+            if(e05 == i17)
+                P17 = 1;
             i17--;
             break;
         }
@@ -3476,10 +3618,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P20VAR = 0x00;
+            P20 = 0;
             i20--;
             break;
         default:
+            if(e05 == i20)
+                P20 = 1;
             i20--;
             break;
         }
@@ -3488,10 +3632,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P21VAR = 0x00;
+            P21 = 0;
             i21--;
             break;
         default:
+            if(e05 == i21)
+                P21 = 1;
             i21--;
             break;
         }
@@ -3500,11 +3646,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP0H = 255;
-            P22VAR = 0;
+            //CCAP0H = 255;
+            P22 = 0;
             i22--;
             break;
         default:
+            if(e04 == i22)
+                P22 = 1;
             i22--;
             break;
         }
@@ -3513,11 +3661,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP1H = 255;
-            P23VAR = 0;
+            //CCAP1H = 255;
+            P23 = 0;
             i23--;
             break;
         default:
+            if(e05 == i23)
+                P23 = 1;
             i23--;
             break;
         }
@@ -3526,11 +3676,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP2H = 255;
-            P24VAR = 0;
+            //CCAP2H = 255;
+            P24 = 0;
             i24--;
             break;
         default:
+            if(e05 == i24)
+                P24 = 1;
             i24--;
             break;
         }
@@ -3539,11 +3691,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP3H = 255;
-            P25VAR = 0;
+            //CCAP3H = 255;
+            P25 = 0;
             i25--;
             break;
         default:
+            if(e05 == i25)
+                P25 = 1;
             i25--;
             break;
         }
@@ -3552,11 +3706,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP4H = 255;
-            P26VAR = 0;
+            //CCAP4H = 255;
+            P26 = 0;
             i26--;
             break;
         default:
+            if(e05 == i26)
+                P26 = 1;
             i26--;
             break;
         }
@@ -3565,10 +3721,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P32VAR = 0;
+            P32 = 0;
             i32--;
             break;
         default:
+            if(e05 == i32)
+                P32 = 1;
             i32--;
             break;
         }
@@ -3577,10 +3735,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P43VAR = 0;
+            P43 = 0;
             i43--;
             break;
         default:
+            if(e05 == i43)
+                P43 = 1;
             i43--;
             break;
         }
@@ -3589,10 +3749,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P34VAR = 0;
+            P34 = 0;
             i34--;
             break;
         default:
+            if(e05 == i34)
+                P34 = 1;
             i34--;
             break;
         }
@@ -3601,10 +3763,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P35VAR = 0;
+            P35 = 0;
             i35--;
             break;
         default:
+            if(e05 == i35)
+                P35 = 1;
             i35--;
             break;
         }
@@ -3613,10 +3777,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P36VAR = 0;
+            P36 = 0;
             i36--;
             break;
         default:
+            if(e05 == i36)
+                P36 = 1;
             i36--;
             break;
         }
@@ -3625,10 +3791,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P37VAR = 0;
+            P37 = 0;
             i37--;
             break;
         default:
+            if(e05 == i37)
+                P37 = 1;
             i37--;
             break;
         }
@@ -3637,10 +3805,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P40VAR = 0;
+            P40 = 0;
             i40--;
             break;
         default:
+            if(e05 == i40)
+                P40 = 1;
             i40--;
             break;
         }
@@ -3649,10 +3819,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P41VAR = 0;
+            P41 = 0;
             i41--;
             break;
         default:
+            if(e05 == i41)
+                P41 = 1;
             i41--;
             break;
         }
@@ -3661,23 +3833,25 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P42VAR = 0;
+            P42 = 0;
             i42--;
             break;
         default:
+            if(e05 == i42)
+                P42 = 1;
             i42--;
             break;
         }
-        switch(i50)
+        switch(i56)
         {
         case 0:
             break;
         case 1:
-            P00VAR = 255;
-            i50--;
+            i00 = e04;
+            i56--;
             break;
         default:
-            i50--;
+            i56--;
             break;
         }
         switch(i51)
@@ -3685,7 +3859,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P05VAR = 255;
+            i05 = e04;
             i51--;
             break;
         default:
@@ -3697,7 +3871,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P15VAR = 255;
+            i15 = e04;
             i52--;
             break;
         default:
@@ -3709,7 +3883,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P22VAR = 255;
+            i22 = e04;
             i53--;
             break;
         default:
@@ -3725,10 +3899,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P00VAR = 0x00;
+            P00 = 0;
             i00--;
             break;
         default:
+            if(e04 == i00)
+                P00 = 1;
             i00--;
             break;
         }
@@ -3737,10 +3913,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P01VAR = 0x00;
+            P01 = 0;
             i01--;
             break;
         default:
+            if(e05 == i01)
+                P01 = 1;
             i01--;
             break;
         }
@@ -3749,10 +3927,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P02VAR = 0x00;
+            P02 = 0;
             i02--;
             break;
         default:
+            if(e05 == i02)
+                P02 = 1;
             i02--;
             break;
         }
@@ -3761,10 +3941,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P03VAR = 0x00;
+            P03 = 0;
             i03--;
             break;
         default:
+            if(e05 == i03)
+                P03 = 1;
             i03--;
             break;
         }
@@ -3773,10 +3955,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P04VAR = 0x00;
+            P04 = 0;
             i04--;
             break;
         default:
+            if(e05 == i04)
+                P04 = 1;
             i04--;
             break;
         }
@@ -3785,10 +3969,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P05VAR = 0x00;
+            P05 = 0;
             i05--;
             break;
         default:
+            if(e05 == i05)
+                P05 = 1;
             i05--;
             break;
         }
@@ -3797,10 +3983,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P06VAR = 0x00;
+            P06 = 0;
             i06--;
             break;
         default:
+            if(e05 == i06)
+                P06 = 1;
             i06--;
             break;
         }
@@ -3809,10 +3997,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P07VAR = 0x00;
+            P07 = 0;
             i07--;
             break;
         default:
+            if(e05 == i07)
+                P07 = 1;
             i07--;
             break;
         }
@@ -3821,10 +4011,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P11VAR = 0;
+            P11 = 0;
             i11--;
             break;
         default:
+            if(e05 == i11)
+                P11 = 1;
             i11--;
             break;
         }
@@ -3833,10 +4025,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P14VAR = 0;
+            P14 = 0;
             i14--;
             break;
         default:
+            if(e05 == i14)
+                P14 = 1;
             i14--;
             break;
         }
@@ -3845,10 +4039,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P15VAR = 0;
+            P15 = 0;
             i15--;
             break;
         default:
+            if(e05 == i15)
+                P15 = 1;
             i15--;
             break;
         }
@@ -3857,10 +4053,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P16VAR = 0;
+            P16 = 0;
             i16--;
             break;
         default:
+            if(e05 == i16)
+                P16 = 1;
             i16--;
             break;
         }
@@ -3869,10 +4067,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P17VAR = 0;
+            P17 = 0;
             i17--;
             break;
         default:
+            if(e05 == i17)
+                P17 = 1;
             i17--;
             break;
         }
@@ -3881,10 +4081,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P20VAR = 0x00;
+            P20 = 0;
             i20--;
             break;
         default:
+            if(e05 == i20)
+                P20 = 1;
             i20--;
             break;
         }
@@ -3893,10 +4095,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P21VAR = 0x00;
+            P21 = 0;
             i21--;
             break;
         default:
+            if(e05 == i21)
+                P21 = 1;
             i21--;
             break;
         }
@@ -3905,11 +4109,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP0H = 255;
-            P22VAR = 0;
+            //CCAP0H = 255;
+            P22 = 0;
             i22--;
             break;
         default:
+            if(e04 == i22)
+                P22 = 1;
             i22--;
             break;
         }
@@ -3918,11 +4124,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP1H = 255;
-            P23VAR = 0;
+            //CCAP1H = 255;
+            P23 = 0;
             i23--;
             break;
         default:
+            if(e05 == i23)
+                P23 = 1;
             i23--;
             break;
         }
@@ -3931,11 +4139,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP2H = 255;
-            P24VAR = 0;
+            //CCAP2H = 255;
+            P24 = 0;
             i24--;
             break;
         default:
+            if(e04 == i24)
+                P24 = 1;
             i24--;
             break;
         }
@@ -3944,11 +4154,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP3H = 255;
-            P25VAR = 0;
+            //CCAP3H = 255;
+            P25 = 0;
             i25--;
             break;
         default:
+            if(e05 == i25)
+                P25 = 1;
             i25--;
             break;
         }
@@ -3957,11 +4169,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP4H = 255;
-            P26VAR = 0;
+            //CCAP4H = 255;
+            P26 = 0;
             i26--;
             break;
         default:
+            if(e05 == i26)
+                P26 = 1;
             i26--;
             break;
         }
@@ -3970,10 +4184,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P32VAR = 0;
+            P32 = 0;
             i32--;
             break;
         default:
+            if(e05 == i32)
+                P32 = 1;
             i32--;
             break;
         }
@@ -3982,10 +4198,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P37VAR = 0;
+            P37 = 0;
             i37--;
             break;
         default:
+            if(e05 == i37)
+                P37 = 1;
             i37--;
             break;
         }
@@ -3994,10 +4212,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P34VAR = 0;
+            P34 = 0;
             i34--;
             break;
         default:
+            if(e05 == i34)
+                P34 = 1;
             i34--;
             break;
         }
@@ -4006,10 +4226,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P35VAR = 0;
+            P35 = 0;
             i35--;
             break;
         default:
+            if(e04 == i35)
+                P35 = 1;
             i35--;
             break;
         }
@@ -4018,10 +4240,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P36VAR = 0;
+            P36 = 0;
             i36--;
             break;
         default:
+            if(e05 == i36)
+                P36 = 1;
             i36--;
             break;
         }
@@ -4031,19 +4255,19 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case (e07-6):
-            P35VAR = 255;
+            P35 = 1;
             i37--;
             break;
         case (e07-4):
-            P22VAR = 255;
+            P22 = 1;
             i37--;
             break;
         case (e07-2):
-            P00VAR = 255;
+            P00 = 1;
             i37--;
             break;
         case e07:
-            P24VAR = 255;
+            P24 = 1;
             i37--;
             break;
         default:
@@ -4051,16 +4275,16 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         }
 #else
-        switch(i50)
+        switch(i56)
         {
         case 0:
             break;
         case 1:
-            P24VAR = 255;
-            i50--;
+            i24 = e04;
+            i56--;
             break;
         default:
-            i50--;
+            i56--;
             break;
         }
         switch(i51)
@@ -4068,7 +4292,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P00VAR = 255;
+            i00 = e04;
             i51--;
             break;
         default:
@@ -4080,7 +4304,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P22VAR = 255;
+            i22 = e04;
             i52--;
             break;
         default:
@@ -4092,7 +4316,7 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P35VAR = 255;
+            i35 = e04;
             i53--;
             break;
         default:
@@ -4102,16 +4326,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
 #endif
         break;
     case 9:
-        //case 11:
         switch(i00)
         {
         case 0:
             break;
         case 1:
-            P00VAR = 0x00;
+            P00 = 0;
             i00--;
             break;
         default:
+            if(e23+1 == i00)
+                P00 = 1;
             i00--;
             break;
         }
@@ -4120,10 +4345,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P01VAR = 0x00;
+            P01 = 0;
             i01--;
             break;
         default:
+            if(e23+2 == i01)
+                P01 = 1;
             i01--;
             break;
         }
@@ -4132,10 +4359,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P02VAR = 0x00;
+            P02 = 0;
             i02--;
             break;
         default:
+            if(e23 == i02)
+                P02 = 1;
             i02--;
             break;
         }
@@ -4144,10 +4373,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P03VAR = 0x00;
+            P03 = 0;
             i03--;
             break;
         default:
+            if(e23-1 == i03)
+                P03 = 1;
             i03--;
             break;
         }
@@ -4156,10 +4387,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P04VAR = 0x00;
+            P04 = 0;
             i04--;
             break;
         default:
+            if(e23-1 == i04)
+                P04 = 1;
             i04--;
             break;
         }
@@ -4168,10 +4401,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P05VAR = 0x00;
+            P05 = 0;
             i05--;
             break;
         default:
+            if(e23-1 == i05)
+                P05 = 1;
             i05--;
             break;
         }
@@ -4180,10 +4415,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P06VAR = 0x00;
+            P06 = 0;
             i06--;
             break;
         default:
+            if(e23-1 == i06)
+                P06 = 1;
             i06--;
             break;
         }
@@ -4192,10 +4429,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P07VAR = 0x00;
+            P07 = 0;
             i07--;
             break;
         default:
+            if(e23+1 == i07)
+                P07 = 1;
             i07--;
             break;
         }
@@ -4204,10 +4443,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P11VAR = 0;
+            P11 = 0;
             i11--;
             break;
         default:
+            if(e23+1 == i11)
+                P11 = 1;
             i11--;
             break;
         }
@@ -4216,10 +4457,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P14VAR = 0;
+            P14 = 0;
             i14--;
             break;
         default:
+            if(e23+1 == i14)
+                P14 = 1;
             i14--;
             break;
         }
@@ -4228,10 +4471,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P15VAR = 0;
+            P15 = 0;
             i15--;
             break;
         default:
+            if(e23+1 == i15)
+                P15 = 1;
             i15--;
             break;
         }
@@ -4240,10 +4485,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P16VAR = 0;
+            P16 = 0;
             i16--;
             break;
         default:
+            if(e23+1 == i16)
+                P16 = 1;
             i16--;
             break;
         }
@@ -4252,10 +4499,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P17VAR = 0;
+            P17 = 0;
             i17--;
             break;
         default:
+            if(e23+1 == i17)
+                P17 = 1;
             i17--;
             break;
         }
@@ -4264,10 +4513,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P20VAR = 0x00;
+            P20 = 0;
             i20--;
             break;
         default:
+            if(e23+1 == i20)
+                P20 = 1;
             i20--;
             break;
         }
@@ -4276,10 +4527,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P21VAR = 0x00;
+            P21 = 0;
             i21--;
             break;
         default:
+            if(e23 == i21)
+                P21 = 1;
             i21--;
             break;
         }
@@ -4288,11 +4541,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP0H = 255;
-            P22VAR = 0;
+            //CCAP0H = 255;
+            P22 = 0;
             i22--;
             break;
         default:
+            if(e23 == i22)
+                P22 = 1;
             i22--;
             break;
         }
@@ -4301,11 +4556,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP1H = 255;
-            P23VAR = 0;
+            //CCAP1H = 255;
+            P23 = 0;
             i23--;
             break;
         default:
+            if(e23 == i23)
+                P23 = 1;
             i23--;
             break;
         }
@@ -4314,11 +4571,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP2H = 255;
-            P24VAR = 0;
+            //CCAP2H = 255;
+            P24 = 0;
             i24--;
             break;
         default:
+            if(e23-1 == i24)
+                P24 = 1;
             i24--;
             break;
         }
@@ -4327,11 +4586,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP3H = 255;
-            P25VAR = 0;
+            //CCAP3H = 255;
+            P25 = 0;
             i25--;
             break;
         default:
+            if(e23-1 == i25)
+                P25 = 1;
             i25--;
             break;
         }
@@ -4340,11 +4601,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP4H = 255;
-            P26VAR = 0;
+            //CCAP4H = 255;
+            P26 = 0;
             i26--;
             break;
         default:
+            if(e23 == i26)
+                P26 = 1;
             i26--;
             break;
         }
@@ -4353,11 +4616,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            CCAP5H = 255;
-            P27VAR = 0;
+            //CCAP5H = 255;
+            P27 = 0;
             i27--;
             break;
         default:
+            if(e23 == i27)
+                P27 = 1;
             i27--;
             break;
         }
@@ -4366,10 +4631,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P32VAR = 0;
+            P32 = 0;
             i32--;
             break;
         default:
+            if(e23 == i32)
+                P32 = 1;
             i32--;
             break;
         }
@@ -4378,10 +4645,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P34VAR = 0;
+            P34 = 0;
             i34--;
             break;
         default:
+            if(e23 == i34)
+                P34 = 1;
             i34--;
             break;
         }
@@ -4390,10 +4659,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P35VAR = 0;
+            P35 = 0;
             i35--;
             break;
         default:
+            if(e23 == i35)
+                P35 = 1;
             i35--;
             break;
         }
@@ -4402,10 +4673,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P36VAR = 0;
+            P36 = 0;
             i36--;
             break;
         default:
+            if(e23 == i36)
+                P36 = 1;
             i36--;
             break;
         }
@@ -4414,10 +4687,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P37VAR = 0;
+            P37 = 0;
             i37--;
             break;
         default:
+            if(e23 == i37)
+                P37 = 1;
             i37--;
             break;
         }
@@ -4426,10 +4701,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P40VAR = 0;
+            P40 = 0;
             i40--;
             break;
         default:
+            if(e23 == i40)
+                P40 = 1;
             i40--;
             break;
         }
@@ -4438,10 +4715,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P41VAR = 0;
+            P41 = 0;
             i41--;
             break;
         default:
+            if(e23 == i41)
+                P41 = 1;
             i41--;
             break;
         }
@@ -4450,10 +4729,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P42VAR = 0;
+            P42 = 0;
             i42--;
             break;
         default:
+            if(e23 == i42)
+                P42 = 1;
             i42--;
             break;
         }
@@ -4462,10 +4743,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P43VAR = 0;
+            P43 = 0;
             i43--;
             break;
         default:
+            if(e23 == i43)
+                P43 = 1;
             i43--;
             break;
         }
@@ -4474,10 +4757,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P46VAR = 0;
+            P46 = 0;
             i46--;
             break;
         default:
+            if(e23 == i46)
+                P46 = 1;
             i46--;
             break;
         }
@@ -4487,10 +4772,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P50VAR = 0;
+            P50 = 0;
             i50--;
             break;
         default:
+            if(e23 == i50)
+                P50 = 1;
             i50--;
             break;
         }
@@ -4499,10 +4786,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P51VAR = 0;
+            P51 = 0;
             i51--;
             break;
         default:
+            if(e23 == i51)
+                P51 = 1;
             i51--;
             break;
         }
@@ -4511,10 +4800,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P52VAR = 0;
+            P52 = 0;
             i52--;
             break;
         default:
+            if(e23 == i52)
+                P52 = 1;
             i52--;
             break;
         }
@@ -4523,10 +4814,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P53VAR = 0;
+            P53 = 0;
             i53--;
             break;
         default:
+            if(e23 == i53)
+                P53 = 1;
             i53--;
             break;
         }
@@ -4535,10 +4828,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P54VAR = 0;
+            P54 = 0;
             i54--;
             break;
         default:
+            if(e23 == i54)
+                P54 = 1;
             i54--;
             break;
         }
@@ -4551,9 +4846,11 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             {
                 SFRPI = 1;
                 if(!P63)
-                    P55VAR = 0;
+                    P55 = 0;
                 SFRPI = 0;
             }
+            else if(e06 == i06)
+                P55 = 1;
             i55--;
             break;
         }
@@ -4562,10 +4859,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P56VAR = 0;
+            P56 = 0;
             i56--;
             break;
         default:
+            if(e23 == i56)
+                P56 = 1;
             i56--;
             break;
         }
@@ -4574,10 +4873,12 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         case 0:
             break;
         case 1:
-            P57VAR = 0;
+            P57 = 0;
             i57--;
             break;
         default:
+            if(e23 == i57)
+                P57 = 1;
             i57--;
             break;
         }
@@ -4652,7 +4953,7 @@ void PCA_Interrupt() interrupt 10
     go_mad();
 #endif
 }
-
+#if defined(PCATIMER) || defined(TIMER0)
 void go_mad()
 {
     switch( oneCHANNEL )
@@ -4834,8 +5135,6 @@ void go_mad()
         break;
     case 2:
     case 3:
-        //case 12:
-        //case 13:
         if(P00VAR && !i00)
         {
             i00 = 5;
@@ -5379,7 +5678,6 @@ void go_mad()
         P3 |= 0xF4;
         break;
     case 9:
-        //case 11:
         if(P00VAR && !i00)
         {
             i00 = 4;
@@ -5553,7 +5851,7 @@ void go_mad()
         break;
     }
 }
-
+#endif
 void go_crazy()
 {
 #ifdef CHANNEL16
@@ -5609,3 +5907,316 @@ void T0_int(void) interrupt 1  //Timer0い耞ㄧ计
     TH0=0;	//Timer0パ0秨﹍璸		//TH0=65536 - TT >> 8; //砞﹚璸
 }
 #endif
+
+void rayoff()
+{
+    switch( oneCHANNEL )
+    {
+    case 4:
+    case 5:
+    case 6:
+        i46 = 1;
+        switch(note)
+        {
+            //case 36:
+            //i00 = 1;
+            //break;
+        case 37:
+            i01 = 1;
+            break;
+        case 38:
+            i02 = 1;
+            break;
+        case 39:
+            i03 = 1;
+            break;
+        case 40:
+            i04 = 1;
+            break;
+            //case 41:
+            //i05 = 1;
+            //break;
+        case 42:
+            i06 = 1;
+            break;
+        case 43:
+            i07 = 1;
+            break;
+        case 44:
+            i11 = 1;
+            break;
+        case 45:
+            i14 = 1;
+            break;
+            //case 46:
+            //i15 = 1;
+            //break;
+        case 47:
+            i16 = 1;
+            break;
+        case 48:
+            i17 = 1;
+            break;
+        case 49:
+            i20 = 1;
+            break;
+        case 50:
+            i21 = 1;
+            break;
+            //case 51:
+            //i22 = 1;
+            //break;
+        case 52:
+            i23 = 1;
+            break;
+        case 53:
+            i24 = 1;
+            break;
+        case 54:
+            i25 = 1;
+            break;
+            //case 55:
+            //i26 = 1;
+            //break;
+        case 56:
+            i32 = 1;
+            break;
+        case 57:
+            i50 = 1;
+            break;
+        case 58:
+            i34 = 1;
+            break;
+        case 59:
+            i35 = 1;
+            break;
+            //case 60:
+            //i36 = 1;
+            //break;
+        case 61:
+            i37 = 1;
+            break;
+        case 62:
+            i40 = 1;
+            break;
+        case 63:
+            i41 = 1;
+            break;
+        case 64:
+            i42 = 1;
+            break;
+        case 65:
+            i43 = 1;
+            break;
+        }
+        break;
+    case 7:
+        i42 = 1;
+        switch(note)
+        {
+        case 37:
+            i01 = 1;
+            break;
+        case 38:
+            i02 = 1;
+            break;
+        case 39:
+            i03 = 1;
+            break;
+        case 40:
+            i04 = 1;
+            break;
+        case 42:
+            i06 = 1;
+            break;
+        case 43:
+            i07 = 1;
+            break;
+        case 44:
+            i11 = 1;
+            break;
+        case 45:
+            i14 = 1;
+            break;
+        case 47:
+            i16 = 1;
+            break;
+        case 48:
+            i17 = 1;
+            break;
+        case 49:
+            i20 = 1;
+            break;
+        case 50:
+            i21 = 1;
+            break;
+        case 52:
+            i23 = 1;
+            break;
+        case 53:
+            i24 = 1;
+            break;
+        case 54:
+            i25 = 1;
+            break;
+        case 55:
+            i26 = 1;
+            break;
+        case 56:
+            i32 = 1;
+            break;
+        case 57:
+            i43 = 1;
+            break;
+        case 58:
+            i34 = 1;
+            break;
+        case 59:
+            i35 = 1;
+            break;
+        case 60:
+            i36 = 1;
+            break;
+        case 61:
+            i37 = 1;
+            break;
+        case 62:
+            i40 = 1;
+            break;
+        case 63:
+            i41 = 1;
+            break;
+        }
+        break;
+    case 8:
+        switch(note)
+        {
+        case 36:
+#ifndef ukulelechord
+#else
+            P17VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 37:
+#ifndef ukulelechord
+            i01 = 1;
+#else
+            P25VAR = P01VAR = P23VAR = P20VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 38:
+#ifndef ukulelechord
+            i02 = 1;
+#else
+            P26VAR = P02VAR = P06VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 39:
+#ifndef ukulelechord
+            i03 = 1;
+#else
+            P03VAR = P07VAR = P15VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 40:
+#ifndef ukulelechord
+            i04 = 1;
+#else
+            P25VAR = P04VAR = P16VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 41:
+#ifndef ukulelechord
+            i23 = 1;
+            i05 = 1;
+#else
+            P26VAR = P23VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 42:
+#ifndef ukulelechord
+            i06 = 1;
+#else
+            P32VAR = P01VAR = P06VAR = P20VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 43:
+#ifndef ukulelechord
+            i07 = 1;
+#else
+            P02VAR = P07VAR = P16VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 44:
+#ifndef ukulelechord
+            i25 = 1;
+            i11 = 1;
+#else
+            P25VAR = P03VAR = P11VAR = P17VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 45:
+#ifndef ukulelechord
+            i26 = 1;
+            i14 = 1;
+#else
+            P01VAR = P26VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 46:
+#ifndef ukulelechord
+            i15 = 1;
+            i32 = 1;
+#else
+            P32VAR = P02VAR = P23VAR = P15VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 47:
+#ifndef ukulelechord
+            i16 = 1;
+            i37 = 1;
+#else
+            P33VAR = P03VAR = P06VAR = P16VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 48:
+#ifndef ukulelechord
+            i17 = 1;
+            i34 = 1;
+#else
+            P17VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 49:
+#ifndef ukulelechord
+            i20 = 1;
+#else
+            P25VAR = P01VAR = P23VAR = P20VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        case 50:
+#ifndef ukulelechord
+            i21 = 1;
+#else
+            P26VAR = P02VAR = P06VAR = 255;
+            i37 = e07;
+#endif
+            break;
+        }
+        break;
+    }
+}
