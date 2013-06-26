@@ -50,6 +50,7 @@ unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL
 #define e09 5	 //木鐵琴全滿Velocity
 unsigned char e13;//木鐵琴槌時間
 unsigned char e23;//鼓棒時間
+#define yesoff
 //#define ukulelechord
 #ifndef ukulelechord
 unsigned char ukubool;
@@ -1593,7 +1594,7 @@ void consumeToken(unsigned char incomingByte)
                                 i00 = e23+1;
                                 break;
                             case 37:
-                                i01 = e23+2;
+                                i01 = e23+4;
                                 break;
                             case 38:
                                 i02 = e23;
@@ -4349,7 +4350,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             i01--;
             break;
         default:
-            if(e23+2 == i01)
+            if(e23+4 == i01)
                 P01 = 1;
             i01--;
             break;
@@ -5910,6 +5911,7 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 
 void rayoff()
 {
+#ifdef yesoff
     switch( oneCHANNEL )
     {
     case 4:
@@ -6219,4 +6221,5 @@ void rayoff()
         }
         break;
     }
+#endif
 }

@@ -68,6 +68,7 @@ sfr TH2       = 0xCD;
 sfr TH3       = 0xCD;                            // Page P
 
 #define T0_M0   0x01 //Timer0模式位元0
+#define T0_M1   0x02 //Timer0模式位元1	
 #define T1_M1   0x20 //Timer1模式位元1
 
 // (Serial Port)
