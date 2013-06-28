@@ -7,6 +7,7 @@
 //#define DEBUG
 #define CHANNEL16		  //P10 P12 P13
 //#define LEDRay
+#define LIGHT
 #ifdef DEBUG
 #include <stdio.h>   //加入標準輸出入函數
 unsigned char oldCHANNEL=0xFF;
@@ -30,10 +31,7 @@ unsigned char P50VAR,P51VAR,P52VAR,P53VAR,P54VAR,P55VAR,P56VAR,P57VAR;
 #define PARSER
 #define TT  34286  //Timer延時時間=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i24,i25,i26,i27,i32,i34,i35,i36,i37,i40,i41,i42,i43,i46,i10000;
-#ifndef LEDRay
-i50,i51,i52,i53,i54,i55,i56,i57;
-#endif
+unsigned char i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i24,i25,i26,i27,i32,i34,i35,i36,i37,i40,i41,i42,i43,i46,i50,i51,i52,i53,i54,i55,i56,i57,i10000;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -50,7 +48,10 @@ unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL
 #define e09 5	 //木鐵琴全滿Velocity
 unsigned char e13;//木鐵琴槌時間
 unsigned char e23;//鼓棒時間
+#ifndef LIGHT
 #define yesoff
+void rayoff();
+#endif
 //#define ukulelechord
 #ifndef ukulelechord
 unsigned char ukubool;
@@ -71,7 +72,6 @@ unsigned int pressure = 0;
 #endif
 void consumeToken(unsigned char incomingByte);
 void go_crazy();
-void rayoff();
 main()
 {
     IFD = XTAL;
@@ -209,6 +209,26 @@ void consumeToken(unsigned char incomingByte)
             velocity=incomingByte;
             if(action > OFF)
             {
+#ifdef LIGHT
+                switch( channel )
+                {
+                case 4:
+                    i03 = e05;
+                    break;
+                case 5:
+                    i04 = e05;
+                    break;
+                case 6:
+                    i05 = e05;
+                    break;
+                case 7:
+                    i06 = e05;
+                    break;
+                case 8:
+                    i07 = e05;
+                    break;
+                }
+#else
                 if( oneCHANNEL == channel )
                 {
                     if( velocity )
@@ -1730,15 +1750,37 @@ void consumeToken(unsigned char incomingByte)
                     }
                     else
                     {
-                        rayoff();//produceCount = produceCount;
+                        //rayoff();//produceCount = produceCount;
                     }
                     //Midi_Send(0x90,note,velocity);
                 }
+#endif
             }
             else if(action == OFF)
             {
+#ifdef LIGHT
+                switch( channel )
+                {
+                case 4:
+                    i03 = 1;
+                    break;
+                case 5:
+                    i04 = 1;
+                    break;
+                case 6:
+                    i05 = 1;
+                    break;
+                case 7:
+                    i06 = 1;
+                    break;
+                case 8:
+                    i07 = 1;
+                    break;
+                }
+#else
+
                 rayoff();
-                //i11 = 0xFF;
+#endif
                 //Midi_Send(0x80,note,velocity);
             }
             note=0;
@@ -4845,10 +4887,10 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         default:
             if(i55 < (e06-50) )
             {
-                SFRPI = 1;
-                if(!P63)
+                //SFRPI = 1;
+                if(!P14)
                     P55 = 0;
-                SFRPI = 0;
+                //SFRPI = 0;
             }
             else if(e06 == i06)
                 P55 = 1;
@@ -5909,9 +5951,9 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 }
 #endif
 
+#ifdef yesoff
 void rayoff()
 {
-#ifdef yesoff
     switch( oneCHANNEL )
     {
     case 4:
@@ -6221,5 +6263,5 @@ void rayoff()
         }
         break;
     }
-#endif
 }
+#endif
