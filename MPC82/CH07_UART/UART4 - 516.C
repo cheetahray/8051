@@ -1759,12 +1759,17 @@ void consumeToken(unsigned char incomingByte)
                             }
                             break;
                         }
+                        keyboard = 1;
                     }
-                    else
+                    else if(!keyboard)
                     {
                         rayoff();//produceCount = produceCount;
                     }
                     //Midi_Send(0x90,note,velocity);
+                    else
+                    {
+                        keyboard = 0;
+                    }
                 }
 #endif
             }
