@@ -40,10 +40,10 @@ void softPWM();
 #define ON 2
 #define WAIT 3
 unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL 0x00
-#define e03 55   //燈亮
+#define e03 30   //燈亮
 #define e04 4	 //撥弦	duration
 #define e05	250	 //壓弦1秒
-#define e06 250	 //風鈴計算時間
+#define e06 255	 //風鈴計算時間
 #define e07 10	 //和弦duration
 #define e08 4    //撥弦壓弦時間差
 #define e09 5	 //木鐵琴全滿Velocity
@@ -1413,6 +1413,16 @@ void consumeToken(unsigned char incomingByte)
                             {
                             case 36:
 #ifndef ukulelechord
+                                if(i01)
+                                    i01 = 1;
+                                if(i02)
+                                    i02 = 1;
+                                if(i03)
+                                    i03 = 1;
+                                if(i04)
+                                    i04 = 1;
+                                if(i05)
+                                    i05 = 1;
                                 i00 = e04;
 #else
                                 P17VAR = 255;
@@ -1421,6 +1431,14 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 37:
 #ifndef ukulelechord
+                                if(i02)
+                                    i02 = 1;
+                                if(i03)
+                                    i03 = 1;
+                                if(i04)
+                                    i04 = 1;
+                                if(i05)
+                                    i05 = 1;
                                 i01 = e05;
                                 i51 = e08;
 #else
@@ -1430,6 +1448,12 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 38:
 #ifndef ukulelechord
+                                if(i03)
+                                    i03 = 1;
+                                if(i04)
+                                    i04 = 1;
+                                if(i05)
+                                    i05 = 1;
                                 i02 = e05;
                                 i51 = e08;
 #else
@@ -1439,6 +1463,10 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 39:
 #ifndef ukulelechord
+                                if(i04)
+                                    i04 = 1;
+                                if(i05)
+                                    i05 = 1;
                                 i03 = e05;
                                 i51 = e08;
 #else
@@ -1450,10 +1478,22 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
+                                    if(i23)
+                                        i23 = 1;
+                                    if(i06)
+                                        i06 = 1;
+                                    if(i07)
+                                        i07 = 1;
+                                    if(i11)
+                                        i11 = 1;
+                                    if(i14)
+                                        i14 = 1;
                                     i22 = e04;
                                 }
                                 else
                                 {
+                                    if(i05)
+                                        i05 = 1;
                                     i04 = e05;
                                     i51 = e08;
                                 }
@@ -1466,6 +1506,14 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
+                                    if(i06)
+                                        i06 = 1;
+                                    if(i07)
+                                        i07 = 1;
+                                    if(i11)
+                                        i11 = 1;
+                                    if(i14)
+                                        i14 = 1;
                                     i23 = e05;
                                     i52 = e08;
                                 }
@@ -1481,6 +1529,12 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 42:
 #ifndef ukulelechord
+                                if(i07)
+                                    i07 = 1;
+                                if(i11)
+                                    i11 = 1;
+                                if(i14)
+                                    i14 = 1;
                                 i06 = e05;
                                 i52 = e08;
 #else
@@ -1492,10 +1546,24 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
+                                    if(i25)
+                                        i25 = 1;
+                                    if(i26)
+                                        i26 = 1;
+                                    if(i32)
+                                        i32 = 1;
+                                    if(i37)
+                                        i37 = 1;
+                                    if(i34)
+                                        i34 = 1;
                                     i24 = e04;
                                 }
                                 else
                                 {
+                                    if(i11)
+                                        i11 = 1;
+                                    if(i14)
+                                        i14 = 1;
                                     i07 = e05;
                                     i52 = e08;
                                 }
@@ -1508,11 +1576,21 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
+                                    if(i26)
+                                        i26 = 1;
+                                    if(i32)
+                                        i32 = 1;
+                                    if(i37)
+                                        i37 = 1;
+                                    if(i34)
+                                        i34 = 1;
                                     i25 = e05;
                                     i56 = e08;
                                 }
                                 else
                                 {
+                                    if(i14)
+                                        i14 = 1;
                                     i11 = e05;
                                     i52 = e08;
                                 }
@@ -1527,10 +1605,26 @@ void consumeToken(unsigned char incomingByte)
                                 {
                                     if(ukubool%3==1)
                                     {
+                                        if(i15)
+                                            i15 = 1;
+                                        if(i16)
+                                            i16 = 1;
+                                        if(i17)
+                                            i17 = 1;
+                                        if(i20)
+                                            i20 = 1;
+                                        if(i21)
+                                            i21 = 1;
                                         i35 = e04;
                                     }
                                     else
                                     {
+                                        if(i32)
+                                            i32 = 1;
+                                        if(i37)
+                                            i37 = 1;
+                                        if(i34)
+                                            i34 = 1;
                                         i26 = e05;
                                         i56 = e08;
                                     }
@@ -1550,11 +1644,23 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
+                                    if(i16)
+                                        i16 = 1;
+                                    if(i17)
+                                        i17 = 1;
+                                    if(i20)
+                                        i20 = 1;
+                                    if(i21)
+                                        i21 = 1;
                                     i15 = e05;
                                     i53 = e08;
                                 }
                                 else
                                 {
+                                    if(i37)
+                                        i37 = 1;
+                                    if(i34)
+                                        i34 = 1;
                                     i32 = e05;
                                     i56 = e08;
                                 }
@@ -1567,11 +1673,19 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
+                                    if(i17)
+                                        i17 = 1;
+                                    if(i20)
+                                        i20 = 1;
+                                    if(i21)
+                                        i21 = 1;
                                     i16 = e05;
                                     i53 = e08;
                                 }
                                 else
                                 {
+                                    if(i34)
+                                        i34 = 1;
                                     i37 = e05;
                                     i56 = e08;
                                 }
@@ -1584,6 +1698,10 @@ void consumeToken(unsigned char incomingByte)
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
+                                    if(i20)
+                                        i20 = 1;
+                                    if(i21)
+                                        i21 = 1;
                                     i17 = e05;
                                     i53 = e08;
                                 }
@@ -1599,6 +1717,8 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 49:
 #ifndef ukulelechord
+                                if(i21)
+                                    i21 = 1;
                                 i20 = e05;
                                 i53 = e08;
 #else
@@ -1643,7 +1763,7 @@ void consumeToken(unsigned char incomingByte)
                                 i06 = e23-1;
                                 break;
                             case 43:
-                                i11 = e05;
+                                i11 = e03;
                                 i14 = 3;
                                 break;
                             case 44:
@@ -1667,13 +1787,13 @@ void consumeToken(unsigned char incomingByte)
                             case 48:
                                 i17 = e23+1;
 #ifndef LEDRay
-                                i57 = e23;
+                                //i57 = e23;
 #endif
                                 break;
                             case 49:
                                 i20 = e23+1;
 #ifndef LEDRay
-                                i57 = e23;
+                                //i57 = e23;
 #endif
                                 break;
                             case 50:
@@ -1745,15 +1865,15 @@ void consumeToken(unsigned char incomingByte)
                                 break;
                             case 72:
                                 i55 = e06;
-                                SFRPI = 1;
-                                P62 = 1;
-                                SFRPI = 0;
+                                //SFRPI = 1;
+                                P57 = 1;
+                                //SFRPI = 0;
                                 break;
                             case 73:
                                 i55 = e06;
-                                SFRPI = 1;
-                                P62 = 0;
-                                SFRPI = 0;
+                                //SFRPI = 1;
+                                P57 = 0;
+                                //SFRPI = 0;
                                 break;
 #endif
                             }
@@ -4568,7 +4688,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             i11--;
             break;
         default:
-            if(e23+1 == i11)
+            if(e23+1 == i11 || e03 == i11)
                 P11 = 1;
             i11--;
             break;
@@ -4960,16 +5080,20 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         {
         case 0:
             break;
+        case 1:
+            P55 = 0;
+            i55--;
+            break;
         default:
-            if(i55 < (e06-50) )
+            if(e06 == i55)
+                P55 = 1;
+            else if( !( i55 > (e06-50) ) )
             {
                 //SFRPI = 1;
-                if(!P14)
+                if(!P33)
                     P55 = 0;
                 //SFRPI = 0;
             }
-            else if(e06 == i55)
-                P55 = 1;
             i55--;
             break;
         }
@@ -4987,6 +5111,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             i56--;
             break;
         }
+        /*
         switch(i57)
         {
         case 0:
@@ -5001,6 +5126,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             i57--;
             break;
         }
+        */
 #endif
         break;
     }
