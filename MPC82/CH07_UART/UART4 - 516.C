@@ -5087,7 +5087,7 @@ void T2_int (void) interrupt 5   //Timer2¤¤Â_¨ç¼Æ
         default:
             if(e06 == i55)
                 P55 = 1;
-            else if( !( i55 > (e06-50) ) )
+            else if( i55 < (e06-50) )
             {
                 //SFRPI = 1;
                 if(!P33)
