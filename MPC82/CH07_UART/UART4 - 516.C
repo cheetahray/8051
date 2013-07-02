@@ -31,7 +31,7 @@ unsigned char P50VAR,P51VAR,P52VAR,P53VAR,P54VAR,P55VAR,P56VAR,P57VAR;
 #define PARSER
 #define TT  34286  //Timer┑丁=(1/1.8432MHz)*57600=31250uS
 #ifdef TIMER2
-unsigned char i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i24,i25,i26,i27,i32,i34,i35,i36,i37,i40,i41,i42,i43,i46,i50,i51,i52,i53,i54,i55,i56,i57,i10000;
+unsigned char i00,i01,i02,i03,i04,i05,i06,i07,i11,i14,i15,i16,i17,i20,i21,i22,i23,i24,i25,i26,i27,i32,i33,i34,i35,i36,i37,i40,i41,i42,i43,i46,i50,i51,i52,i53,i54,i55,i56,i57,i10000;
 #endif
 void softPWM();
 #ifdef PARSER
@@ -54,7 +54,7 @@ unsigned char e23;//躬次丁
 unsigned char ukubool;
 #endif
 unsigned char channel;
-unsigned char note;
+int note;
 unsigned char velocity;
 unsigned int action; //1 =note off ; 2=note on ; 3= wait
 #endif
@@ -64,7 +64,6 @@ volatile unsigned int produceCount, consumeCount;
 unsigned char buffer[BUFFER_SIZE];
 #endif
 #ifdef SIMULATION
-int notecount;
 unsigned int pressure = 0;
 #endif
 void consumeToken(unsigned char incomingByte);
@@ -148,9 +147,6 @@ main()
     ET0=1;	//璓Timer0い
     TR0=1;	//币笆Timer0秨﹍璸
 #endif
-#ifdef SIMULATION
-    notecount = 0;
-#endif
     go_crazy();
     while(1)
     {
@@ -179,9 +175,6 @@ void consumeToken(unsigned char incomingByte)
     else if ( controlray == 9 ) // Note on
     {
         channel = (incomingByte & 0x0F);
-#ifdef SIMULATION
-        notecount = 0;
-#endif
         action = ON;
     }
     else if ( controlray == 8 )// Note off
@@ -516,38 +509,14 @@ void consumeToken(unsigned char incomingByte)
                                 i00 = e04;
                                 break;
                             case 37:
-                                if(i02)
-                                {
-                                    i02 = 1;
-                                }
-                                if(i03)
-                                {
-                                    i03 = 1;
-                                }
-                                if(i04)
-                                {
-                                    i04 = 1;
-                                }
                                 i01 = e05;
                                 i56 = e08;
                                 break;
                             case 38:
-                                if(i03)
-                                {
-                                    i03 = 1;
-                                }
-                                if(i04)
-                                {
-                                    i04 = 1;
-                                }
                                 i02 = e05;
                                 i56 = e08;
                                 break;
                             case 39:
-                                if(i04)
-                                {
-                                    i04 = 1;
-                                }
                                 i03 = e05;
                                 i56 = e08;
                                 break;
@@ -575,38 +544,14 @@ void consumeToken(unsigned char incomingByte)
                                 i05 = e04;
                                 break;
                             case 42:
-                                if(i07)
-                                {
-                                    i07 = 1;
-                                }
-                                if(i11)
-                                {
-                                    i11 = 1;
-                                }
-                                if(i14)
-                                {
-                                    i14 = 1;
-                                }
                                 i06 = e05;
                                 i51 = e08;
                                 break;
                             case 43:
-                                if(i11)
-                                {
-                                    i11 = 1;
-                                }
-                                if(i14)
-                                {
-                                    i14 = 1;
-                                }
                                 i07 = e05;
                                 i51 = e08;
                                 break;
                             case 44:
-                                if(i14)
-                                {
-                                    i14 = 1;
-                                }
                                 i11 = e05;
                                 i51 = e08;
                                 break;
@@ -634,38 +579,14 @@ void consumeToken(unsigned char incomingByte)
                                 i15 = e04;
                                 break;
                             case 47:
-                                if(i17)
-                                {
-                                    i17 = 1;
-                                }
-                                if(i20)
-                                {
-                                    i20 = 1;
-                                }
-                                if(i21)
-                                {
-                                    i21 = 1;
-                                }
                                 i16 = e05;
                                 i52 = e08;
                                 break;
                             case 48:
-                                if(i20)
-                                {
-                                    i20 = 1;
-                                }
-                                if(i21)
-                                {
-                                    i21 = 1;
-                                }
                                 i17 = e05;
                                 i52 = e08;
                                 break;
                             case 49:
-                                if(i21)
-                                {
-                                    i21 = 1;
-                                }
                                 i20 = e05;
                                 i52 = e08;
                                 break;
@@ -689,22 +610,10 @@ void consumeToken(unsigned char incomingByte)
                                 i22 = e04;
                                 break;
                             case 52:
-                                if(i24)
-                                {
-                                    i24 = 1;
-                                }
-                                if(i25)
-                                {
-                                    i25 = 1;
-                                }
                                 i23 = e05;
                                 i53 = e08;
                                 break;
                             case 53:
-                                if(i25)
-                                {
-                                    i25 = 1;
-                                }
                                 i24 = e05;
                                 i53 = e08;
                                 break;
@@ -734,42 +643,16 @@ void consumeToken(unsigned char incomingByte)
                                 i26 = e04;
                                 break;
                             case 56:
-#ifndef LEDRay
-                                if(i50)
-                                {
-                                    i50 = 1;
-                                }
-#endif
-                                if(i34)
-                                {
-                                    i34 = 1;
-                                }
-                                if(i35)
-                                {
-                                    i35 = 1;
-                                }
                                 i32 = e05;
                                 i54 = e08;
                                 break;
                             case 57:
-                                if(i34)
-                                {
-                                    i34 = 1;
-                                }
-                                if(i35)
-                                {
-                                    i35 = 1;
-                                }
 #ifndef LEDRay
                                 i50 = e05;
 #endif
                                 i54 = e08;
                                 break;
                             case 58:
-                                if(i35)
-                                {
-                                    i35 = 1;
-                                }
                                 i34 = e05;
                                 i54 = e08;
                                 break;
@@ -801,58 +684,18 @@ void consumeToken(unsigned char incomingByte)
                                 i36 = e04;
                                 break;
                             case 61:
-                                if(i40)
-                                {
-                                    i40 = 1;
-                                }
-                                if(i41)
-                                {
-                                    i41 = 1;
-                                }
-                                if(i42)
-                                {
-                                    i42 = 1;
-                                }
-                                if(i43)
-                                {
-                                    i43 = 1;
-                                }
                                 i37 = e05;
                                 i55 = e08;
                                 break;
                             case 62:
-                                if(i41)
-                                {
-                                    i41 = 1;
-                                }
-                                if(i42)
-                                {
-                                    i42 = 1;
-                                }
-                                if(i43)
-                                {
-                                    i43 = 1;
-                                }
                                 i40 = e05;
                                 i55 = e08;
                                 break;
                             case 63:
-                                if(i42)
-                                {
-                                    i42 = 1;
-                                }
-                                if(i43)
-                                {
-                                    i43 = 1;
-                                }
                                 i41 = e05;
                                 i55 = e08;
                                 break;
                             case 64:
-                                if(i43)
-                                {
-                                    i43 = 1;
-                                }
                                 i42 = e05;
                                 i55 = e08;
                                 break;
@@ -1411,6 +1254,37 @@ void consumeToken(unsigned char incomingByte)
                         case 8:
                             switch(note)
                             {
+                            case 12:
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 13:
+                                i25 = e05;
+                                i01 = e05;
+                                i23 = e05;
+                                i20 = e05;
+                                i33 = e07;
+                                break;
+                            case 14:
+                                i26	= e05;
+                                i02	= e05;
+                                i06	= e05;
+                                i33 = e07;
+                                break;
+                            case 15:
+                                i32	= e05;
+                                i03	= e05;
+                                i07	= e05;
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 16:
+                                i37	= e05;
+                                i04	= e05;
+                                i11	= e05;
+                                i16	= e05;
+                                i33 = e07;
+                                break;
                             case 36:
 #ifndef ukulelechord
                                 if(i01)
@@ -1426,52 +1300,34 @@ void consumeToken(unsigned char incomingByte)
                                 i00 = e04;
 #else
                                 P17VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 37:
 #ifndef ukulelechord
-                                if(i02)
-                                    i02 = 1;
-                                if(i03)
-                                    i03 = 1;
-                                if(i04)
-                                    i04 = 1;
-                                if(i05)
-                                    i05 = 1;
                                 i01 = e05;
                                 i51 = e08;
 #else
                                 P25VAR = P01VAR = P23VAR = P20VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 38:
 #ifndef ukulelechord
-                                if(i03)
-                                    i03 = 1;
-                                if(i04)
-                                    i04 = 1;
-                                if(i05)
-                                    i05 = 1;
                                 i02 = e05;
                                 i51 = e08;
 #else
                                 P26VAR = P02VAR = P06VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 39:
 #ifndef ukulelechord
-                                if(i04)
-                                    i04 = 1;
-                                if(i05)
-                                    i05 = 1;
                                 i03 = e05;
                                 i51 = e08;
 #else
                                 P03VAR = P07VAR = P15VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 40:
@@ -1492,28 +1348,18 @@ void consumeToken(unsigned char incomingByte)
                                 }
                                 else
                                 {
-                                    if(i05)
-                                        i05 = 1;
                                     i04 = e05;
                                     i51 = e08;
                                 }
 #else
                                 P25VAR = P04VAR = P16VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 41:
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
-                                    if(i06)
-                                        i06 = 1;
-                                    if(i07)
-                                        i07 = 1;
-                                    if(i11)
-                                        i11 = 1;
-                                    if(i14)
-                                        i14 = 1;
                                     i23 = e05;
                                     i52 = e08;
                                 }
@@ -1524,22 +1370,16 @@ void consumeToken(unsigned char incomingByte)
                                 }
 #else
                                 P26VAR = P23VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 42:
 #ifndef ukulelechord
-                                if(i07)
-                                    i07 = 1;
-                                if(i11)
-                                    i11 = 1;
-                                if(i14)
-                                    i14 = 1;
                                 i06 = e05;
                                 i52 = e08;
 #else
                                 P32VAR = P01VAR = P06VAR = P20VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 43:
@@ -1560,43 +1400,29 @@ void consumeToken(unsigned char incomingByte)
                                 }
                                 else
                                 {
-                                    if(i11)
-                                        i11 = 1;
-                                    if(i14)
-                                        i14 = 1;
                                     i07 = e05;
                                     i52 = e08;
                                 }
 #else
                                 P02VAR = P07VAR = P16VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 44:
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
-                                    if(i26)
-                                        i26 = 1;
-                                    if(i32)
-                                        i32 = 1;
-                                    if(i37)
-                                        i37 = 1;
-                                    if(i34)
-                                        i34 = 1;
                                     i25 = e05;
                                     i56 = e08;
                                 }
                                 else
                                 {
-                                    if(i14)
-                                        i14 = 1;
                                     i11 = e05;
                                     i52 = e08;
                                 }
 #else
                                 P25VAR = P03VAR = P11VAR = P17VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 45:
@@ -1619,12 +1445,6 @@ void consumeToken(unsigned char incomingByte)
                                     }
                                     else
                                     {
-                                        if(i32)
-                                            i32 = 1;
-                                        if(i37)
-                                            i37 = 1;
-                                        if(i34)
-                                            i34 = 1;
                                         i26 = e05;
                                         i56 = e08;
                                     }
@@ -1637,71 +1457,47 @@ void consumeToken(unsigned char incomingByte)
                                 ukubool++;
 #else
                                 P01VAR = P26VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 46:
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
-                                    if(i16)
-                                        i16 = 1;
-                                    if(i17)
-                                        i17 = 1;
-                                    if(i20)
-                                        i20 = 1;
-                                    if(i21)
-                                        i21 = 1;
                                     i15 = e05;
                                     i53 = e08;
                                 }
                                 else
                                 {
-                                    if(i37)
-                                        i37 = 1;
-                                    if(i34)
-                                        i34 = 1;
                                     i32 = e05;
                                     i56 = e08;
                                 }
 #else
                                 P32VAR = P02VAR = P23VAR = P15VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 47:
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
-                                    if(i17)
-                                        i17 = 1;
-                                    if(i20)
-                                        i20 = 1;
-                                    if(i21)
-                                        i21 = 1;
                                     i16 = e05;
                                     i53 = e08;
                                 }
                                 else
                                 {
-                                    if(i34)
-                                        i34 = 1;
                                     i37 = e05;
                                     i56 = e08;
                                 }
 #else
                                 P33VAR = P03VAR = P06VAR = P16VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 48:
 #ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
-                                    if(i20)
-                                        i20 = 1;
-                                    if(i21)
-                                        i21 = 1;
                                     i17 = e05;
                                     i53 = e08;
                                 }
@@ -1712,18 +1508,16 @@ void consumeToken(unsigned char incomingByte)
                                 }
 #else
                                 P17VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 49:
 #ifndef ukulelechord
-                                if(i21)
-                                    i21 = 1;
                                 i20 = e05;
                                 i53 = e08;
 #else
                                 P25VAR = P01VAR = P23VAR = P20VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             case 50:
@@ -1732,7 +1526,7 @@ void consumeToken(unsigned char incomingByte)
                                 i53 = e08;
 #else
                                 P26VAR = P02VAR = P06VAR = 255;
-                                i37 = e07;
+                                i33 = e07;
 #endif
                                 break;
                             }
@@ -3181,7 +2975,21 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i01)
+            {
+                if(i02)
+                {
+                    i02 = 1;
+                }
+                if(i03)
+                {
+                    i03 = 1;
+                }
+                if(i04)
+                {
+                    i04 = 1;
+                }
                 P01 = 1;
+            }
             i01--;
             break;
         }
@@ -3195,7 +3003,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i02)
+            {
+                if(i03)
+                {
+                    i03 = 1;
+                }
+                if(i04)
+                {
+                    i04 = 1;
+                }
                 P02 = 1;
+            }
             i02--;
             break;
         }
@@ -3209,7 +3027,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i03)
+            {
+                if(i04)
+                {
+                    i04 = 1;
+                }
                 P03 = 1;
+            }
             i03--;
             break;
         }
@@ -3251,7 +3075,21 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i06)
+            {
+                if(i07)
+                {
+                    i07 = 1;
+                }
+                if(i11)
+                {
+                    i11 = 1;
+                }
+                if(i14)
+                {
+                    i14 = 1;
+                }
                 P06 = 1;
+            }
             i06--;
             break;
         }
@@ -3265,7 +3103,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i07)
+            {
+                if(i11)
+                {
+                    i11 = 1;
+                }
+                if(i14)
+                {
+                    i14 = 1;
+                }
                 P07 = 1;
+            }
             i07--;
             break;
         }
@@ -3279,7 +3127,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i11)
+            {
+                if(i14)
+                {
+                    i14 = 1;
+                }
                 P11 = 1;
+            }
             i11--;
             break;
         }
@@ -3321,7 +3175,21 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i16)
+            {
+                if(i17)
+                {
+                    i17 = 1;
+                }
+                if(i20)
+                {
+                    i20 = 1;
+                }
+                if(i21)
+                {
+                    i21 = 1;
+                }
                 P16 = 1;
+            }
             i16--;
             break;
         }
@@ -3335,7 +3203,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i17)
+            {
+                if(i20)
+                {
+                    i20 = 1;
+                }
+                if(i21)
+                {
+                    i21 = 1;
+                }
                 P17 = 1;
+            }
             i17--;
             break;
         }
@@ -3349,7 +3227,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i20)
+            {
+                if(i21)
+                {
+                    i21 = 1;
+                }
                 P20 = 1;
+            }
             i20--;
             break;
         }
@@ -3393,7 +3277,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i23)
+            {
+                if(i24)
+                {
+                    i24 = 1;
+                }
+                if(i25)
+                {
+                    i25 = 1;
+                }
                 P23 = 1;
+            }
             i23--;
             break;
         }
@@ -3408,7 +3302,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i24)
+            {
+                if(i25)
+                {
+                    i25 = 1;
+                }
                 P24 = 1;
+            }
             i24--;
             break;
         }
@@ -3452,7 +3352,23 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i32)
+            {
+#ifndef LEDRay
+                if(i50)
+                {
+                    i50 = 1;
+                }
+#endif
+                if(i34)
+                {
+                    i34 = 1;
+                }
+                if(i35)
+                {
+                    i35 = 1;
+                }
                 P32 = 1;
+            }
             i32--;
             break;
         }
@@ -3467,7 +3383,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i50)
+            {
+                if(i34)
+                {
+                    i34 = 1;
+                }
+                if(i35)
+                {
+                    i35 = 1;
+                }
                 P50 = 1;
+            }
             i50--;
             break;
         }
@@ -3482,7 +3408,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i34)
+            {
+                if(i35)
+                {
+                    i35 = 1;
+                }
                 P34 = 1;
+            }
             i34--;
             break;
         }
@@ -3524,7 +3456,25 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i37)
+            {
+                if(i40)
+                {
+                    i40 = 1;
+                }
+                if(i41)
+                {
+                    i41 = 1;
+                }
+                if(i42)
+                {
+                    i42 = 1;
+                }
+                if(i43)
+                {
+                    i43 = 1;
+                }
                 P37 = 1;
+            }
             i37--;
             break;
         }
@@ -3538,7 +3488,21 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i40)
+            {
+                if(i41)
+                {
+                    i41 = 1;
+                }
+                if(i42)
+                {
+                    i42 = 1;
+                }
+                if(i43)
+                {
+                    i43 = 1;
+                }
                 P40 = 1;
+            }
             i40--;
             break;
         }
@@ -3552,7 +3516,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i41)
+            {
+                if(i42)
+                {
+                    i42 = 1;
+                }
+                if(i43)
+                {
+                    i43 = 1;
+                }
                 P41 = 1;
+            }
             i41--;
             break;
         }
@@ -3566,7 +3540,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i42)
+            {
+                if(i43)
+                {
+                    i43 = 1;
+                }
                 P42 = 1;
+            }
             i42--;
             break;
         }
@@ -4159,7 +4139,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i01)
+            {
+                if(i02)
+                    i02 = 1;
+                if(i03)
+                    i03 = 1;
+                if(i04)
+                    i04 = 1;
+                if(i05)
+                    i05 = 1;
                 P01 = 1;
+            }
             i01--;
             break;
         }
@@ -4173,7 +4163,15 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i02)
+            {
+                if(i03)
+                    i03 = 1;
+                if(i04)
+                    i04 = 1;
+                if(i05)
+                    i05 = 1;
                 P02 = 1;
+            }
             i02--;
             break;
         }
@@ -4187,7 +4185,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i03)
+            {
+                if(i04)
+                    i04 = 1;
+                if(i05)
+                    i05 = 1;
                 P03 = 1;
+            }
             i03--;
             break;
         }
@@ -4201,7 +4205,11 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i04)
+            {
+                if(i05)
+                    i05 = 1;
                 P04 = 1;
+            }
             i04--;
             break;
         }
@@ -4229,7 +4237,15 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i06)
+            {
+                if(i07)
+                    i07 = 1;
+                if(i11)
+                    i11 = 1;
+                if(i14)
+                    i14 = 1;
                 P06 = 1;
+            }
             i06--;
             break;
         }
@@ -4243,7 +4259,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i07)
+            {
+                if(i11)
+                    i11 = 1;
+                if(i14)
+                    i14 = 1;
                 P07 = 1;
+            }
             i07--;
             break;
         }
@@ -4257,7 +4279,11 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i11)
+            {
+                if(i14)
+                    i14 = 1;
                 P11 = 1;
+            }
             i11--;
             break;
         }
@@ -4285,7 +4311,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i15)
+            {
+                if(i16)
+                    i16 = 1;
+                if(i17)
+                    i17 = 1;
+                if(i20)
+                    i20 = 1;
+                if(i21)
+                    i21 = 1;
                 P15 = 1;
+            }
             i15--;
             break;
         }
@@ -4299,7 +4335,15 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i16)
+            {
+                if(i17)
+                    i17 = 1;
+                if(i20)
+                    i20 = 1;
+                if(i21)
+                    i21 = 1;
                 P16 = 1;
+            }
             i16--;
             break;
         }
@@ -4313,7 +4357,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i17)
+            {
+                if(i20)
+                    i20 = 1;
+                if(i21)
+                    i21 = 1;
                 P17 = 1;
+            }
             i17--;
             break;
         }
@@ -4327,7 +4377,11 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i20)
+            {
+                if(i21)
+                    i21 = 1;
                 P20 = 1;
+            }
             i20--;
             break;
         }
@@ -4371,7 +4425,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i23)
+            {
+                if(i06)
+                    i06 = 1;
+                if(i07)
+                    i07 = 1;
+                if(i11)
+                    i11 = 1;
+                if(i14)
+                    i14 = 1;
                 P23 = 1;
+            }
             i23--;
             break;
         }
@@ -4401,7 +4465,17 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i25)
+            {
+                if(i26)
+                    i26 = 1;
+                if(i32)
+                    i32 = 1;
+                if(i37)
+                    i37 = 1;
+                if(i34)
+                    i34 = 1;
                 P25 = 1;
+            }
             i25--;
             break;
         }
@@ -4416,7 +4490,15 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i26)
+            {
+                if(i32)
+                    i32 = 1;
+                if(i37)
+                    i37 = 1;
+                if(i34)
+                    i34 = 1;
                 P26 = 1;
+            }
             i26--;
             break;
         }
@@ -4430,7 +4512,13 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i32)
+            {
+                if(i37)
+                    i37 = 1;
+                if(i34)
+                    i34 = 1;
                 P32 = 1;
+            }
             i32--;
             break;
         }
@@ -4444,7 +4532,11 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         default:
             if(e05 == i37)
+            {
+                if(i34)
+                    i34 = 1;
                 P37 = 1;
+            }
             i37--;
             break;
         }
@@ -4491,28 +4583,28 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
             break;
         }
 #ifdef ukulelechord
-        switch(i37)
+        switch(i33)
         {
         case 0:
             break;
-        case (e07-6):
+        case (e07-8):
             P35 = 1;
-            i37--;
+            i33--;
+            break;
+        case (e07-6):
+            P22 = 1;
+            i33--;
             break;
         case (e07-4):
-            P22 = 1;
-            i37--;
+            P00 = 1;
+            i33--;
             break;
         case (e07-2):
-            P00 = 1;
-            i37--;
-            break;
-        case e07:
             P24 = 1;
-            i37--;
+            i33--;
             break;
         default:
-            i37--;
+            i33--;
             break;
         }
 #else
@@ -6361,7 +6453,7 @@ void rayoff()
 #ifndef ukulelechord
 #else
             P17VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 37:
@@ -6369,7 +6461,7 @@ void rayoff()
             i01 = 1;
 #else
             P25VAR = P01VAR = P23VAR = P20VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 38:
@@ -6377,7 +6469,7 @@ void rayoff()
             i02 = 1;
 #else
             P26VAR = P02VAR = P06VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 39:
@@ -6385,7 +6477,7 @@ void rayoff()
             i03 = 1;
 #else
             P03VAR = P07VAR = P15VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 40:
@@ -6393,7 +6485,7 @@ void rayoff()
             i04 = 1;
 #else
             P25VAR = P04VAR = P16VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 41:
@@ -6402,7 +6494,7 @@ void rayoff()
             i05 = 1;
 #else
             P26VAR = P23VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 42:
@@ -6410,7 +6502,7 @@ void rayoff()
             i06 = 1;
 #else
             P32VAR = P01VAR = P06VAR = P20VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 43:
@@ -6418,7 +6510,7 @@ void rayoff()
             i07 = 1;
 #else
             P02VAR = P07VAR = P16VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 44:
@@ -6427,7 +6519,7 @@ void rayoff()
             i11 = 1;
 #else
             P25VAR = P03VAR = P11VAR = P17VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 45:
@@ -6436,7 +6528,7 @@ void rayoff()
             i14 = 1;
 #else
             P01VAR = P26VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 46:
@@ -6445,7 +6537,7 @@ void rayoff()
             i32 = 1;
 #else
             P32VAR = P02VAR = P23VAR = P15VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 47:
@@ -6454,7 +6546,7 @@ void rayoff()
             i37 = 1;
 #else
             P33VAR = P03VAR = P06VAR = P16VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 48:
@@ -6463,7 +6555,7 @@ void rayoff()
             i34 = 1;
 #else
             P17VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 49:
@@ -6471,7 +6563,7 @@ void rayoff()
             i20 = 1;
 #else
             P25VAR = P01VAR = P23VAR = P20VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         case 50:
@@ -6479,7 +6571,7 @@ void rayoff()
             i21 = 1;
 #else
             P26VAR = P02VAR = P06VAR = 255;
-            i37 = e07;
+            i33 = e07;
 #endif
             break;
         }
