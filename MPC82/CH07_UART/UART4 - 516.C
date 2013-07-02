@@ -42,7 +42,7 @@ void softPWM();
 unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL 0x00
 #define e03 30   //¿O«G
 #define e04 4	 //¼·©¶	duration
-#define e05	250	 //À£©¶1¬í
+#define e05	100	 //À£©¶1¬í
 #define e06 255	 //­·¹a­pºâ®É¶¡
 #define e07 10	 //©M©¶duration
 #define e08 4    //¼·©¶À£©¶®É¶¡®t
@@ -1254,35 +1254,79 @@ void consumeToken(unsigned char incomingByte)
                         case 8:
                             switch(note)
                             {
-                            case 12:
+                            case 12: //C
                                 i17 = e05;
                                 i33 = e07;
                                 break;
-                            case 13:
+                            case 13://Db
                                 i25 = e05;
                                 i01 = e05;
                                 i23 = e05;
                                 i20 = e05;
                                 i33 = e07;
                                 break;
-                            case 14:
+                            case 14: //D
                                 i26	= e05;
                                 i02	= e05;
                                 i06	= e05;
                                 i33 = e07;
                                 break;
-                            case 15:
+                            case 15://Eb
                                 i32	= e05;
                                 i03	= e05;
                                 i07	= e05;
                                 i15 = e05;
                                 i33 = e07;
                                 break;
-                            case 16:
+                            case 16: //E
                                 i37	= e05;
                                 i04	= e05;
                                 i11	= e05;
                                 i16	= e05;
+                                i33 = e07;
+                                break;
+                            case 17: //F
+                                i26 = e05;
+                                i23 = e05;
+                                i33 = e07;
+                                break;
+                            case 18://Gb
+                                i32 = e05;
+                                i01 = e05;
+                                i06 = e05;
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 19: //G
+                                i02 = e05;
+                                i07 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 20://Ab
+                                i25 = e05;
+                                i03 = e05;
+                                i11 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 21: //A
+                                i26 = e05;
+                                i01 = e05;
+                                i33 = e07;
+                                break;
+                            case 22://Bb
+                                i32 = e05;
+                                i02 = e05;
+                                i23 = e05;
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 23:
+                                i37 = e05;
+                                i03 = e05;
+                                i06 = e05;
+                                i16 = e05;
                                 i33 = e07;
                                 break;
                             case 36:
@@ -1528,6 +1572,231 @@ void consumeToken(unsigned char incomingByte)
                                 P26VAR = P02VAR = P06VAR = 255;
                                 i33 = e07;
 #endif
+                                break;
+                            case 60://Cm
+                                i03 = e05;
+                                i07 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 61://Dbm
+                                i25 = e05;
+                                i04 = e05;
+                                i11 = e05;
+                                i20 = e05;
+                                i33 = e07;
+                                break;
+                            case 62://Dm
+                                i26 = e05;
+                                i02 = e05;
+                                i23 = e05;
+                                i33 = e07;
+                                break;
+                            case 63://Ebm
+                                i32 = e05;
+                                i03 = e05;
+                                i06 = e05;
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 64://Em
+                                i37 = e05;
+                                i04 = e05;
+                                i07 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 65:
+                                i25 = e05;
+                                i23 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 66://Gbm
+                                i26 = e05;
+                                i01 = e05;
+                                i06 = e05;
+                                i33 = e07;
+                                break;
+                            case 67://Gm
+                                i02 = e05;
+                                i07 = e05;
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 68://Abm
+                                i25 = e05;
+                                i03 = e05;
+                                i11 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 69://Am
+                                i26 = e05;
+                                i33 = e07;
+                                break;
+                            case 70://Bbm
+                                i32 = e05;
+                                i01 = e05;
+                                i23 = e05;
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 71://Bm
+                                i37 = e05;
+                                i02 = e05;
+                                i06 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 72://C7
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 73://Db7
+                                i25 = e05;
+                                i01 = e05;
+                                i23 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 74://D7
+                                i26 = e05;
+                                i02 = e05;
+                                i06 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 75://Eb7
+                                i32 = e05;
+                                i03 = e05;
+                                i07 = e05;
+                                i20 = e05;
+                                i33 = e07;
+                                break;
+                            case 76://E7
+                                i25 = e05;
+                                i02 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 77://F7
+                                i26 = e05;
+                                i03 = e05;
+                                i23 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 78://Gb7
+                                i32 = e05;
+                                i04 = e05;
+                                i06 = e05;
+                                i20 = e05;
+                                i33 = e07;
+                                break;
+                            case 79://G7
+                                i02 = e05;
+                                i23 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 80://Ab7
+                                i25 = e05;
+                                i03 = e05;
+                                i06 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 81://A7
+                                i01 = e05;
+                                i33 = e07;
+                                break;
+                            case 82://Bb7
+                                i25 = e05;
+                                i02 = e05;
+                                i23 = e05;
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 83://B7
+                                i26 = e05;
+                                i03 = e05;
+                                i06 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 84://Cmaj7
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 85://Dbmaj7
+                                i25 = e05;
+                                i01 = e05;
+                                i23 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 86://Dmaj7
+                                i26 = e05;
+                                i02 = e05;
+                                i06 = e05;
+                                i20 = e05;
+                                i33 = e07;
+                                break;
+                            case 87://Ebmaj7
+                                i32 = e05;
+                                i03 = e05;
+                                i07 = e05;
+                                i21 = e05;
+                                i33 = e07;
+                                break;
+                            case 88://Fmaj7
+                                i26 = e05;
+                                i04 = e05;
+                                i23 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 89://Gbmaj7
+                                i32 = e05;
+                                i05 = e05;
+                                i06 = e05;
+                                i20 = e05;
+                                i33 = e07;
+                                break;
+                            case 90://Gmaj7
+                                i02 = e05;
+                                i06 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 91://Abmaj7
+                                i25 = e05;
+                                i03 = e05;
+                                i07 = e05;
+                                i17 = e05;
+                                i33 = e07;
+                                break;
+                            case 92://Amaj7
+                                i26 = e05;
+                                i04 = e05;
+                                i11 = e05;
+                                i20 = e05;
+                                i33 = e07;
+                                break;
+                            case 93://Bbmaj7
+                                i26 = e05;
+                                i02 = e05;
+                                i23 = e05;
+                                i15 = e05;
+                                i33 = e07;
+                                break;
+                            case 94://Bmaj7
+                                i32 = e05;
+                                i03 = e05;
+                                i06 = e05;
+                                i16 = e05;
+                                i33 = e07;
                                 break;
                             }
                             break;
