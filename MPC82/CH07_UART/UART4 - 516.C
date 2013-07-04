@@ -7,7 +7,7 @@
 //#define DEBUG
 #define CHANNEL16		  //P10 P12 P13
 //#define LEDRay
-#define LIGHT
+//#define LIGHT
 #ifdef DEBUG
 #include <stdio.h>   //夹非块ㄧ计
 unsigned char oldCHANNEL=0xFF;
@@ -65,6 +65,7 @@ unsigned int pressure = 0;
 #endif
 void consumeToken(unsigned char incomingByte);
 void go_crazy();
+//#define YESOFF
 void rayoff();
 unsigned char keyboard;
 main()
@@ -213,7 +214,7 @@ void consumeToken(unsigned char incomingByte)
                         i05 = e03;
                         break;
                     case 7:
-                        i06 = e03;
+                        i52 = e03;
                         break;
                     case 8:
                         i07 = e03;
@@ -2334,18 +2335,18 @@ void T2_int (void) interrupt 5   //Timer2い耞ㄧ计
         }
         break;
     case 7:
-        switch(i06)
+        switch(i52)
         {
         case 0:
             break;
         case 1:
-            P06 = 0;
-            i06--;
+            P52 = 0;
+            i52--;
             break;
         default:
-            if(e03 == i06)
-                P06 = 1;
-            i06--;
+            if(e03 == i52)
+                P52 = 1;
+            i52--;
             break;
         }
         break;
@@ -6828,6 +6829,7 @@ void T0_int(void) interrupt 1  //Timer0い耞ㄧ计
 
 void rayoff()
 {
+#ifdef YESOFF
 #ifdef LIGHT
     switch( channel )
     {
@@ -7082,5 +7084,6 @@ void rayoff()
         }
         break;
     }
+#endif
 #endif
 }
