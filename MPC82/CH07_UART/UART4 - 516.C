@@ -205,21 +205,28 @@ void consumeToken(unsigned char incomingByte)
                     switch( channel )
                     {
                     case 4:
-                        i03 = e03;
+                        if(!i03)
+                            i03 = e03;
                         break;
                     case 5:
-                        i04 = e03;
+                        if(!i04)
+                            i04 = e03;
                         break;
                     case 6:
-                        i05 = e03;
+                        if(!i05)
+                            i05 = e03;
                         break;
                     case 7:
-                        i52 = e03;
+                        if(!i06)
+                            i52 = e03;
                         break;
                     case 8:
-                        i07 = e03;
-                        i50 = e03;
-                        i51 = e03;
+                        if(!i07)
+                            i07 = e03;
+                        if(!i50)
+                            i50 = e03;
+                        if(!i51)
+                            i51 = e03;
                         break;
                     }
                     keyboard = 1;
@@ -2284,115 +2291,102 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
 {
     TF2=0;    //清除TF2=0
 #ifdef LIGHT
-    switch( channel )
+    switch(i03)
     {
-    case 4:
-        switch(i03)
-        {
-        case 0:
-            break;
-        case 1:
-            P03 = 0;
-            i03--;
-            break;
-        default:
-            if(e03 == i03)
-                P03 = 1;
-            i03--;
-            break;
-        }
+    case 0:
         break;
-    case 5:
-        switch(i04)
-        {
-        case 0:
-            break;
-        case 1:
-            P04 = 0;
-            i04--;
-            break;
-        default:
-            if(e03 == i04)
-                P04 = 1;
-            i04--;
-            break;
-        }
+    case 1:
+        P03 = 0;
+        i03--;
         break;
-    case 6:
-        switch(i05)
-        {
-        case 0:
-            break;
-        case 1:
-            P05 = 0;
-            i05--;
-            break;
-        default:
-            if(e03 == i05)
-                P05 = 1;
-            i05--;
-            break;
-        }
+    default:
+        if(e03 == i03)
+            P03 = 1;
+        i03--;
         break;
-    case 7:
-        switch(i52)
-        {
-        case 0:
-            break;
-        case 1:
-            P52 = 0;
-            i52--;
-            break;
-        default:
-            if(e03 == i52)
-                P52 = 1;
-            i52--;
-            break;
-        }
+    }
+    switch(i04)
+    {
+    case 0:
         break;
-    case 8:
-        switch(i07)
-        {
-        case 0:
-            break;
-        case 1:
-            P07 = 0;
-            i07--;
-            break;
-        default:
-            if(e03 == i07)
-                P07 = 1;
-            i07--;
-            break;
-        }
-		switch(i50)
-        {
-        case 0:
-            break;
-        case 1:
-            P50 = 0;
-            i50--;
-            break;
-        default:
-            if(e03 == i50)
-                P50 = 1;
-            i50--;
-            break;
-        }
-		switch(i51)
-        {
-        case 0:
-            break;
-        case 1:
-            P51 = 0;
-            i51--;
-            break;
-        default:
-            if(e03 == i51)
-                P51 = 1;
-            i51--;
-            break;
-        }
+    case 1:
+        P04 = 0;
+        i04--;
+        break;
+    default:
+        if(e03 == i04)
+            P04 = 1;
+        i04--;
+        break;
+    }
+    switch(i05)
+    {
+    case 0:
+        break;
+    case 1:
+        P05 = 0;
+        i05--;
+        break;
+    default:
+        if(e03 == i05)
+            P05 = 1;
+        i05--;
+        break;
+    }
+    switch(i52)
+    {
+    case 0:
+        break;
+    case 1:
+        P52 = 0;
+        i52--;
+        break;
+    default:
+        if(e03 == i52)
+            P52 = 1;
+        i52--;
+        break;
+    }
+    switch(i07)
+    {
+    case 0:
+        break;
+    case 1:
+        P07 = 0;
+        i07--;
+        break;
+    default:
+        if(e03 == i07)
+            P07 = 1;
+        i07--;
+        break;
+    }
+    switch(i50)
+    {
+    case 0:
+        break;
+    case 1:
+        P50 = 0;
+        i50--;
+        break;
+    default:
+        if(e03 == i50)
+            P50 = 1;
+        i50--;
+        break;
+    }
+    switch(i51)
+    {
+    case 0:
+        break;
+    case 1:
+        P51 = 0;
+        i51--;
+        break;
+    default:
+        if(e03 == i51)
+            P51 = 1;
+        i51--;
         break;
     }
 #else
