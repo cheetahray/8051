@@ -41,7 +41,7 @@ void softPWM();
 #define WAIT 3
 unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL 0x00
 #define e03 30   //¿O«G
-#define e04 4	 //¼·©¶	duration
+#define e04 5	 //¼·©¶	duration
 #define e05	100	 //À£©¶2¬í
 #define e06 255	 //­·¹a­pºâ®É¶¡
 #define e07 14	 //©M©¶duration
