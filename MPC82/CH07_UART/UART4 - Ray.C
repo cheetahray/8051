@@ -839,148 +839,16 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
 #else
-    switch(pressure++)
+    if( 0 == ( pressure++ % 5 ) )
     {
-    	case 0:
 #if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
+        i12 = 3;
+        CCAP0H = 0;
+        i13 = 3;
+        CCAP1H = 0;
 #endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-    	break;
-		case 18:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-		break;
-    	case 36:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-    	break;
-    	case 54:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-		break;
-    	case 72:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-    	break;
-    	case 90:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-		break;
-    	case 108:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-    	break;
-		case 126:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-		break;
-    	case 144:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-    	break;
-		case 162:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-		break;
-    	case 180:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-    	break;
-		case 196:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-			break;
-    	case 216:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-    	break;
-		case 234:
-#if !defined MUSIC && !defined CHANNEL16
-    		i12 = 3;
-    		CCAP0H = 0;
-    		i13 = 3;
-    		CCAP1H = 0;
-#endif
-			i16 = 3;
-    		CCAP4H = ~DIF16;
-		break;
+        i16 = 3;
+        CCAP4H = ~DIF16;
     }
 #endif
 }
