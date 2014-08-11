@@ -16,7 +16,7 @@ unsigned char oldCHANNEL=0xFF;
 #ifdef	HARDRAYPWM
 //#define PCATIMER
 #ifndef PCATIMER
-#define TIMER0
+//#define TIMER0
 #endif
 #define TTT  256
 unsigned char P00VAR,P01VAR,P02VAR,P03VAR,P04VAR,P05VAR,P06VAR,P07VAR,P11VAR,P14VAR,P15VAR,P16VAR,P17VAR,P20VAR,P21VAR,P22VAR,P23VAR,P24VAR,P25VAR,P26VAR,P27VAR,P32VAR,P34VAR,P35VAR,P36VAR,P37VAR,P40VAR,P41VAR,P42VAR,P43VAR,P46VAR;
@@ -41,18 +41,15 @@ void softPWM();
 #define WAIT 3
 unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL 0x00
 #define e03 30   //燈亮
-#define e04 4	 //撥弦	duration
-#define e05	100	 //壓弦1秒
+#define e04 5	 //撥弦	duration
+#define e05	100	 //壓弦2秒
 #define e06 255	 //風鈴計算時間
-#define e07 10	 //和弦duration
+#define e07 14	 //和弦duration
 #define e08 4    //撥弦壓弦時間差
 #define e09 5	 //木鐵琴全滿Velocity
 unsigned char e13;//木鐵琴槌時間
 unsigned char e23;//鼓棒時間
-//#define ukulelechord
-#ifndef ukulelechord
 unsigned char ukubool;
-#endif
 unsigned char channel;
 int note;
 unsigned char velocity;
@@ -68,6 +65,7 @@ unsigned int pressure = 0;
 #endif
 void consumeToken(unsigned char incomingByte);
 void go_crazy();
+//#define YESOFF
 void rayoff();
 unsigned char keyboard;
 main()
@@ -207,19 +205,28 @@ void consumeToken(unsigned char incomingByte)
                     switch( channel )
                     {
                     case 4:
-                        i03 = e03;
+                        if(!i03)
+                            i03 = e03;
                         break;
                     case 5:
-                        i04 = e03;
+                        if(!i04)
+                            i04 = e03;
                         break;
                     case 6:
-                        i05 = e03;
+                        if(!i05)
+                            i05 = e03;
                         break;
                     case 7:
-                        i06 = e03;
+                        if(!i06)
+                            i52 = e03;
                         break;
                     case 8:
-                        i07 = e03;
+                        if(!i07)
+                            i07 = e03;
+                        if(!i50)
+                            i50 = e03;
+                        if(!i51)
+                            i51 = e03;
                         break;
                     }
                     keyboard = 1;
@@ -483,8 +490,300 @@ void consumeToken(unsigned char incomingByte)
 #endif
                             }
                             break;
-                        case 4:
                         case 5:
+                            switch(note)
+                            {
+                            case 12://C
+                                i32 = e05;
+                                i17 = e05;
+                                i11 = e05;
+                                break;
+                            case 13://Db
+                                i37 = e05;
+                                i50 = e05;
+                                i23 = e05;
+                                i20 = e05;
+                                i14 = e05;
+                                break;
+                            case 14://D
+                                i40 = e05;
+                                i34 = e05;
+                                i24 = e05;
+                                break;
+                            case 15://Eb
+                                i41 = e05;
+                                i35 = e05;
+                                i25 = e05;
+                                i16 = e05;
+                                break;
+                            case 16://E
+                                i23 = e05;
+                                i17 = e05;
+                                i07 = e05;
+                                break;
+                            case 17://F
+                                i37 = e05;
+                                i32 = e05;
+                                i24 = e05;
+                                i20 = e05;
+                                i11 = e05;
+                                i01 = e05;
+                                break;
+                            case 18://Gb
+                                i40 = e05;
+                                i50 = e05;
+                                i25 = e05;
+                                i21 = e05;
+                                i14 = e05;
+                                i02 = e05;
+                                break;
+                            case 19://G
+                                i41 = e05;
+                                i07 = e05;
+                                i03 = e05;
+                                break;
+                            case 20://Ab
+                                i32 = e05;
+                                i23 = e05;
+                                i16 = e05;
+                                i11 = e05;
+                                i04 = e05;
+                                break;
+                            case 21://A
+                                i50 = e05;
+                                i24 = e05;
+                                i17 = e05;
+                                break;
+                            case 22://Bb
+                                i37 = e05;
+                                i34 = e05;
+                                i25 = e05;
+                                i20 = e05;
+                                i06 = e05;
+                                break;
+                            case 23:// B
+                                i40 = e05;
+                                i35 = e05;
+                                i21 = e05;
+                                i07 = e05;
+                                break;
+                            case 66:
+                                i57 = e07;
+                                break;
+                            case 67:
+                                i33 = e07;
+                                break;
+                            case 68:// Cm
+                                i32 = e05;
+                                i16 = e05;
+                                i11 = e05;
+                                break;
+                            case 69:// Dbm
+                                i37 = e05;
+                                i50 = e05;
+                                i25 = e05;
+                                i20 = e05;
+                                i06 = e05;
+                                break;
+                            case 70:// Dm
+                                i37 = e05;
+                                i34 = e05;
+                                i24 = e05;
+                                break;
+                            case 71:// Ebm
+                                i35 = e05;
+                                i25 = e05;
+                                i16 = e05;
+                                i02 = e05;
+                                break;
+                            case 72 :// Em
+                                i17 = e05;
+                                i07 = e05;
+                                break;
+                            case 73 ://	 Fm
+                                i37 = e05;
+                                i32 = e05;
+                                i23 = e05;
+                                i20 = e05;
+                                i11 = e05;
+                                i01 = e05;
+                                break;
+                            case 74 :// Gbm
+                                i40 = e05;
+                                i50 = e05;
+                                i24 = e05;
+                                i21 = e05;
+                                i14 = e05;
+                                i02 = e05;
+                                break;
+                            case 75 :// Gm
+                                i41 = e05;
+                                i34 = e05;
+                                i06 = e05;
+                                i03 = e05;
+                                break;
+                            case 76 :// Abm
+                                i42 = e05;
+                                i35 = e05;
+                                i23 = e05;
+                                i16 = e05;
+                                i07 = e05;
+                                break;
+                            case 77 ://	Am
+                                i32 = e05;
+                                i24 = e05;
+                                i17 = e05;
+                                break;
+                            case 78 :// Bbm
+                                i37 = e05;
+                                i50 = e05;
+                                i25 = e05;
+                                i20 = e05;
+                                i06 = e05;
+                                break;
+                            case 79 :// Bm
+                                i40 = e05;
+                                i34 = e05;
+                                i21 = e05;
+                                i07 = e05;
+                                break;
+                            case 80 :// C7
+                                i32 = e05;
+                                i25 = e05;
+                                i17 = e05;
+                                i11 = e05;
+                                break;
+                            case 81 :// Db7
+                                i50 = e05;
+                                i20 = e05;
+                                i14 = e05;
+                                break;
+                            case 82:// D7
+                                i40 = e05;
+                                i32 = e05;
+                                i24 = e05;
+                                break;
+                            case 83:// Eb7
+                                i41 = e05;
+                                i50 = e05;
+                                i25 = e05;
+                                i16 = e05;
+                                break;
+                            case 84://	E7
+                                i23 = e05;
+                                i07 = e05;
+                                break;
+                            case 85:// F7
+                                i37 = e05;
+                                i32 = e05;
+                                i24 = e05;
+                                i16 = e05;
+                                i11 = e05;
+                                i01 = e05;
+                                break;
+                            case 86:// Gb7
+                                i50 = e05;
+                                i25 = e05;
+                                i21 = e05;
+                                break;
+                            case 87:// G7
+                                i37 = e05;
+                                i07 = e05;
+                                i03 = e05;
+                                break;
+                            case 88:// Ab7
+                                i40 = e05;
+                                i32 = e05;
+                                i23 = e05;
+                                i16 = e05;
+                                break;
+                            case 89://A7
+                                i50 = e05;
+                                i17 = e05;
+                                break;
+                            case 90:// Bb7
+                                i37 = e05;
+                                i34 = e05;
+                                i23 = e05;
+                                i20 = e05;
+                                i06 = e05;
+                                break;
+                            case 91:// B7
+                                i40 = e05;
+                                i24 = e05;
+                                i16 = e05;
+                                i07 = e05;
+                                break;
+                            case 92:// Cmaj7
+                                i17 = e05;
+                                i11 = e05;
+                                break;
+                            case 93:// Dbmaj7
+                                i37 = e05;
+                                i32 = e05;
+                                i23 = e05;
+                                i20 = e05;
+                                i14 = e05;
+                                break;
+                            case 94:// Dmaj7
+                                i40 = e05;
+                                i50 = e05;
+                                i24 = e05;
+                                i21 = e05;
+                                break;
+                            case 95:// Ebmaj7
+                                i41 = e05;
+                                i34 = e05;
+                                i25 = e05;
+                                i16 = e05;
+                                break;
+                            case 96:// Emqj7
+                                i23 = e05;
+                                i16 = e05;
+                                i07 = e05;
+                                break;
+                            case 97:// Fmaj7
+                                i32 = e05;
+                                i24 = e05;
+                                i17 = e05;
+                                i01 = e05;
+                                break;
+                            case 98:// Gbmaj7
+                                i37 = e05;
+                                i50 = e05;
+                                i25 = e05;
+                                i21 = e05;
+                                break;
+                            case 99:// Gmaj7
+                                i40 = e05;
+                                i07 = e05;
+                                i03 = e05;
+                                break;
+                            case 100:// Abmaj7
+                                i41 = e05;
+                                i32 = e05;
+                                i23 = e05;
+                                i16 = e05;
+                                break;
+                            case 101:// Amaj7
+                                i50 = e05;
+                                i23 = e05;
+                                i17 = e05;
+                                break;
+                            case 102:// Bbmaj7
+                                i41 = e05;
+                                i24 = e05;
+                                i20 = e05;
+                                i06 = e05;
+                                break;
+                            case 103:// Bmaj7
+                                i25 = e05;
+                                i16 = e05;
+                                i07 = e05;
+                                i02 = e05;
+                                break;
+                            }
+                        case 4:
                         case 6:
                             i46 = e05;
                             switch(note)
@@ -1322,7 +1621,7 @@ void consumeToken(unsigned char incomingByte)
                                 i15 = e05;
                                 i33 = e07;
                                 break;
-                            case 23:
+                            case 23: //B
                                 i37 = e05;
                                 i03 = e05;
                                 i06 = e05;
@@ -1330,7 +1629,6 @@ void consumeToken(unsigned char incomingByte)
                                 i33 = e07;
                                 break;
                             case 36:
-#ifndef ukulelechord
                                 if(i01)
                                     i01 = 1;
                                 if(i02)
@@ -1342,40 +1640,20 @@ void consumeToken(unsigned char incomingByte)
                                 if(i05)
                                     i05 = 1;
                                 i00 = e04;
-#else
-                                P17VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 37:
-#ifndef ukulelechord
                                 i01 = e05;
                                 i51 = e08;
-#else
-                                P25VAR = P01VAR = P23VAR = P20VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 38:
-#ifndef ukulelechord
                                 i02 = e05;
                                 i51 = e08;
-#else
-                                P26VAR = P02VAR = P06VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 39:
-#ifndef ukulelechord
                                 i03 = e05;
                                 i51 = e08;
-#else
-                                P03VAR = P07VAR = P15VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 40:
-#ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
                                     if(i23)
@@ -1395,13 +1673,8 @@ void consumeToken(unsigned char incomingByte)
                                     i04 = e05;
                                     i51 = e08;
                                 }
-#else
-                                P25VAR = P04VAR = P16VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 41:
-#ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
                                     i23 = e05;
@@ -1412,22 +1685,12 @@ void consumeToken(unsigned char incomingByte)
                                     i05 = e05;
                                     i51 = e08;
                                 }
-#else
-                                P26VAR = P23VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 42:
-#ifndef ukulelechord
                                 i06 = e05;
                                 i52 = e08;
-#else
-                                P32VAR = P01VAR = P06VAR = P20VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 43:
-#ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
                                     if(i25)
@@ -1447,13 +1710,8 @@ void consumeToken(unsigned char incomingByte)
                                     i07 = e05;
                                     i52 = e08;
                                 }
-#else
-                                P02VAR = P07VAR = P16VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 44:
-#ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
                                     i25 = e05;
@@ -1464,13 +1722,8 @@ void consumeToken(unsigned char incomingByte)
                                     i11 = e05;
                                     i52 = e08;
                                 }
-#else
-                                P25VAR = P03VAR = P11VAR = P17VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 45:
-#ifndef ukulelechord
                                 if(ukubool%3!=0)
                                 {
                                     if(ukubool%3==1)
@@ -1499,13 +1752,8 @@ void consumeToken(unsigned char incomingByte)
                                     i52 = e08;
                                 }
                                 ukubool++;
-#else
-                                P01VAR = P26VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 46:
-#ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
                                     i15 = e05;
@@ -1516,13 +1764,8 @@ void consumeToken(unsigned char incomingByte)
                                     i32 = e05;
                                     i56 = e08;
                                 }
-#else
-                                P32VAR = P02VAR = P23VAR = P15VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 47:
-#ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
                                     i16 = e05;
@@ -1533,13 +1776,8 @@ void consumeToken(unsigned char incomingByte)
                                     i37 = e05;
                                     i56 = e08;
                                 }
-#else
-                                P33VAR = P03VAR = P06VAR = P16VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 48:
-#ifndef ukulelechord
                                 if(ukubool++%2==0)
                                 {
                                     i17 = e05;
@@ -1550,28 +1788,14 @@ void consumeToken(unsigned char incomingByte)
                                     i34 = e05;
                                     i56 = e08;
                                 }
-#else
-                                P17VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 49:
-#ifndef ukulelechord
                                 i20 = e05;
                                 i53 = e08;
-#else
-                                P25VAR = P01VAR = P23VAR = P20VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 50:
-#ifndef ukulelechord
                                 i21 = e05;
                                 i53 = e08;
-#else
-                                P26VAR = P02VAR = P06VAR = 255;
-                                i33 = e07;
-#endif
                                 break;
                             case 60://Cm
                                 i03 = e05;
@@ -1606,7 +1830,7 @@ void consumeToken(unsigned char incomingByte)
                                 i16 = e05;
                                 i33 = e07;
                                 break;
-                            case 65:
+                            case 65://Fm
                                 i25 = e05;
                                 i23 = e05;
                                 i17 = e05;
@@ -1750,48 +1974,54 @@ void consumeToken(unsigned char incomingByte)
                                 i21 = e05;
                                 i33 = e07;
                                 break;
-                            case 88://Fmaj7
+                            case 88://Emaj7
+                                i25 = e05;
+                                i03 = e05;
+                                i16 = e05;
+                                i33 = e07;
+                                break;
+                            case 89://Fmaj7
                                 i26 = e05;
                                 i04 = e05;
                                 i23 = e05;
                                 i17 = e05;
                                 i33 = e07;
                                 break;
-                            case 89://Gbmaj7
+                            case 90://Gbmaj7
                                 i32 = e05;
                                 i05 = e05;
                                 i06 = e05;
                                 i20 = e05;
                                 i33 = e07;
                                 break;
-                            case 90://Gmaj7
+                            case 91://Gmaj7
                                 i02 = e05;
                                 i06 = e05;
                                 i16 = e05;
                                 i33 = e07;
                                 break;
-                            case 91://Abmaj7
+                            case 92://Abmaj7
                                 i25 = e05;
                                 i03 = e05;
                                 i07 = e05;
                                 i17 = e05;
                                 i33 = e07;
                                 break;
-                            case 92://Amaj7
+                            case 93://Amaj7
                                 i26 = e05;
                                 i04 = e05;
                                 i11 = e05;
                                 i20 = e05;
                                 i33 = e07;
                                 break;
-                            case 93://Bbmaj7
+                            case 94://Bbmaj7
                                 i26 = e05;
                                 i02 = e05;
                                 i23 = e05;
                                 i15 = e05;
                                 i33 = e07;
                                 break;
-                            case 94://Bmaj7
+                            case 95://Bmaj7
                                 i32 = e05;
                                 i03 = e05;
                                 i06 = e05;
@@ -1830,7 +2060,7 @@ void consumeToken(unsigned char incomingByte)
                                 i14 = 3;
                                 break;
                             case 44:
-                                i11 = e23+1;
+                                i11 = (e03 >> 1) ;
                                 break;
                             case 45:
                                 i07 = e23+1;
@@ -2061,87 +2291,102 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
 {
     TF2=0;    //清除TF2=0
 #ifdef LIGHT
-    switch( channel )
+    switch(i03)
     {
-    case 4:
-        switch(i03)
-        {
-        case 0:
-            break;
-        case 1:
-            P03 = 0;
-            i03--;
-            break;
-        default:
-            if(e03 == i03)
-                P03 = 1;
-            i03--;
-            break;
-        }
+    case 0:
         break;
-    case 5:
-        switch(i04)
-        {
-        case 0:
-            break;
-        case 1:
-            P04 = 0;
-            i04--;
-            break;
-        default:
-            if(e03 == i04)
-                P04 = 1;
-            i04--;
-            break;
-        }
+    case 1:
+        P03 = 0;
+        i03--;
         break;
-    case 6:
-        switch(i05)
-        {
-        case 0:
-            break;
-        case 1:
-            P05 = 0;
-            i05--;
-            break;
-        default:
-            if(e03 == i05)
-                P05 = 1;
-            i05--;
-            break;
-        }
+    default:
+        if(e03 == i03)
+            P03 = 1;
+        i03--;
         break;
-    case 7:
-        switch(i06)
-        {
-        case 0:
-            break;
-        case 1:
-            P06 = 0;
-            i06--;
-            break;
-        default:
-            if(e03 == i06)
-                P06 = 1;
-            i06--;
-            break;
-        }
+    }
+    switch(i04)
+    {
+    case 0:
         break;
-    case 8:
-        switch(i07)
-        {
-        case 0:
-            break;
-        case 1:
-            P07 = 0;
-            i07--;
-            break;
-        default:
-            if(e03 == i07)
-                P07 = 1;
-            i07--;
-            break;
-        }
+    case 1:
+        P04 = 0;
+        i04--;
+        break;
+    default:
+        if(e03 == i04)
+            P04 = 1;
+        i04--;
+        break;
+    }
+    switch(i05)
+    {
+    case 0:
+        break;
+    case 1:
+        P05 = 0;
+        i05--;
+        break;
+    default:
+        if(e03 == i05)
+            P05 = 1;
+        i05--;
+        break;
+    }
+    switch(i52)
+    {
+    case 0:
+        break;
+    case 1:
+        P52 = 0;
+        i52--;
+        break;
+    default:
+        if(e03 == i52)
+            P52 = 1;
+        i52--;
+        break;
+    }
+    switch(i07)
+    {
+    case 0:
+        break;
+    case 1:
+        P07 = 0;
+        i07--;
+        break;
+    default:
+        if(e03 == i07)
+            P07 = 1;
+        i07--;
+        break;
+    }
+    switch(i50)
+    {
+    case 0:
+        break;
+    case 1:
+        P50 = 0;
+        i50--;
+        break;
+    default:
+        if(e03 == i50)
+            P50 = 1;
+        i50--;
+        break;
+    }
+    switch(i51)
+    {
+    case 0:
+        break;
+    case 1:
+        P51 = 0;
+        i51--;
+        break;
+    default:
+        if(e03 == i51)
+            P51 = 1;
+        i51--;
         break;
     }
 #else
@@ -3217,8 +3462,72 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         }
 #endif
         break;
-    case 4:
     case 5:
+        switch(i57)
+        {
+        case 0:
+            break;
+        case (e07-12):
+            i00 = e04;
+            i57--;
+            break;
+        case (e07-10):
+            i05 = e04;
+            i57--;
+            break;
+        case (e07-8):
+            i15 = e04;
+            i57--;
+            break;
+        case (e07-6):
+            i22 = e04;
+            i57--;
+            break;
+        case (e07-4):
+            i26 = e04;
+            i57--;
+            break;
+        case (e07-2):
+            i36 = e04;
+            i57--;
+            break;
+        default:
+            i57--;
+            break;
+        }
+        switch(i33)
+        {
+        case 0:
+            break;
+        case (e07-12):
+            i36 = e04;
+            i33--;
+            break;
+        case (e07-10):
+            i26 = e04;
+            i33--;
+            break;
+        case (e07-8):
+            i22 = e04;
+            i33--;
+            break;
+        case (e07-6):
+            i15 = e04;
+            i33--;
+            break;
+        case (e07-4):
+            i05 = e04;
+            i33--;
+            break;
+        case (e07-2):
+            i00 = e04;
+            i33--;
+            break;
+        default:
+            i33--;
+            break;
+        }
+    case 4:
     case 6:
         switch(i00)
         {
@@ -4851,32 +5160,30 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             i36--;
             break;
         }
-#ifdef ukulelechord
         switch(i33)
         {
         case 0:
             break;
         case (e07-8):
-            P35 = 1;
+            i35 = e04;
             i33--;
             break;
         case (e07-6):
-            P22 = 1;
+            i22 = e04;
             i33--;
             break;
         case (e07-4):
-            P00 = 1;
+            i00 = e04;
             i33--;
             break;
         case (e07-2):
-            P24 = 1;
+            i24 = e04;
             i33--;
             break;
         default:
             i33--;
             break;
         }
-#else
         switch(i56)
         {
         case 0:
@@ -4925,7 +5232,6 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
             i53--;
             break;
         }
-#endif
         break;
     case 9:
         switch(i00)
@@ -6517,6 +6823,7 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
 
 void rayoff()
 {
+#ifdef YESOFF
 #ifdef LIGHT
     switch( channel )
     {
@@ -6534,6 +6841,8 @@ void rayoff()
         break;
     case 8:
         i07 = 1;
+        i50 = 1;
+        i51 = 1;
         break;
     }
 #else
@@ -6718,133 +7027,57 @@ void rayoff()
     case 8:
         switch(note)
         {
-        case 36:
-#ifndef ukulelechord
-#else
-            P17VAR = 255;
-            i33 = e07;
-#endif
-            break;
         case 37:
-#ifndef ukulelechord
             i01 = 1;
-#else
-            P25VAR = P01VAR = P23VAR = P20VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 38:
-#ifndef ukulelechord
             i02 = 1;
-#else
-            P26VAR = P02VAR = P06VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 39:
-#ifndef ukulelechord
             i03 = 1;
-#else
-            P03VAR = P07VAR = P15VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 40:
-#ifndef ukulelechord
             i04 = 1;
-#else
-            P25VAR = P04VAR = P16VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 41:
-#ifndef ukulelechord
             i23 = 1;
             i05 = 1;
-#else
-            P26VAR = P23VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 42:
-#ifndef ukulelechord
             i06 = 1;
-#else
-            P32VAR = P01VAR = P06VAR = P20VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 43:
-#ifndef ukulelechord
             i07 = 1;
-#else
-            P02VAR = P07VAR = P16VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 44:
-#ifndef ukulelechord
             i25 = 1;
             i11 = 1;
-#else
-            P25VAR = P03VAR = P11VAR = P17VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 45:
-#ifndef ukulelechord
             i26 = 1;
             i14 = 1;
-#else
-            P01VAR = P26VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 46:
-#ifndef ukulelechord
             i15 = 1;
             i32 = 1;
-#else
-            P32VAR = P02VAR = P23VAR = P15VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 47:
-#ifndef ukulelechord
             i16 = 1;
             i37 = 1;
-#else
-            P33VAR = P03VAR = P06VAR = P16VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 48:
-#ifndef ukulelechord
             i17 = 1;
             i34 = 1;
-#else
-            P17VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 49:
-#ifndef ukulelechord
             i20 = 1;
-#else
-            P25VAR = P01VAR = P23VAR = P20VAR = 255;
-            i33 = e07;
-#endif
             break;
         case 50:
-#ifndef ukulelechord
             i21 = 1;
-#else
-            P26VAR = P02VAR = P06VAR = 255;
-            i33 = e07;
-#endif
             break;
         }
         break;
     }
+#endif
 #endif
 }
