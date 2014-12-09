@@ -2060,7 +2060,7 @@ void consumeToken(unsigned char incomingByte)
                                 i14 = 3;
                                 break;
                             case 44:
-                                i11 = (e03 >> 1) ;
+                                i11 = e03;
                                 break;
                             case 45:
                                 i07 = e23+1;

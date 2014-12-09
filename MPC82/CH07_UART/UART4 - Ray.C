@@ -839,7 +839,7 @@ void T0_int(void) interrupt 1  //Timer0中斷函數
     TL0=0;	//TL0=65536 - TT;
     TH0=0;	//Timer0由0開始計時		//TH0=65536 - TT >> 8; //設定計時值
 #else
-    if( 0 == ( pressure++ % 5 ) )
+    if( 0 == ( pressure++ % 8 ) )
     {
 #if !defined MUSIC && !defined CHANNEL16
         i12 = 3;
