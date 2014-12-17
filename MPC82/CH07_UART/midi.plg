@@ -4,60 +4,58 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 C:\Windows.old\Users\Ray\Documents\DreamII\8051\MPC82\CH07_UART\shanghai.uvproj
-Project File Date:  09/23/2014
+Project File Date:  12/16/2014
 
 <h2>Output:</h2>
 Build target 'Target 1'
 compiling shanghai.c...
-SHANGHAI.C(5833): warning C280: 'bps': unreferenced local variable
+SHANGHAI.C(1190): warning C280: 'bps': unreferenced local variable
 linking...
-Program Size: data=9.0 xdata=970 code=22832
+Program Size: data=9.0 xdata=970 code=5106
 "midi" - 0 Error(s), 1 Warning(s).
 Build target 'Target 1'
 compiling shanghai.c...
-SHANGHAI.C(1137): warning C280: 'bps': unreferenced local variable
+SHANGHAI.C(1184): warning C280: 'bps': unreferenced local variable
 linking...
-Program Size: data=9.0 xdata=970 code=4140
+Program Size: data=9.0 xdata=970 code=5087
 "midi" - 0 Error(s), 1 Warning(s).
 Build target 'Target 1'
 compiling shanghai.c...
-SHANGHAI.C(1137): warning C280: 'bps': unreferenced local variable
+SHANGHAI.C(1184): warning C280: 'bps': unreferenced local variable
 linking...
-Program Size: data=9.0 xdata=970 code=4140
+Program Size: data=9.0 xdata=970 code=5087
 "midi" - 0 Error(s), 1 Warning(s).
 Build target 'Target 1'
 compiling shanghai.c...
-SHANGHAI.C(1137): warning C280: 'bps': unreferenced local variable
+SHANGHAI.C(1184): warning C280: 'bps': unreferenced local variable
 linking...
-Program Size: data=9.0 xdata=970 code=4153
+Program Size: data=9.0 xdata=970 code=5087
 "midi" - 0 Error(s), 1 Warning(s).
 Build target 'Target 1'
 compiling shanghai.c...
-SHANGHAI.C(1137): warning C280: 'bps': unreferenced local variable
-linking...
-Program Size: data=9.0 xdata=970 code=4139
-"midi" - 0 Error(s), 1 Warning(s).
+SHANGHAI.C(432): error C141: syntax error near 'else'
+SHANGHAI.C(454): error C141: syntax error near 'else'
+SHANGHAI.C(460): error C141: syntax error near 'void'
+SHANGHAI.C(461): error C141: syntax error near '{'
+SHANGHAI.C(545): error C141: syntax error near 'void'
+Target not created
 Build target 'Target 1'
 compiling shanghai.c...
-SHANGHAI.C(1137): warning C280: 'bps': unreferenced local variable
-linking...
-Program Size: data=9.0 xdata=970 code=4139
-"midi" - 0 Error(s), 1 Warning(s).
-Build target 'Target 1'
-compiling shanghai.c...
-SHANGHAI.C(1137): warning C280: 'bps': unreferenced local variable
-linking...
-Program Size: data=9.0 xdata=970 code=4125
-"midi" - 0 Error(s), 1 Warning(s).
-Build target 'Target 1'
-compiling shanghai.c...
-SHANGHAI.C(1200): warning C280: 'bps': unreferenced local variable
-linking...
-Program Size: data=9.0 xdata=970 code=4503
-"midi" - 0 Error(s), 1 Warning(s).
+SHANGHAI.C(432): error C141: syntax error near 'else'
+SHANGHAI.C(454): error C141: syntax error near 'else'
+SHANGHAI.C(460): error C141: syntax error near 'void'
+SHANGHAI.C(461): error C141: syntax error near '{'
+SHANGHAI.C(545): error C141: syntax error near 'void'
+Target not created
 Build target 'Target 1'
 compiling shanghai.c...
 SHANGHAI.C(1200): warning C280: 'bps': unreferenced local variable
 linking...
-Program Size: data=9.0 xdata=970 code=4503
+Program Size: data=9.0 xdata=970 code=5214
+"midi" - 0 Error(s), 1 Warning(s).
+Build target 'Target 1'
+compiling shanghai.c...
+SHANGHAI.C(1203): warning C280: 'bps': unreferenced local variable
+linking...
+Program Size: data=9.0 xdata=970 code=5242
 "midi" - 0 Error(s), 1 Warning(s).

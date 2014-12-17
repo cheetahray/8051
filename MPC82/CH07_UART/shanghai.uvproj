@@ -347,9 +347,9 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>UART4 - 516.C</FileName>
+              <FileName>shanghai.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UART4 - 516.C</FilePath>
+              <FilePath>.\shanghai.c</FilePath>
             </File>
           </Files>
         </Group>
