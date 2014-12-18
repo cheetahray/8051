@@ -262,7 +262,7 @@ void consumeToken(unsigned char incomingByte)
 							case 45:
 							case 46:
 							    e13 = velocity/42 + 4;
-							    if(drumbool++%2)
+							    if(drumbool%2)
 							        i50 = e13;
 							    else
 								    i51 = e13;
@@ -1090,6 +1090,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         case 1:
             P50 = 0;
             i50--;
+            drumbool++;
             break;
         default:
             if(e13 == i50)
@@ -1104,6 +1105,7 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
         case 1:
             P51 = 0;
             i51--;
+            drumbool++;
             break;
         default:
             if(e13 == i51)
