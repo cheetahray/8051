@@ -49,7 +49,7 @@ unsigned char rayCHANNEL = 0, oneCHANNEL = 2,twoCHANNEL = 0;//#define rayCHANNEL
 #define e09 5	 //木鐵琴全滿Velocity
 unsigned char e13;//木鐵琴槌時間
 unsigned char e23;//鼓棒時間
-unsigned char ukubool;
+unsigned char drumbool;
 unsigned char channel;
 int note;
 unsigned char velocity;
@@ -248,188 +248,205 @@ void consumeToken(unsigned char incomingByte)
                         switch( oneCHANNEL )
                         {
                         case 2:
-                        switch(note)
-                        {
-                        case 23:
-                            i17 = e13;
-                            break;
-                        case 24:
-                            i20 = e13;
-                            break;
-                        case 25:
-                            i21 = e13;
-                            break;
-                        case 26:
-                            i22 = e13;
-                            break;
-                        case 27:
-                            i23 = e13;
-                            break;
-                        case 28:
-                            i24 = e13;
-                            break;
-                        case 29:
-                            i25 = e13;
-                            break;
-                        case 30:
-                            i26 = e13;
-                            break;
-                        case 31:
-                            i56 = e13;
-                            break;
-                        case 32:
-                            i55 = e13;
-                            break;
-                        case 33:
-                            i34 = e13;
-                            break;
-                        case 34:
-                            i35 = e13;
-                            break;
-                        case 35:
-                            i36 = e13;
-                            break;
-                        case 36:
-                            i37 = e13;
-                            break;
-                        case 37:
-                            i40 = e13;
-                            break;
-                        case 38:
-                            i41 = e13;
-                            break;
-                        case 39:
-                            i42 = e13;
-                            break;
-                        case 40:
-                            i43 = e13;
-                            break;
-                        case 41:
-                            i46 = e13;
-                            break;
-                        case 42:
-                            i50 = e13;
-                            break;
-                        case 43:
-                            i51 = e13;
-                            break;
-                        case 44:
-                            i52 = e13;
-                            break;
-                        case 45:
-                            i53 = e13;
-                            break;
-                        case 46:
-                            i54 = e13;
-                            break;
-                            }
+                            switch(note)
+                            {
+                            case 36:
+							case 37:
+							case 38:
+							case 39:
+							case 40:
+							case 41:
+							case 42:
+							case 43:
+							case 44:
+							case 45:
+							case 46:
+							    e13 = velocity/42 + 4;
+							    if(drumbool++%2)
+							        i50 = e13;
+							    else
+								    i51 = e13;
+								break;
+							case 47:
+                                i17 = e13;
+                                break;
+                            case 48:
+                                i20 = e13;
+                                break;
+                            case 49:
+                                i21 = e13;
+                                break;
+                            case 50:
+                                i22 = e13;
+                                break;
+                            case 51:
+                                i23 = e13;
+                                break;
+                            case 52:
+                                i24 = e13;
+                                break;
+                            case 53:
+                                i25 = e13;
+                                break;
+                            case 54:
+                                i26 = e13;
+                                break;
+                            case 55:
+                                i56 = e13;
+                                break;
+                            case 56:
+                                i55 = e13;
+                                break;
+                            case 57:
+                                i34 = e13;
+                                break;
+                            case 58:
+                                i35 = e13;
+                                break;
+                            case 59:
+                                i36 = e13;
+                                break;
+                            case 60:
+                                i37 = e13;
+                                break;
+                            case 61:
+                                i40 = e13;
+                                break;
+                            case 62:
+                                i41 = e13;
+                                break;
+                            case 63:
+                                i42 = e13;
+                                break;
+                            case 64:
+                                i43 = e13;
+                                break;
+                            case 65:
+                                i46 = e13;
+                                break;
+                            case 66:
+                                i00 = e13;
+                                break;
+                            case 67:
+                                i01 = e13;
+                                break;
+                            case 68:
+                                i02 = e13;
+                                break;
+                            case 69:
+                                i53 = e13;
+                                break;
+                            case 70:
+                                i54 = e13;
+                                break;
+							}
                             break;
                         case 3:
                             switch(note)
                             {
-                            case 47:
-                            i00 = e13;
-                            break;
-                        case 48:
-                            i01 = e13;
-                            break;
-                        case 49:
-                            i02 = e13;
-                            break;
-                        case 50:
-                            i03 = e13;
-                            break;
-                        case 51:
-                            i04 = e13;
-                            break;
-                        case 52:
-                            i05 = e13;
-                            break;
-                        case 53:
-                            i06 = e13;
-                            break;
-                        case 54:
-                            i07 = e13;
-                            break;
-                        case 55:
-                            i11 = e13;
-                            break;
-                        case 56:
-                            i14 = e13;
-                            break;
-                        case 57:
-                            i15 = e13;
-                            break;
-                        case 58:
-                            i16 = e13;
-                            break;
-                        case 59:
-                            i17 = e13;
-                            break;
-                        case 60:
-                            i20 = e13;
-                            break;
-                        case 61:
-                            i21 = e13;
-                            break;
-                        case 62:
-                            i22 = e13;
-                            break;
-                        case 63:
-                            i23 = e13;
-                            break;
-                        case 64:
-                            i24 = e13;
-                            break;
-                        case 65:
-                            i25 = e13;
-                            break;
-                        case 66:
-                            i26 = e13;
-                            break;
-                        case 67:
-                            i56 = e13;
-                            break;
-                        case 68:
-                            i55 = e13;
-                            break;
-                        case 69:
-                            i34 = e13;
-                            break;
-                        case 70:
-                            i35 = e13;
-                            break;
-                        case 71:
-                            i36 = e13;
-                            break;
-                        case 72:
-                            i37 = e13;
-                            break;
-                        case 73:
-                            i40 = e13;
-                            break;
-                        case 74:
-                            i41 = e13;
-                            break;
-                        case 75:
-                            i42 = e13;
-                            break;
-                        case 76:
-                            i43 = e13;
-                            break;
-                        case 77:
-                            i46 = e13;
-                            break;
-                        case 78:
-                            i50 = e13;
-                            break;
-                        case 79:
-                            i51 = e13;
-                            break;
-                        case 80:
-                            i52 = e13;
-                            break;
-                        }
+                            case 71:
+                                i00 = e13;
+                                break;
+                            case 72:
+                                i01 = e13;
+                                break;
+                            case 73:
+                                i02 = e13;
+                                break;
+                            case 74:
+                                i03 = e13;
+                                break;
+                            case 75:
+                                i04 = e13;
+                                break;
+                            case 76:
+                                i05 = e13;
+                                break;
+                            case 77:
+                                i06 = e13;
+                                break;
+                            case 78:
+                                i07 = e13;
+                                break;
+                            case 79:
+                                i11 = e13;
+                                break;
+                            case 80:
+                                i14 = e13;
+                                break;
+                            case 81:
+                                i15 = e13;
+                                break;
+                            case 82:
+                                i16 = e13;
+                                break;
+                            case 83:
+                                i17 = e13;
+                                break;
+                            case 84:
+                                i20 = e13;
+                                break;
+                            case 85:
+                                i21 = e13;
+                                break;
+                            case 86:
+                                i22 = e13;
+                                break;
+                            case 87:
+                                i23 = e13;
+                                break;
+                            case 88:
+                                i24 = e13;
+                                break;
+                            case 89:
+                                i25 = e13;
+                                break;
+                            case 90:
+                                i26 = e13;
+                                break;
+                            case 91:
+                                i56 = e13;
+                                break;
+                            case 92:
+                                i55 = e13;
+                                break;
+                            case 93:
+                                i34 = e13;
+                                break;
+                            case 94:
+                                i35 = e13;
+                                break;
+                            case 95:
+                                i36 = e13;
+                                break;
+                            case 96:
+                                i37 = e13;
+                                break;
+                            case 97:
+                                i40 = e13;
+                                break;
+                            case 98:
+                                i41 = e13;
+                                break;
+                            case 99:
+                                i42 = e13;
+                                break;
+                            case 100:
+                                i43 = e13;
+                                break;
+                            case 101:
+                                i46 = e13;
+                                break;
+                            case 102:
+                                i50 = e13;
+                                break;
+                            case 103:
+                                i51 = e13;
+                                break;
+                            case 104:
+                                i52 = e13;
+                                break;
+                            }
                             break;
                         }
                         //keyboard = 1;
@@ -654,516 +671,516 @@ void T2_int (void) interrupt 5   //Timer2中斷函數
     {
     case 2:
     case 3:
-    switch(i00)
-    {
-    case 0:
-        break;
-    case 1:
-        P00 = 0;
-        i00--;
-        break;
-    default:
-        if(e13 == i00)
-            P00 = 1;
-        i00--;
-        break;
-    }
-    switch(i01)
-    {
-    case 0:
-        break;
-    case 1:
-        P01 = 0;
-        i01--;
-        break;
-    default:
-        if(e13 == i01)
-            P01 = 1;
-        i01--;
-        break;
-    }
-    switch(i02)
-    {
-    case 0:
-        break;
-    case 1:
-        P02 = 0;
-        i02--;
-        break;
-    default:
-        if(e13 == i02)
-            P02 = 1;
-        i02--;
-        break;
-    }
-    switch(i03)
-    {
-    case 0:
-        break;
-    case 1:
-        P03 = 0;
-        i03--;
-        break;
-    default:
-        if(e13 == i03)
-            P03 = 1;
-        i03--;
-        break;
-    }
-    switch(i04)
-    {
-    case 0:
-        break;
-    case 1:
-        P04 = 0;
-        i04--;
-        break;
-    default:
-        if(e13 == i04)
-            P04 = 1;
-        i04--;
-        break;
-    }
-    switch(i05)
-    {
-    case 0:
-        break;
-    case 1:
-        P05 = 0;
-        i05--;
-        break;
-    default:
-        if(e13 == i05)
-            P05 = 1;
-        i05--;
-        break;
-    }
-    switch(i06)
-    {
-    case 0:
-        break;
-    case 1:
-        P06 = 0;
-        i06--;
-        break;
-    default:
-        if(e13 == i06)
-            P06 = 1;
-        i06--;
-        break;
-    }
-    switch(i07)
-    {
-    case 0:
-        break;
-    case 1:
-        P07 = 0;
-        i07--;
-        break;
-    default:
-        if(e13 == i07)
-            P07 = 1;
-        i07--;
-        break;
-    }
-    switch(i11)
-    {
-    case 0:
-        break;
-    case 1:
-        P11 = 0;
-        i11--;
-        break;
-    default:
-        if(e13 == i11)
-            P11 = 1;
-        i11--;
-        break;
-    }
-    switch(i14)
-    {
-    case 0:
-        break;
-    case 1:
-        P14 = 0;
-        i14--;
-        break;
-    default:
-        if(e13 == i14)
-            P14 = 1;
-        i14--;
-        break;
-    }
-    switch(i15)
-    {
-    case 0:
-        break;
-    case 1:
-        P15 = 0;
-        i15--;
-        break;
-    default:
-        if(e13 == i15)
-            P15 = 1;
-        i15--;
-        break;
-    }
-    switch(i16)
-    {
-    case 0:
-        break;
-    case 1:
-        P16 = 0;
-        i16--;
-        break;
-    default:
-        if(e13 == i16)
-            P16 = 1;
-        i16--;
-        break;
-    }
-    switch(i17)
-    {
-    case 0:
-        break;
-    case 1:
-        P17 = 0;
-        i17--;
-        break;
-    default:
-        if(e13 == i17)
-            P17 = 1;
-        i17--;
-        break;
-    }
-    switch(i20)
-    {
-    case 0:
-        break;
-    case 1:
-        P20 = 0;
-        i20--;
-        break;
-    default:
-        if(e13 == i20)
-            P20 = 1;
-        i20--;
-        break;
-    }
-    switch(i21)
-    {
-    case 0:
-        break;
-    case 1:
-        P21 = 0;
-        i21--;
-        break;
-    default:
-        if(e13 == i21)
-            P21 = 1;
-        i21--;
-        break;
-    }
-    switch(i22)
-    {
-    case 0:
-        break;
-    case 1:
-        //CCAP0H = 255;
-        P22 = 0;
-        i22--;
-        break;
-    default:
-        if(e13 == i22)
-            P22 = 1;
-        i22--;
-        break;
-    }
-    switch(i23)
-    {
-    case 0:
-        break;
-    case 1:
-        //CCAP1H = 255;
-        P23 = 0;
-        i23--;
-        break;
-    default:
-        if(e13 == i23)
-            P23 = 1;
-        i23--;
-        break;
-    }
-    switch(i24)
-    {
-    case 0:
-        break;
-    case 1:
-        //CCAP2H = 255;
-        P24 = 0;
-        i24--;
-        break;
-    default:
-        if(e13 == i24)
-            P24 = 1;
-        i24--;
-        break;
-    }
-    switch(i25)
-    {
-    case 0:
-        break;
-    case 1:
-        //CCAP3H = 255;
-        P25 = 0;
-        i25--;
-        break;
-    default:
-        if(e13 == i25)
-            P25 = 1;
-        i25--;
-        break;
-    }
-    switch(i26)
-    {
-    case 0:
-        break;
-    case 1:
-        //CCAP4H = 255;
-        P26 = 0;
-        i26--;
-        break;
-    default:
-        if(e13 == i26)
-            P26 = 1;
-        i26--;
-        break;
-    }
-    switch(i34)
-    {
-    case 0:
-        break;
-    case 1:
-        P34 = 0;
-        i34--;
-        break;
-    default:
-        if(e13 == i34)
-            P34 = 1;
-        i34--;
-        break;
-    }
-    switch(i35)
-    {
-    case 0:
-        break;
-    case 1:
-        P35 = 0;
-        i35--;
-        break;
-    default:
-        if(e13 == i35)
-            P35 = 1;
-        i35--;
-        break;
-    }
-    switch(i36)
-    {
-    case 0:
-        break;
-    case 1:
-        P36 = 0;
-        i36--;
-        break;
-    default:
-        if(e13 == i36)
-            P36 = 1;
-        i36--;
-        break;
-    }
-    switch(i37)
-    {
-    case 0:
-        break;
-    case 1:
-        P37 = 0;
-        i37--;
-        break;
-    default:
-        if(e13 == i37)
-            P37 = 1;
-        i37--;
-        break;
-    }
-    switch(i40)
-    {
-    case 0:
-        break;
-    case 1:
-        P40 = 0;
-        i40--;
-        break;
-    default:
-        if(e13 == i40)
-            P40 = 1;
-        i40--;
-        break;
-    }
-    switch(i41)
-    {
-    case 0:
-        break;
-    case 1:
-        P41 = 0;
-        i41--;
-        break;
-    default:
-        if(e13 == i41)
-            P41 = 1;
-        i41--;
-        break;
-    }
-    switch(i42)
-    {
-    case 0:
-        break;
-    case 1:
-        P42 = 0;
-        i42--;
-        break;
-    default:
-        if(e13 == i42)
-            P42 = 1;
-        i42--;
-        break;
-    }
-    switch(i43)
-    {
-    case 0:
-        break;
-    case 1:
-        P43 = 0;
-        i43--;
-        break;
-    default:
-        if(e13 == i43)
-            P43 = 1;
-        i43--;
-        break;
-    }
-    switch(i46)
-    {
-    case 0:
-        break;
-    case 1:
-        P46 = 0;
-        i46--;
-        break;
-    default:
-        if(e13 == i46)
-            P46 = 1;
-        i46--;
-        break;
-    }
+        switch(i00)
+        {
+        case 0:
+            break;
+        case 1:
+            P00 = 0;
+            i00--;
+            break;
+        default:
+            if(e13 == i00)
+                P00 = 1;
+            i00--;
+            break;
+        }
+        switch(i01)
+        {
+        case 0:
+            break;
+        case 1:
+            P01 = 0;
+            i01--;
+            break;
+        default:
+            if(e13 == i01)
+                P01 = 1;
+            i01--;
+            break;
+        }
+        switch(i02)
+        {
+        case 0:
+            break;
+        case 1:
+            P02 = 0;
+            i02--;
+            break;
+        default:
+            if(e13 == i02)
+                P02 = 1;
+            i02--;
+            break;
+        }
+        switch(i03)
+        {
+        case 0:
+            break;
+        case 1:
+            P03 = 0;
+            i03--;
+            break;
+        default:
+            if(e13 == i03)
+                P03 = 1;
+            i03--;
+            break;
+        }
+        switch(i04)
+        {
+        case 0:
+            break;
+        case 1:
+            P04 = 0;
+            i04--;
+            break;
+        default:
+            if(e13 == i04)
+                P04 = 1;
+            i04--;
+            break;
+        }
+        switch(i05)
+        {
+        case 0:
+            break;
+        case 1:
+            P05 = 0;
+            i05--;
+            break;
+        default:
+            if(e13 == i05)
+                P05 = 1;
+            i05--;
+            break;
+        }
+        switch(i06)
+        {
+        case 0:
+            break;
+        case 1:
+            P06 = 0;
+            i06--;
+            break;
+        default:
+            if(e13 == i06)
+                P06 = 1;
+            i06--;
+            break;
+        }
+        switch(i07)
+        {
+        case 0:
+            break;
+        case 1:
+            P07 = 0;
+            i07--;
+            break;
+        default:
+            if(e13 == i07)
+                P07 = 1;
+            i07--;
+            break;
+        }
+        switch(i11)
+        {
+        case 0:
+            break;
+        case 1:
+            P11 = 0;
+            i11--;
+            break;
+        default:
+            if(e13 == i11)
+                P11 = 1;
+            i11--;
+            break;
+        }
+        switch(i14)
+        {
+        case 0:
+            break;
+        case 1:
+            P14 = 0;
+            i14--;
+            break;
+        default:
+            if(e13 == i14)
+                P14 = 1;
+            i14--;
+            break;
+        }
+        switch(i15)
+        {
+        case 0:
+            break;
+        case 1:
+            P15 = 0;
+            i15--;
+            break;
+        default:
+            if(e13 == i15)
+                P15 = 1;
+            i15--;
+            break;
+        }
+        switch(i16)
+        {
+        case 0:
+            break;
+        case 1:
+            P16 = 0;
+            i16--;
+            break;
+        default:
+            if(e13 == i16)
+                P16 = 1;
+            i16--;
+            break;
+        }
+        switch(i17)
+        {
+        case 0:
+            break;
+        case 1:
+            P17 = 0;
+            i17--;
+            break;
+        default:
+            if(e13 == i17)
+                P17 = 1;
+            i17--;
+            break;
+        }
+        switch(i20)
+        {
+        case 0:
+            break;
+        case 1:
+            P20 = 0;
+            i20--;
+            break;
+        default:
+            if(e13 == i20)
+                P20 = 1;
+            i20--;
+            break;
+        }
+        switch(i21)
+        {
+        case 0:
+            break;
+        case 1:
+            P21 = 0;
+            i21--;
+            break;
+        default:
+            if(e13 == i21)
+                P21 = 1;
+            i21--;
+            break;
+        }
+        switch(i22)
+        {
+        case 0:
+            break;
+        case 1:
+            //CCAP0H = 255;
+            P22 = 0;
+            i22--;
+            break;
+        default:
+            if(e13 == i22)
+                P22 = 1;
+            i22--;
+            break;
+        }
+        switch(i23)
+        {
+        case 0:
+            break;
+        case 1:
+            //CCAP1H = 255;
+            P23 = 0;
+            i23--;
+            break;
+        default:
+            if(e13 == i23)
+                P23 = 1;
+            i23--;
+            break;
+        }
+        switch(i24)
+        {
+        case 0:
+            break;
+        case 1:
+            //CCAP2H = 255;
+            P24 = 0;
+            i24--;
+            break;
+        default:
+            if(e13 == i24)
+                P24 = 1;
+            i24--;
+            break;
+        }
+        switch(i25)
+        {
+        case 0:
+            break;
+        case 1:
+            //CCAP3H = 255;
+            P25 = 0;
+            i25--;
+            break;
+        default:
+            if(e13 == i25)
+                P25 = 1;
+            i25--;
+            break;
+        }
+        switch(i26)
+        {
+        case 0:
+            break;
+        case 1:
+            //CCAP4H = 255;
+            P26 = 0;
+            i26--;
+            break;
+        default:
+            if(e13 == i26)
+                P26 = 1;
+            i26--;
+            break;
+        }
+        switch(i34)
+        {
+        case 0:
+            break;
+        case 1:
+            P34 = 0;
+            i34--;
+            break;
+        default:
+            if(e13 == i34)
+                P34 = 1;
+            i34--;
+            break;
+        }
+        switch(i35)
+        {
+        case 0:
+            break;
+        case 1:
+            P35 = 0;
+            i35--;
+            break;
+        default:
+            if(e13 == i35)
+                P35 = 1;
+            i35--;
+            break;
+        }
+        switch(i36)
+        {
+        case 0:
+            break;
+        case 1:
+            P36 = 0;
+            i36--;
+            break;
+        default:
+            if(e13 == i36)
+                P36 = 1;
+            i36--;
+            break;
+        }
+        switch(i37)
+        {
+        case 0:
+            break;
+        case 1:
+            P37 = 0;
+            i37--;
+            break;
+        default:
+            if(e13 == i37)
+                P37 = 1;
+            i37--;
+            break;
+        }
+        switch(i40)
+        {
+        case 0:
+            break;
+        case 1:
+            P40 = 0;
+            i40--;
+            break;
+        default:
+            if(e13 == i40)
+                P40 = 1;
+            i40--;
+            break;
+        }
+        switch(i41)
+        {
+        case 0:
+            break;
+        case 1:
+            P41 = 0;
+            i41--;
+            break;
+        default:
+            if(e13 == i41)
+                P41 = 1;
+            i41--;
+            break;
+        }
+        switch(i42)
+        {
+        case 0:
+            break;
+        case 1:
+            P42 = 0;
+            i42--;
+            break;
+        default:
+            if(e13 == i42)
+                P42 = 1;
+            i42--;
+            break;
+        }
+        switch(i43)
+        {
+        case 0:
+            break;
+        case 1:
+            P43 = 0;
+            i43--;
+            break;
+        default:
+            if(e13 == i43)
+                P43 = 1;
+            i43--;
+            break;
+        }
+        switch(i46)
+        {
+        case 0:
+            break;
+        case 1:
+            P46 = 0;
+            i46--;
+            break;
+        default:
+            if(e13 == i46)
+                P46 = 1;
+            i46--;
+            break;
+        }
 #ifndef LEDRay
-    switch(i50)
-    {
-    case 0:
-        break;
-    case 1:
-        P50 = 0;
-        i50--;
-        break;
-    default:
-        if(e13 == i50)
-            P50 = 1;
-        i50--;
-        break;
-    }
-    switch(i51)
-    {
-    case 0:
-        break;
-    case 1:
-        P51 = 0;
-        i51--;
-        break;
-    default:
-        if(e13 == i51)
-            P51 = 1;
-        i51--;
-        break;
-    }
-    switch(i52)
-    {
-    case 0:
-        break;
-    case 1:
-        P52 = 0;
-        i52--;
-        break;
-    default:
-        if(e13 == i52)
-            P52 = 1;
-        i52--;
-        break;
-    }
-    switch(i53)
-    {
-    case 0:
-        break;
-    case 1:
-        P53 = 0;
-        i53--;
-        break;
-    default:
-        if(e13 == i53)
-            P53 = 1;
-        i53--;
-        break;
-    }
-    switch(i54)
-    {
-    case 0:
-        break;
-    case 1:
-        P54 = 0;
-        i54--;
-        break;
-    default:
-        if(e13 == i54)
-            P54 = 1;
-        i54--;
-        break;
-    }
-    switch(i55)
-    {
-    case 0:
-        break;
-    case 1:
-        P55 = 0;
-        i55--;
-        break;
-    default:
-        if(e13 == i55)
-            P55 = 1;
-        i55--;
-        break;
-    }
-    switch(i56)
-    {
-    case 0:
-        break;
-    case 1:
-        P56 = 0;
-        i56--;
-        break;
-    default:
-        if(e13 == i56)
-            P56 = 1;
-        i56--;
-        break;
-    }
+        switch(i50)
+        {
+        case 0:
+            break;
+        case 1:
+            P50 = 0;
+            i50--;
+            break;
+        default:
+            if(e13 == i50)
+                P50 = 1;
+            i50--;
+            break;
+        }
+        switch(i51)
+        {
+        case 0:
+            break;
+        case 1:
+            P51 = 0;
+            i51--;
+            break;
+        default:
+            if(e13 == i51)
+                P51 = 1;
+            i51--;
+            break;
+        }
+        switch(i52)
+        {
+        case 0:
+            break;
+        case 1:
+            P52 = 0;
+            i52--;
+            break;
+        default:
+            if(e13 == i52)
+                P52 = 1;
+            i52--;
+            break;
+        }
+        switch(i53)
+        {
+        case 0:
+            break;
+        case 1:
+            P53 = 0;
+            i53--;
+            break;
+        default:
+            if(e13 == i53)
+                P53 = 1;
+            i53--;
+            break;
+        }
+        switch(i54)
+        {
+        case 0:
+            break;
+        case 1:
+            P54 = 0;
+            i54--;
+            break;
+        default:
+            if(e13 == i54)
+                P54 = 1;
+            i54--;
+            break;
+        }
+        switch(i55)
+        {
+        case 0:
+            break;
+        case 1:
+            P55 = 0;
+            i55--;
+            break;
+        default:
+            if(e13 == i55)
+                P55 = 1;
+            i55--;
+            break;
+        }
+        switch(i56)
+        {
+        case 0:
+            break;
+        case 1:
+            P56 = 0;
+            i56--;
+            break;
+        default:
+            if(e13 == i56)
+                P56 = 1;
+            i56--;
+            break;
+        }
 #endif
         break;
     }
@@ -1490,187 +1507,187 @@ void rayoff()
     switch( oneCHANNEL )
     {
     case 2:
-    switch(note)
-    {
-    case 23:
-        i17 = 1;
-        break;
-    case 24:
-        i20 = 1;
-        break;
-    case 25:
-        i21 = 1;
-        break;
-    case 26:
-        i22 = 1;
-        break;
-    case 27:
-        i23 = 1;
-        break;
-    case 28:
-        i24 = 1;
-        break;
-    case 29:
-        i25 = 1;
-        break;
-    case 30:
-        i26 = 1;
-        break;
-    case 31:
-        i56 = 1;
-        break;
-    case 32:
-        i55 = 1;
-        break;
-    case 33:
-        i34 = 1;
-        break;
-    case 34:
-        i35 = 1;
-        break;
-    case 35:
-        i36 = 1;
-        break;
-    case 36:
-        i37 = 1;
-        break;
-    case 37:
-        i40 = 1;
-        break;
-    case 38:
-        i41 = 1;
-        break;
-    case 39:
-        i42 = 1;
-        break;
-    case 40:
-        i43 = 1;
-        break;
-    case 41:
-        i46 = 1;
-        break;
-    case 42:
-        i50 = 1;
-        break;
-    case 43:
-        i51 = 1;
-        break;
-    case 44:
-        i52 = 1;
-        break;
-    case 45:
-        i53 = 1;
-        break;
-    case 46:
-        i54 = 1;
-        break;
+        switch(note)
+        {
+        case 47:
+            i17 = 1;
+            break;
+        case 48:
+            i20 = 1;
+            break;
+        case 49:
+            i21 = 1;
+            break;
+        case 50:
+            i22 = 1;
+            break;
+        case 51:
+            i23 = 1;
+            break;
+        case 52:
+            i24 = 1;
+            break;
+        case 53:
+            i25 = 1;
+            break;
+        case 54:
+            i26 = 1;
+            break;
+        case 55:
+            i56 = 1;
+            break;
+        case 56:
+            i55 = 1;
+            break;
+        case 57:
+            i34 = 1;
+            break;
+        case 58:
+            i35 = 1;
+            break;
+        case 59:
+            i36 = 1;
+            break;
+        case 60:
+            i37 = 1;
+            break;
+        case 61:
+            i40 = 1;
+            break;
+        case 62:
+            i41 = 1;
+            break;
+        case 63:
+            i42 = 1;
+            break;
+        case 64:
+            i43 = 1;
+            break;
+        case 65:
+            i46 = 1;
+            break;
+        case 66:
+            i00 = 1;
+            break;
+        case 67:
+            i01 = 1;
+            break;
+        case 68:
+            i02 = 1;
+            break;
+        case 69:
+            i53 = 1;
+            break;
+        case 70:
+            i54 = 1;
+            break;
         }
     case 3:
         switch(note)
         {
-        case 47:
-        i00 = 1;
-        break;
-    case 48:
-        i01 = 1;
-        break;
-    case 49:
-        i02 = 1;
-        break;
-    case 50:
-        i03 = 1;
-        break;
-    case 51:
-        i04 = 1;
-        break;
-    case 52:
-        i05 = 1;
-        break;
-    case 53:
-        i06 = 1;
-        break;
-    case 54:
-        i07 = 1;
-        break;
-    case 55:
-        i11 = 1;
-        break;
-    case 56:
-        i14 = 1;
-        break;
-    case 57:
-        i15 = 1;
-        break;
-    case 58:
-        i16 = 1;
-        break;
-    case 59:
-        i17 = 1;
-        break;
-    case 60:
-        i20 = 1;
-        break;
-    case 61:
-        i21 = 1;
-        break;
-    case 62:
-        i22 = 1;
-        break;
-    case 63:
-        i23 = 1;
-        break;
-    case 64:
-        i24 = 1;
-        break;
-    case 65:
-        i25 = 1;
-        break;
-    case 66:
-        i26 = 1;
-        break;
-    case 67:
-        i56 = 1;
-        break;
-    case 68:
-        i55 = 1;
-        break;
-    case 69:
-        i34 = 1;
-        break;
-    case 70:
-        i35 = 1;
-        break;
-    case 71:
-        i36 = 1;
-        break;
-    case 72:
-        i37 = 1;
-        break;
-    case 73:
-        i40 = 1;
-        break;
-    case 74:
-        i41 = 1;
-        break;
-    case 75:
-        i42 = 1;
-        break;
-    case 76:
-        i43 = 1;
-        break;
-    case 77:
-        i46 = 1;
-        break;
-    case 78:
-        i50 = 1;
-        break;
-    case 79:
-        i51 = 1;
-        break;
-    case 80:
-        i52 = 1;
-        break;
-    }
+        case 71:
+            i00 = 1;
+            break;
+        case 72:
+            i01 = 1;
+            break;
+        case 73:
+            i02 = 1;
+            break;
+        case 74:
+            i03 = 1;
+            break;
+        case 75:
+            i04 = 1;
+            break;
+        case 76:
+            i05 = 1;
+            break;
+        case 77:
+            i06 = 1;
+            break;
+        case 78:
+            i07 = 1;
+            break;
+        case 79:
+            i11 = 1;
+            break;
+        case 80:
+            i14 = 1;
+            break;
+        case 81:
+            i15 = 1;
+            break;
+        case 82:
+            i16 = 1;
+            break;
+        case 83:
+            i17 = 1;
+            break;
+        case 84:
+            i20 = 1;
+            break;
+        case 85:
+            i21 = 1;
+            break;
+        case 86:
+            i22 = 1;
+            break;
+        case 87:
+            i23 = 1;
+            break;
+        case 88:
+            i24 = 1;
+            break;
+        case 89:
+            i25 = 1;
+            break;
+        case 90:
+            i26 = 1;
+            break;
+        case 91:
+            i56 = 1;
+            break;
+        case 92:
+            i55 = 1;
+            break;
+        case 93:
+            i34 = 1;
+            break;
+        case 94:
+            i35 = 1;
+            break;
+        case 95:
+            i36 = 1;
+            break;
+        case 96:
+            i37 = 1;
+            break;
+        case 97:
+            i40 = 1;
+            break;
+        case 98:
+            i41 = 1;
+            break;
+        case 99:
+            i42 = 1;
+            break;
+        case 100:
+            i43 = 1;
+            break;
+        case 101:
+            i46 = 1;
+            break;
+        case 102:
+            i50 = 1;
+            break;
+        case 103:
+            i51 = 1;
+            break;
+        case 104:
+            i52 = 1;
+            break;
+        }
         break;
     }
 #endif
